@@ -1,0 +1,10 @@
+{
+  "@@locale": "tr",
+  "addFilament": "Filament Ekle",
+  "brand": "Marka",
+  "color": "Renk",
+  "material": "Malzeme",
+  "save": "Kaydet",
+  "required": "Zorunlu",
+  "addNew": "+ Yeni ekle"
+}
