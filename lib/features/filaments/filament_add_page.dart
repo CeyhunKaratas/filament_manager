@@ -180,7 +180,7 @@ class _FilamentAddPageState extends State<FilamentAddPage> {
 
                 /// MATERIAL
                 DropdownButtonFormField<FilamentMaterial>(
-                  value: _selectedMaterial,
+                  initialValue: _selectedMaterial,
                   decoration: InputDecoration(labelText: strings.material),
                   items: FilamentMaterial.values.map((m) {
                     return DropdownMenuItem(
@@ -231,7 +231,7 @@ class _FilamentAddPageState extends State<FilamentAddPage> {
                 if (_locations.length > 1) ...[
                   const SizedBox(height: 12),
                   DropdownButtonFormField<Location>(
-                    value: _selectedLocation,
+                    initialValue: _selectedLocation,
                     decoration: InputDecoration(labelText: strings.location),
                     items: _locations
                         .map(

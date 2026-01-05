@@ -168,7 +168,7 @@ class AppStrings {
   String get statusActive {
     switch (locale.languageCode) {
       case 'tr':
-        return 'Actif';
+        return 'Aktif';
       default:
         return 'Active';
     }
@@ -498,6 +498,87 @@ class AppStrings {
         return 'Not: Bu ekran sadece OCR testi içindir. DB’ye kayıt yapmaz, filament oluşturmaz.';
       default:
         return 'Note: This page is for OCR testing only. It does not write to DB or create filaments.';
+    }
+  }
+
+  String get scanReadFromCamera {
+    switch (locale.languageCode) {
+      case 'tr':
+        return 'Verileri kameradan oku';
+      default:
+        return 'Read from camera';
+    }
+  }
+
+  String get scanCaptureInstruction {
+    switch (locale.languageCode) {
+      case 'tr':
+        return 'İhtiyacınız olan fotoğrafları çekin.';
+      default:
+        return 'Take the photos you need.';
+    }
+  }
+
+  String photosTaken(int count) {
+    switch (locale.languageCode) {
+      case 'tr':
+        return '$count foto çekildi';
+      default:
+        return '$count photos taken';
+    }
+  }
+
+  String get doneUpper {
+    switch (locale.languageCode) {
+      case 'tr':
+        return 'TAMAM';
+      default:
+        return 'DONE';
+    }
+  }
+
+  String get cameraInitFailed {
+    switch (locale.languageCode) {
+      case 'tr':
+        return 'Kamera başlatılamadı';
+      default:
+        return 'Camera could not be initialized';
+    }
+  }
+
+  String get scanProcessing {
+    switch (locale.languageCode) {
+      case 'tr':
+        return 'OCR çalıştırılıyor...';
+      default:
+        return 'Running OCR...';
+    }
+  }
+
+  String get scanMergedOcrTitle {
+    switch (locale.languageCode) {
+      case 'tr':
+        return 'Birleşik OCR Metni';
+      default:
+        return 'Merged OCR Text';
+    }
+  }
+
+  String get scanPerPhotoOcrTitle {
+    switch (locale.languageCode) {
+      case 'tr':
+        return 'Fotoğraf Bazlı OCR Sonuçları';
+      default:
+        return 'Per-photo OCR Results';
+    }
+  }
+
+  String get scanStartNewSession {
+    switch (locale.languageCode) {
+      case 'tr':
+        return 'Yeni tarama başlat';
+      default:
+        return 'Start new scan';
     }
   }
 }

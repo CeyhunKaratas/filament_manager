@@ -23,6 +23,9 @@ dependencies:
   image_picker: ^1.0.7
   google_mlkit_text_recognition: ^0.11.0
 
+  camera: ^0.10.5+9
+  cross_file: ^0.3.4+2
+
 
 dev_dependencies:
   flutter_test:

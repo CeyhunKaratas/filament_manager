@@ -147,7 +147,7 @@ class _FilamentGroupDetailPageState extends State<FilamentGroupDetailPage> {
           mainAxisSize: MainAxisSize.min,
           children: [
             DropdownButtonFormField<Printer>(
-              value: selectedPrinter,
+              initialValue: selectedPrinter,
               items: _printers
                   .map((p) => DropdownMenuItem(value: p, child: Text(p.name)))
                   .toList(),
@@ -159,7 +159,7 @@ class _FilamentGroupDetailPageState extends State<FilamentGroupDetailPage> {
             ),
             const SizedBox(height: 12),
             DropdownButtonFormField<int>(
-              value: selectedSlot,
+              initialValue: selectedSlot,
               items: slotsFor(selectedPrinter)
                   .map(
                     (s) => DropdownMenuItem(
@@ -182,9 +182,9 @@ class _FilamentGroupDetailPageState extends State<FilamentGroupDetailPage> {
             onPressed: () async {
               try {
                 await _repository.assignFilament(
-                  filament.id!,
+                  filament.id,
                   selectedPrinter.id!,
-                  selectedSlot!,
+                  selectedSlot,
                 );
               } on SlotOccupiedException {
                 final confirmed = await showDialog<bool>(
@@ -209,9 +209,9 @@ class _FilamentGroupDetailPageState extends State<FilamentGroupDetailPage> {
 
                 if (confirmed == true) {
                   await _repository.assignFilament(
-                    filament.id!,
+                    filament.id,
                     selectedPrinter.id!,
-                    selectedSlot!,
+                    selectedSlot,
                     force: true,
                   );
                 } else {

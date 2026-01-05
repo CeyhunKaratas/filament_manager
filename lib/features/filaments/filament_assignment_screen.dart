@@ -67,7 +67,7 @@ class _FilamentAssignmentScreenState extends State<FilamentAssignmentScreen> {
           children: [
             /// PRINTER
             DropdownButtonFormField<Printer>(
-              value: selectedPrinter,
+              initialValue: selectedPrinter,
               items: printers
                   .map((p) => DropdownMenuItem(value: p, child: Text(p.name)))
                   .toList(),
@@ -84,7 +84,7 @@ class _FilamentAssignmentScreenState extends State<FilamentAssignmentScreen> {
 
             /// SLOT
             DropdownButtonFormField<int>(
-              value: selectedSlot,
+              initialValue: selectedSlot,
               items: slotsFor(selectedPrinter)
                   .map(
                     (s) => DropdownMenuItem(
