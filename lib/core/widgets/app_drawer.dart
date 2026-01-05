@@ -46,6 +46,13 @@ class AppDrawer extends StatelessWidget {
             selected: current == 'locations',
             onTap: () => _navigate(context, 'locations'),
           ),
+          
+          _DrawerItem(
+            icon: Icons.qr_code_scanner,
+            label: 'Scan / OCR',
+            selected: current == 'scan',
+            onTap: () => _navigate(context, 'scan'),
+          ),
         ],
       ),
     );

@@ -136,122 +136,124 @@ class _FilamentAddPageState extends State<FilamentAddPage> {
       appBar: AppBar(title: Text(strings.addFilament)),
       body: Padding(
         padding: const EdgeInsets.all(16),
-        child: Form(
-          key: _formKey,
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.stretch,
-            children: [
-              /// BRAND
-              DropdownButtonFormField<String>(
-                decoration: InputDecoration(labelText: strings.brand),
-                items: [
-                  ..._availableBrands.map(
-                    (v) => DropdownMenuItem(value: v, child: Text(v)),
-                  ),
-                  DropdownMenuItem(
-                    value: '__new__',
-                    child: Text(strings.addNew),
+        child: SingleChildScrollView(
+          child: Form(
+            key: _formKey,
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.stretch,
+              children: [
+                /// BRAND
+                DropdownButtonFormField<String>(
+                  decoration: InputDecoration(labelText: strings.brand),
+                  items: [
+                    ..._availableBrands.map(
+                      (v) => DropdownMenuItem(value: v, child: Text(v)),
+                    ),
+                    DropdownMenuItem(
+                      value: '__new__',
+                      child: Text(strings.addNew),
+                    ),
+                  ],
+                  onChanged: (v) {
+                    setState(() {
+                      _isCustomBrand = (v == '__new__');
+                      if (!_isCustomBrand && v != null) {
+                        _brandController.text = v.trim().toLowerCase();
+                      }
+                    });
+                  },
+                  validator: (_) =>
+                      _brandController.text.isEmpty ? strings.required : null,
+                ),
+
+                if (_isCustomBrand) ...[
+                  const SizedBox(height: 8),
+                  TextFormField(
+                    controller: _brandController,
+                    decoration: InputDecoration(labelText: strings.newBrand),
+                    validator: (v) =>
+                        v == null || v.isEmpty ? strings.required : null,
                   ),
                 ],
-                onChanged: (v) {
-                  setState(() {
-                    _isCustomBrand = (v == '__new__');
-                    if (!_isCustomBrand && v != null) {
-                      _brandController.text = v.trim().toLowerCase();
-                    }
-                  });
-                },
-                validator: (_) =>
-                    _brandController.text.isEmpty ? strings.required : null,
-              ),
 
-              if (_isCustomBrand) ...[
-                const SizedBox(height: 8),
-                TextFormField(
-                  controller: _brandController,
-                  decoration: InputDecoration(labelText: strings.newBrand),
-                  validator: (v) =>
-                      v == null || v.isEmpty ? strings.required : null,
-                ),
-              ],
-
-              const SizedBox(height: 12),
-
-              /// MATERIAL
-              DropdownButtonFormField<FilamentMaterial>(
-                value: _selectedMaterial,
-                decoration: InputDecoration(labelText: strings.material),
-                items: FilamentMaterial.values.map((m) {
-                  return DropdownMenuItem(
-                    value: m,
-                    child: Text(m.name.toUpperCase()),
-                  );
-                }).toList(),
-                onChanged: (v) => setState(() => _selectedMaterial = v!),
-              ),
-
-              const SizedBox(height: 12),
-
-              /// COLOR
-              DropdownButtonFormField<String>(
-                decoration: InputDecoration(labelText: strings.color),
-                items: [
-                  ..._availableColors.map(
-                    (v) => DropdownMenuItem(value: v, child: _colorItem(v)),
-                  ),
-                  DropdownMenuItem(
-                    value: '__new__',
-                    child: Text(strings.addNew),
-                  ),
-                ],
-                onChanged: (v) {
-                  setState(() {
-                    _isCustomColor = (v == '__new__');
-                    if (!_isCustomColor && v != null) {
-                      _colorController.text = v.trim().toLowerCase();
-                    }
-                  });
-                },
-                validator: (_) =>
-                    _colorController.text.isEmpty ? strings.required : null,
-              ),
-
-              if (_isCustomColor) ...[
-                const SizedBox(height: 8),
-                TextFormField(
-                  controller: _colorController,
-                  decoration: InputDecoration(labelText: strings.newColor),
-                  validator: (v) =>
-                      v == null || v.isEmpty ? strings.required : null,
-                ),
-              ],
-
-              /// 🔹 LOCATION
-              if (_locations.length > 1) ...[
                 const SizedBox(height: 12),
-                DropdownButtonFormField<Location>(
-                  value: _selectedLocation,
-                  decoration: InputDecoration(labelText: strings.location),
-                  items: _locations
-                      .map(
-                        (l) => DropdownMenuItem<Location>(
-                          value: l,
-                          child: Text(l.name),
-                        ),
-                      )
-                      .toList(),
-                  onChanged: (v) => setState(() => _selectedLocation = v),
-                  validator: (v) => v == null ? strings.required : null,
+
+                /// MATERIAL
+                DropdownButtonFormField<FilamentMaterial>(
+                  value: _selectedMaterial,
+                  decoration: InputDecoration(labelText: strings.material),
+                  items: FilamentMaterial.values.map((m) {
+                    return DropdownMenuItem(
+                      value: m,
+                      child: Text(m.name.toUpperCase()),
+                    );
+                  }).toList(),
+                  onChanged: (v) => setState(() => _selectedMaterial = v!),
+                ),
+
+                const SizedBox(height: 12),
+
+                /// COLOR
+                DropdownButtonFormField<String>(
+                  decoration: InputDecoration(labelText: strings.color),
+                  items: [
+                    ..._availableColors.map(
+                      (v) => DropdownMenuItem(value: v, child: _colorItem(v)),
+                    ),
+                    DropdownMenuItem(
+                      value: '__new__',
+                      child: Text(strings.addNew),
+                    ),
+                  ],
+                  onChanged: (v) {
+                    setState(() {
+                      _isCustomColor = (v == '__new__');
+                      if (!_isCustomColor && v != null) {
+                        _colorController.text = v.trim().toLowerCase();
+                      }
+                    });
+                  },
+                  validator: (_) =>
+                      _colorController.text.isEmpty ? strings.required : null,
+                ),
+
+                if (_isCustomColor) ...[
+                  const SizedBox(height: 8),
+                  TextFormField(
+                    controller: _colorController,
+                    decoration: InputDecoration(labelText: strings.newColor),
+                    validator: (v) =>
+                        v == null || v.isEmpty ? strings.required : null,
+                  ),
+                ],
+
+                /// 🔹 LOCATION
+                if (_locations.length > 1) ...[
+                  const SizedBox(height: 12),
+                  DropdownButtonFormField<Location>(
+                    value: _selectedLocation,
+                    decoration: InputDecoration(labelText: strings.location),
+                    items: _locations
+                        .map(
+                          (l) => DropdownMenuItem<Location>(
+                            value: l,
+                            child: Text(l.name),
+                          ),
+                        )
+                        .toList(),
+                    onChanged: (v) => setState(() => _selectedLocation = v),
+                    validator: (v) => v == null ? strings.required : null,
+                  ),
+                ],
+
+                const SizedBox(height: 24),
+
+                ElevatedButton(
+                  onPressed: _saveFilament,
+                  child: Text(strings.save),
                 ),
               ],
-
-              const SizedBox(height: 24),
-
-              ElevatedButton(
-                onPressed: _saveFilament,
-                child: Text(strings.save),
-              ),
-            ],
+            ),
           ),
         ),
       ),

@@ -10,10 +10,7 @@ class AppStrings {
     return AppStrings(locale);
   }
 
-  static const supportedLocales = [
-    Locale('en'),
-    Locale('tr'),
-  ];
+  static const supportedLocales = [Locale('en'), Locale('tr')];
 
   String get addFilament {
     switch (locale.languageCode) {
@@ -195,20 +192,19 @@ class AppStrings {
     }
   }
 
-    String statusLabel(FilamentStatus status) {
-        switch (status) {
-            case FilamentStatus.active:
-            return statusActive;
-            case FilamentStatus.low:
-            return statusLow;
-            case FilamentStatus.finished:
-            return statusFinished;
-        }
-        return '';
+  String statusLabel(FilamentStatus status) {
+    switch (status) {
+      case FilamentStatus.active:
+        return statusActive;
+      case FilamentStatus.low:
+        return statusLow;
+      case FilamentStatus.finished:
+        return statusFinished;
     }
+    return '';
+  }
 
-
-    String get assignTitle {
+  String get assignTitle {
     switch (locale.languageCode) {
       case 'tr':
         return 'Makara → Printer Atama';
@@ -279,37 +275,35 @@ class AppStrings {
         return 'No printers';
     }
   }
-  
-String get slotAlreadyUsed {
-  switch (locale.languageCode) {
-    case 'tr':
-      return 'Bu slot zaten dolu';
-    default:
-      return 'This slot is already in use';
+
+  String get slotAlreadyUsed {
+    switch (locale.languageCode) {
+      case 'tr':
+        return 'Bu slot zaten dolu';
+      default:
+        return 'This slot is already in use';
+    }
   }
-}
 
-String get ok {
-  switch (locale.languageCode) {
-    case 'tr':
-      return 'Tamam';
-    default:
-      return 'OK';
+  String get ok {
+    switch (locale.languageCode) {
+      case 'tr':
+        return 'Tamam';
+      default:
+        return 'OK';
+    }
   }
-}
 
-String get changeSlot {
-  switch (locale.languageCode) {
-    case 'tr':
-      return 'Slot Değiştir';
-    default:
-      return 'Change Slot';
+  String get changeSlot {
+    switch (locale.languageCode) {
+      case 'tr':
+        return 'Slot Değiştir';
+      default:
+        return 'Change Slot';
+    }
   }
-}
 
-
-
-  String get slotOccupiedTitle  {
+  String get slotOccupiedTitle {
     switch (locale.languageCode) {
       case 'tr':
         return 'Slot dolu';
@@ -317,7 +311,8 @@ String get changeSlot {
         return 'Slot occupied';
     }
   }
-  String get slotOccupiedMessage   {
+
+  String get slotOccupiedMessage {
     switch (locale.languageCode) {
       case 'tr':
         return 'Bu slot dolu. Devam ederseniz eski filament bu slottan kaldırılacak.';
@@ -325,7 +320,8 @@ String get changeSlot {
         return 'This slot is occupied. If you continue, the old filament will be removed from this slot.';
     }
   }
-  String get continueLabel   {
+
+  String get continueLabel {
     switch (locale.languageCode) {
       case 'tr':
         return 'Devam';
@@ -334,112 +330,174 @@ String get changeSlot {
     }
   }
 
-String get empty {
-  switch (locale.languageCode) {
-    case 'tr':
-      return 'Boş';
-    default:
-      return 'Empty';
+  String get empty {
+    switch (locale.languageCode) {
+      case 'tr':
+        return 'Boş';
+      default:
+        return 'Empty';
+    }
   }
-}
 
-String get location {
-  switch (locale.languageCode) {
-    case 'tr':
-      return 'Lokasyon';
-    default:
-      return 'Location';
+  String get location {
+    switch (locale.languageCode) {
+      case 'tr':
+        return 'Lokasyon';
+      default:
+        return 'Location';
+    }
   }
-}
 
-String get defaultLocation {
-  switch (locale.languageCode) {
-    case 'tr':
-      return 'Varsayılan';
-    default:
-      return 'Default';
+  String get defaultLocation {
+    switch (locale.languageCode) {
+      case 'tr':
+        return 'Varsayılan';
+      default:
+        return 'Default';
+    }
   }
-}
 
-String get noLocations {
-  switch (locale.languageCode) {
-    case 'tr':
-      return 'Lokasyon yok';
-    default:
-      return 'No location';
+  String get noLocations {
+    switch (locale.languageCode) {
+      case 'tr':
+        return 'Lokasyon yok';
+      default:
+        return 'No location';
+    }
   }
-}
 
-String get locations {
-  switch (locale.languageCode) {
-    case 'tr':
-      return 'Lokasyon';
-    default:
-      return 'Location';
+  String get locations {
+    switch (locale.languageCode) {
+      case 'tr':
+        return 'Lokasyon';
+      default:
+        return 'Location';
+    }
   }
-}
 
-String get addLocation {
-  switch (locale.languageCode) {
-    case 'tr':
-      return 'Lokasyon ekle';
-    default:
-      return 'Add location';
+  String get addLocation {
+    switch (locale.languageCode) {
+      case 'tr':
+        return 'Lokasyon ekle';
+      default:
+        return 'Add location';
+    }
   }
-}
 
-String get locationName {
-  switch (locale.languageCode) {
-    case 'tr':
-      return 'Lokasyon adı';
-    default:
-      return 'Location name';
+  String get locationName {
+    switch (locale.languageCode) {
+      case 'tr':
+        return 'Lokasyon adı';
+      default:
+        return 'Location name';
+    }
   }
-}
 
-String get add {
-  switch (locale.languageCode) {
-    case 'tr':
-      return 'Ekle';
-    default:
-      return 'Add';
+  String get add {
+    switch (locale.languageCode) {
+      case 'tr':
+        return 'Ekle';
+      default:
+        return 'Add';
+    }
   }
-}
 
-String get locationNotEmpty {
-  switch (locale.languageCode) {
-    case 'tr':
-      return 'Lokasyon boş değil';
-    default:
-      return 'Location is not empty';
+  String get locationNotEmpty {
+    switch (locale.languageCode) {
+      case 'tr':
+        return 'Lokasyon boş değil';
+      default:
+        return 'Location is not empty';
+    }
   }
-}
 
-String get selectLocation {
-  switch (locale.languageCode) {
-    case 'tr':
-      return 'Lokasyon seç';
-    default:
-      return 'Select location';
+  String get selectLocation {
+    switch (locale.languageCode) {
+      case 'tr':
+        return 'Lokasyon seç';
+      default:
+        return 'Select location';
+    }
   }
-}
 
-String get moveToLocation {
-  switch (locale.languageCode) {
-    case 'tr':
-      return 'Lokasyona taşı';
-    default:
-      return 'Move to location';
+  String get moveToLocation {
+    switch (locale.languageCode) {
+      case 'tr':
+        return 'Lokasyona taşı';
+      default:
+        return 'Move to location';
+    }
   }
-}
 
-String get customColors {
-  switch (locale.languageCode) {
-    case 'tr':
-      return 'Özel renkler';
-    default:
-      return 'Custom colors';
+  String get customColors {
+    switch (locale.languageCode) {
+      case 'tr':
+        return 'Özel renkler';
+      default:
+        return 'Custom colors';
+    }
   }
-}
 
+  String get scanOcrTitle {
+    switch (locale.languageCode) {
+      case 'tr':
+        return 'Scan / OCR';
+      default:
+        return 'Scan / OCR';
+    }
+  }
+
+  String get scanOcrTakePhoto {
+    switch (locale.languageCode) {
+      case 'tr':
+        return 'Fotoğraf çek ve OCR çalıştır';
+      default:
+        return 'Take photo & run OCR';
+    }
+  }
+
+  String get scanOcrRawTextTitle {
+    switch (locale.languageCode) {
+      case 'tr':
+        return 'Ham OCR Metni';
+      default:
+        return 'Raw OCR Text';
+    }
+  }
+
+  String get scanOcrRawTextEmpty {
+    switch (locale.languageCode) {
+      case 'tr':
+        return 'Henüz OCR sonucu yok.';
+      default:
+        return 'No OCR result yet.';
+    }
+  }
+
+  String get scanOcrAnalysisTitle {
+    switch (locale.languageCode) {
+      case 'tr':
+        return 'Basit Anahtar Kelime Analizi';
+      default:
+        return 'Basic Keyword Analysis';
+    }
+  }
+
+  String get scanOcrAnalysisEmpty {
+    switch (locale.languageCode) {
+      case 'tr':
+        return 'Eşleşen anahtar kelime bulunamadı.';
+      default:
+        return 'No keyword hits found.';
+    }
+  }
+
+  String get scanOcrNote {
+    switch (locale.languageCode) {
+      case 'tr':
+        return 'Not: Bu ekran sadece OCR testi içindir. DB’ye kayıt yapmaz, filament oluşturmaz.';
+      default:
+        return 'Note: This page is for OCR testing only. It does not write to DB or create filaments.';
+    }
+  }
 }
