@@ -7,6 +7,7 @@ import 'l10n/app_strings.dart';
 import 'features/printers/printer_list_page.dart';
 import 'features/locations/location_list_page.dart';
 import 'features/scan/scan_ocr_page.dart';
+import 'features/definitions/definitions_home_screen.dart';
 
 void main() {
   runApp(const MyApp());
@@ -34,6 +35,7 @@ class MyApp extends StatelessWidget {
         '/printers': (_) => const PrinterListPage(),
         '/locations': (_) => const LocationListPage(),
         '/scan': (_) => const ScanOcrPage(),
+        '/definitions': (_) => const DefinitionsHomeScreen(),
       },
     );
   }

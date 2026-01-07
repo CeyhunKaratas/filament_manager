@@ -4,6 +4,13 @@ import 'package:filament_manager/core/models/filament.dart';
 import 'package:filament_manager/core/database/filament_repository.dart';
 import 'package:filament_manager/l10n/app_strings.dart';
 
+import 'package:filament_manager/features/definitions/brands/brand_repository.dart';
+import 'package:filament_manager/features/definitions/materials/material_repository.dart';
+import 'package:filament_manager/features/definitions/colors/color_repository.dart';
+import 'package:filament_manager/features/definitions/brands/brand_model.dart';
+import 'package:filament_manager/features/definitions/materials/material_model.dart';
+import 'package:filament_manager/features/definitions/colors/color_model.dart';
+
 class PrinterDetailPage extends StatefulWidget {
   final Printer printer;
 
@@ -15,8 +22,15 @@ class PrinterDetailPage extends StatefulWidget {
 
 class _PrinterDetailPageState extends State<PrinterDetailPage> {
   final FilamentRepository _filamentRepository = FilamentRepository();
+  final BrandRepository _brandRepository = BrandRepository();
+  final MaterialRepository _materialRepository = MaterialRepository();
+  final ColorRepository _colorRepository = ColorRepository();
 
   List<Filament> _filaments = [];
+
+  final Map<int, BrandModel> _brands = {};
+  final Map<int, MaterialModel> _materials = {};
+  final Map<int, ColorModel> _colors = {};
 
   @override
   void initState() {
@@ -28,6 +42,22 @@ class _PrinterDetailPageState extends State<PrinterDetailPage> {
     final result = await _filamentRepository.getFilamentsByPrinter(
       widget.printer.id!,
     );
+
+    final allBrands = await _brandRepository.getAll();
+    final allMaterials = await _materialRepository.getAll();
+    final allColors = await _colorRepository.getAll();
+
+    for (final b in allBrands) {
+      _brands[b.id] = b;
+    }
+
+    for (final m in allMaterials) {
+      _materials[m.id] = m;
+    }
+
+    for (final c in allColors) {
+      _colors[c.id] = c;
+    }
 
     setState(() {
       _filaments = result;
@@ -42,30 +72,6 @@ class _PrinterDetailPageState extends State<PrinterDetailPage> {
         return Colors.orange;
       case FilamentStatus.finished:
         return Colors.red;
-    }
-  }
-
-  Color _filamentColor(String colorName) {
-    switch (colorName.toLowerCase()) {
-      case 'red':
-        return Colors.red;
-      case 'blue':
-        return Colors.blue;
-      case 'green':
-        return Colors.green;
-      case 'black':
-        return Colors.black;
-      case 'white':
-        return Colors.white;
-      case 'yellow':
-        return Colors.yellow;
-      case 'orange':
-        return Colors.orange;
-      case 'gray':
-      case 'grey':
-        return Colors.grey;
-      default:
-        return Colors.grey.shade400;
     }
   }
 
@@ -84,6 +90,7 @@ class _PrinterDetailPageState extends State<PrinterDetailPage> {
               strings.printer,
               style: Theme.of(context).textTheme.titleMedium,
             ),
+
             if (_filaments.isEmpty) ...[
               const SizedBox(height: 4),
               Text(
@@ -98,8 +105,10 @@ class _PrinterDetailPageState extends State<PrinterDetailPage> {
             const SizedBox(height: 16),
             Text('${strings.slot}: ${widget.printer.slotCount}'),
             const SizedBox(height: 24),
+
             Text(strings.slot, style: Theme.of(context).textTheme.titleMedium),
             const SizedBox(height: 8),
+
             Expanded(
               child: ListView.builder(
                 itemCount: widget.printer.slotCount,
@@ -118,7 +127,6 @@ class _PrinterDetailPageState extends State<PrinterDetailPage> {
                     leading: Row(
                       mainAxisSize: MainAxisSize.min,
                       children: [
-                        // STATUS DOT
                         Container(
                           width: 10,
                           height: 10,
@@ -129,40 +137,44 @@ class _PrinterDetailPageState extends State<PrinterDetailPage> {
                             shape: BoxShape.circle,
                           ),
                         ),
-                        const SizedBox(width: 8),
-
-                        // FILAMENT COLOR SQUARE
-                        Container(
-                          width: 14,
-                          height: 14,
-                          decoration: BoxDecoration(
-                            color: filamentForSlot == null
-                                ? Colors.transparent
-                                : _filamentColor(filamentForSlot.color),
-                            border: Border.all(color: Colors.grey.shade400),
-                          ),
-                        ),
                         const SizedBox(width: 12),
-
-                        // SLOT NUMBER
-                        Text(
-                          '#$slotNumber',
-                          style: Theme.of(context).textTheme.bodyLarge,
-                        ),
+                        Text('#$slotNumber'),
                       ],
                     ),
                     title: filamentForSlot == null
                         ? Text(strings.empty)
                         : Text(
-                            '${filamentForSlot.brand} • ${filamentForSlot.color}',
+                            '${_brands[filamentForSlot.brandId]?.name ?? ''} '
+                            '${_materials[filamentForSlot.materialId]?.name ?? ''}',
                           ),
                     subtitle: filamentForSlot == null
                         ? null
-                        : Text(filamentForSlot.material.name),
+                        : Row(
+                            children: [
+                              Container(
+                                width: 12,
+                                height: 12,
+                                decoration: BoxDecoration(
+                                  shape: BoxShape.circle,
+                                  color: Color(
+                                    _colors[filamentForSlot.colorId]
+                                            ?.flutterColor ??
+                                        0xFF9E9E9E,
+                                  ),
+                                ),
+                              ),
+                              const SizedBox(width: 8),
+                              Text(
+                                '${strings.status}: '
+                                '${strings.statusLabel(filamentForSlot.status)}',
+                              ),
+                            ],
+                          ),
                   );
                 },
               ),
             ),
+
             Row(
               children: [
                 _LegendItem(color: Colors.green, label: strings.statusActive),

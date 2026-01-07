@@ -2,43 +2,26 @@ import 'package:flutter/material.dart';
 
 import '../../core/database/filament_repository.dart';
 import '../../core/models/filament.dart';
+import '../../core/models/filamentgroup.dart';
+
+import '../definitions/brands/brand_repository.dart';
+import '../definitions/materials/material_repository.dart';
+import '../definitions/colors/color_repository.dart';
+import '../definitions/colors/color_model.dart';
 
 import 'filament_add_page.dart';
-import 'filament_group.dart';
 import 'filament_group_detail_page.dart';
 
 import '../../l10n/app_strings.dart';
 import '../printers/printer_list_page.dart';
 import '../../core/widgets/app_drawer.dart';
 
-
-Color filamentColor(String color) {
-  switch (color.toLowerCase()) {
-    case 'black':
-      return Colors.black;
-    case 'white':
-      return Colors.grey.shade300;
-    case 'red':
-      return Colors.red;
-    case 'blue':
-      return Colors.blue;
-    case 'green':
-      return Colors.green;
-    case 'yellow':
-      return Colors.yellow;
-    default:
-      return Colors.brown;
-  }
-}
-
 Icon statusIcon(FilamentStatus status) {
   switch (status) {
     case FilamentStatus.active:
       return const Icon(Icons.play_circle, color: Colors.green);
-
     case FilamentStatus.low:
       return const Icon(Icons.warning, color: Colors.orange);
-
     case FilamentStatus.finished:
       return const Icon(Icons.stop_circle, color: Colors.red);
   }
@@ -54,16 +37,43 @@ class FilamentListPage extends StatefulWidget {
 class _FilamentListPageState extends State<FilamentListPage> {
   final FilamentRepository _repository = FilamentRepository();
 
+  final BrandRepository _brandRepo = BrandRepository();
+  final MaterialRepository _materialRepo = MaterialRepository();
+  final ColorRepository _colorRepo = ColorRepository();
+
   late Future<List<Filament>> _filamentsFuture;
+
+  final Map<int, String> _brandNames = {};
+  final Map<int, String> _materialNames = {};
+  final Map<int, ColorModel> _colors = {};
 
   @override
   void initState() {
     super.initState();
+    _loadDefinitions();
     _loadFilaments();
   }
 
   void _loadFilaments() {
     _filamentsFuture = _repository.getAllFilaments();
+  }
+
+  Future<void> _loadDefinitions() async {
+    final brands = await _brandRepo.getAll();
+    final materials = await _materialRepo.getAll();
+    final colors = await _colorRepo.getAll();
+
+    for (final b in brands) {
+      _brandNames[b.id] = b.name;
+    }
+    for (final m in materials) {
+      _materialNames[m.id] = m.name;
+    }
+    for (final c in colors) {
+      _colors[c.id] = c;
+    }
+
+    if (mounted) setState(() {});
   }
 
   @override
@@ -105,35 +115,58 @@ class _FilamentListPageState extends State<FilamentListPage> {
 
           final groups = _groupFilaments(filaments);
 
+          if (groups.isEmpty) {
+            return Center(child: Text(strings.noFilaments));
+          }
+
           return ListView.builder(
             itemCount: groups.length,
             itemBuilder: (context, index) {
               final group = groups[index];
 
+              final brandName = _brandNames[group.brandId] ?? '—';
+              final materialName = _materialNames[group.materialId] ?? '—';
+              final colorModel = _colors[group.colorId];
+
+              final activeCount = group.items
+                  .where((f) => f.status == FilamentStatus.active)
+                  .length;
+              final lowCount = group.items
+                  .where((f) => f.status == FilamentStatus.low)
+                  .length;
+
               return ListTile(
                 leading: CircleAvatar(
                   radius: 8,
-                  backgroundColor: filamentColor(group.color),
+                  backgroundColor: colorModel != null
+                      ? Color(colorModel.flutterColor)
+                      : Colors.grey,
                 ),
                 title: Text(
-                  '${group.brand} - ${group.material.name.toUpperCase()}',
+                  '$brandName • ${materialName.toUpperCase()} • '
+                  '${colorModel?.name ?? '-'} '
+                  '(${activeCount + lowCount})',
                   style: const TextStyle(fontWeight: FontWeight.w600),
                 ),
-                subtitle: Text('${strings.color}: ${group.color}'),
-                trailing: Column(
-                  mainAxisAlignment: MainAxisAlignment.center,
+                subtitle: Row(
                   children: [
-                    statusIcon(group.items.first.status),
-                    const SizedBox(height: 4),
-                    Text(
-                      'x${group.count}',
-                      style: const TextStyle(
-                        fontWeight: FontWeight.bold,
-                        fontSize: 16,
+                    if (activeCount > 0)
+                      Text(
+                        '$activeCount ${strings.statusActive}',
+                        style: const TextStyle(color: Colors.green),
                       ),
-                    ),
+                    if (lowCount > 0) ...[
+                      const SizedBox(width: 12),
+                      Text(
+                        '$lowCount ${strings.statusLow}',
+                        style: const TextStyle(color: Colors.orange),
+                      ),
+                    ],
                   ],
                 ),
+                trailing: activeCount > 0
+                    ? statusIcon(FilamentStatus.active)
+                    : statusIcon(FilamentStatus.low),
                 onTap: () async {
                   final changed = await Navigator.push<bool>(
                     context,
@@ -143,7 +176,9 @@ class _FilamentListPageState extends State<FilamentListPage> {
                   );
 
                   if (changed == true) {
-                    setState(_loadFilaments);
+                    setState(() {
+                      _filamentsFuture = _repository.getAllFilaments();
+                    });
                   }
                 },
               );
@@ -157,7 +192,9 @@ class _FilamentListPageState extends State<FilamentListPage> {
             context,
             MaterialPageRoute(builder: (_) => const FilamentAddPage()),
           ).then((_) {
-            setState(_loadFilaments);
+            setState(() {
+              _filamentsFuture = _repository.getAllFilaments();
+            });
           });
         },
         child: const Icon(Icons.add),
@@ -165,35 +202,28 @@ class _FilamentListPageState extends State<FilamentListPage> {
     );
   }
 
-  Widget _statusIcon(FilamentStatus status) {
-    switch (status) {
-      case FilamentStatus.active:
-        return const Icon(Icons.check_circle, color: Colors.green);
-      case FilamentStatus.low:
-        return const Icon(Icons.warning, color: Colors.orange);
-      case FilamentStatus.finished:
-        return const Icon(Icons.cancel, color: Colors.red);
-    }
-  }
-
   List<FilamentGroup> _groupFilaments(List<Filament> filaments) {
     final Map<String, List<Filament>> grouped = {};
 
     for (final filament in filaments) {
+      if (filament.status == FilamentStatus.finished) {
+        continue; // 🔒 finished tamamen dışarıda
+      }
+
       final key =
-          '${filament.brand}_${filament.material.name}_${filament.color}';
+          '${filament.brandId}_${filament.materialId}_${filament.colorId}';
 
       grouped.putIfAbsent(key, () => []);
       grouped[key]!.add(filament);
     }
 
-    return grouped.values.map((items) {
+    return grouped.values.where((items) => items.isNotEmpty).map((items) {
       final first = items.first;
 
       return FilamentGroup(
-        brand: first.brand,
-        material: first.material,
-        color: first.color,
+        brandId: first.brandId,
+        materialId: first.materialId,
+        colorId: first.colorId,
         count: items.length,
         items: items,
       );

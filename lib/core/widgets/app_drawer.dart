@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import '../../l10n/app_strings.dart';
+
 
 class AppDrawer extends StatelessWidget {
   final String current;
@@ -19,39 +21,56 @@ class AppDrawer extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final strings = AppStrings.of(Localizations.localeOf(context));
+
     return Drawer(
       child: ListView(
         children: [
-          const DrawerHeader(
-            child: Text('Filament Manager', style: TextStyle(fontSize: 20)),
+          DrawerHeader(
+            child: Text(
+              strings.appTitle,
+              style: const TextStyle(fontSize: 20),
+            ),
           ),
 
           _DrawerItem(
             icon: Icons.layers,
-            label: 'Filaments',
+            label: strings.filaments,
             selected: current == 'filaments',
             onTap: () => _navigate(context, 'filaments'),
           ),
 
           _DrawerItem(
             icon: Icons.print,
-            label: 'Printers',
+            label: strings.printers,
             selected: current == 'printers',
             onTap: () => _navigate(context, 'printers'),
           ),
 
           _DrawerItem(
             icon: Icons.place,
-            label: 'Locations',
+            label: strings.locations,
             selected: current == 'locations',
             onTap: () => _navigate(context, 'locations'),
           ),
-          
+
           _DrawerItem(
             icon: Icons.qr_code_scanner,
-            label: 'Scan / OCR',
+            label: strings.scanOcr,
             selected: current == 'scan',
             onTap: () => _navigate(context, 'scan'),
+          ),
+
+          // --------------------
+          // DEFINITIONS (NEW)
+          // --------------------
+          const Divider(),
+
+          _DrawerItem(
+            icon: Icons.tune,
+            label: strings.definitions,
+            selected: current == 'definitions',
+            onTap: () => _navigate(context, 'definitions'),
           ),
         ],
       ),

@@ -1,17 +1,17 @@
-import 'filament_material.dart';
 import 'filament.dart';
 
 class FilamentGroup {
-  final String brand;
-  final FilamentMaterial material;
-  final String color;
+  final int brandId;
+  final int materialId;
+  final int colorId;
+
   final int count;
   final List<Filament> items;
 
   FilamentGroup({
-    required this.brand,
-    required this.material,
-    required this.color,
+    required this.brandId,
+    required this.materialId,
+    required this.colorId,
     required this.count,
     required this.items,
   });

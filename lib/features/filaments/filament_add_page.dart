@@ -1,11 +1,25 @@
 import 'package:flutter/material.dart';
+import 'package:camera/camera.dart';
 
 import '../../core/database/filament_repository.dart';
 import '../../core/models/filament.dart';
-import '../../core/models/filament_material.dart';
 import '../../l10n/app_strings.dart';
 import '../../core/database/location_repository.dart';
 import '../../core/models/location.dart';
+
+import '../definitions/colors/color_model.dart';
+import '../definitions/colors/color_repository.dart';
+import '../definitions/colors/color_select_popup.dart';
+
+import '../definitions/brands/brand_model.dart';
+import '../definitions/brands/brand_repository.dart';
+
+import '../definitions/materials/material_model.dart';
+import '../definitions/materials/material_repository.dart';
+
+import '../scan/camera_capture_page.dart';
+import '../../core/ocr/ocr_text_extractor.dart';
+import '../../core/ocr/ocr_analyzer.dart';
 
 class FilamentAddPage extends StatefulWidget {
   const FilamentAddPage({super.key});
@@ -15,117 +29,294 @@ class FilamentAddPage extends StatefulWidget {
 }
 
 class _FilamentAddPageState extends State<FilamentAddPage> {
-  final Map<String, Color> _presetColors = {
-    'black': Colors.black,
-    'white': Colors.white,
-    'gray': Colors.grey,
-    'red': Colors.red,
-    'blue': Colors.blue,
-    'green': Colors.green,
-    'yellow': Colors.yellow,
-    'orange': Colors.orange,
-    'purple': Colors.purple,
-    'pink': Colors.pink,
-    'brown': Colors.brown,
-    'cyan': Colors.cyan,
-    'magenta': Colors.pinkAccent,
-    'lime': Colors.lime,
-    'teal': Colors.teal,
-    'transparent': Colors.transparent,
-    'natural': const Color(0xFFD7CFC4),
-  };
-
-  // ✅ PRESET BRAND LIST (KANONİK: lowercase)
-  final List<String> _presetBrands = const [
-    'prusa',
-    'esun',
-    'sunlu',
-    'bambulab',
-    'elegoo',
-    'creality',
-    'anycubic',
-    'polymaker',
-    'overture',
-  ];
-
   final _formKey = GlobalKey<FormState>();
 
   final _brandController = TextEditingController();
+  final _materialController = TextEditingController();
   final _colorController = TextEditingController();
 
-  FilamentMaterial _selectedMaterial = FilamentMaterial.pla;
+  TextEditingController? _brandFieldCtrl;
+  TextEditingController? _materialFieldCtrl;
+  TextEditingController? _colorFieldCtrl;
+
+  String get _brandText => (_brandFieldCtrl ?? _brandController).text;
+  String get _materialText => (_materialFieldCtrl ?? _materialController).text;
+  String get _colorText => (_colorFieldCtrl ?? _colorController).text;
+
+  set _brandTextSet(String v) => (_brandFieldCtrl ?? _brandController).text = v;
+  set _materialTextSet(String v) =>
+      (_materialFieldCtrl ?? _materialController).text = v;
+  set _colorTextSet(String v) => (_colorFieldCtrl ?? _colorController).text = v;
+
   final FilamentRepository _repository = FilamentRepository();
   final LocationRepository _locationRepository = LocationRepository();
+  final ColorRepository _colorRepository = ColorRepository();
+  final BrandRepository _brandRepository = BrandRepository();
+  final MaterialRepository _materialRepository = MaterialRepository();
 
-  List<String> _brands = [];
-  List<String> _colors = [];
+  bool _isSaving = false;
 
-  // 🔹 COLOR STATE (TEK GERÇEK KAYNAK)
-  List<String> _availableColors = [];
+  BrandModel? _selectedBrand;
+  List<BrandModel> _allBrands = [];
 
-  // 🔹 BRAND STATE (TEK GERÇEK KAYNAK)
-  List<String> _availableBrands = [];
+  MaterialModel? _selectedMaterial;
+  List<MaterialModel> _allMaterials = [];
 
-  // 🔹 LOCATION STATE
+  ColorModel? _selectedColor;
+  List<ColorModel> _allColors = [];
+
   List<Location> _locations = [];
   Location? _selectedLocation;
-
-  bool _isCustomBrand = false;
-  bool _isCustomColor = false;
 
   @override
   void initState() {
     super.initState();
-    _loadSmartValues();
+    _loadBrands();
+    _loadMaterials();
+    _loadColors();
     _loadLocations();
   }
 
-  Future<void> _loadSmartValues() async {
-    _brands = await _repository.getDistinctValues('brand');
-    _colors = await _repository.getDistinctValues('color');
+  Future<void> _loadBrands() async {
+    _allBrands = await _brandRepository.getAll();
+    if (mounted) setState(() {});
+  }
 
-    // ✅ PRESET + DB COLOR MERGE (BİR KEZ)
-    _availableColors = {..._presetColors.keys, ..._colors}.toList();
+  Future<void> _loadMaterials() async {
+    _allMaterials = await _materialRepository.getAll();
+    if (mounted) setState(() {});
+  }
 
-    // ✅ PRESET + DB BRAND MERGE (BİR KEZ)
-    // DB’den gelen brand’ler geçmişte farklı case ile kaydedilmiş olabilir.
-    // Burada sadece dropdown listesi için normalize edip birleştiriyoruz.
-    _availableBrands = {
-      ..._presetBrands,
-      ..._brands.map((b) => b.trim().toLowerCase()),
-    }.toList();
-
+  Future<void> _loadColors() async {
+    _allColors = await _colorRepository.getAll();
     if (mounted) setState(() {});
   }
 
   Future<void> _loadLocations() async {
     _locations = await _locationRepository.getAllLocations();
-
-    if (_locations.length == 1) {
+    if (_locations.isNotEmpty && _selectedLocation == null) {
       _selectedLocation = _locations.first;
+    }
+    if (mounted) setState(() {});
+  }
+
+  // -----------------------
+  // OCR
+  // -----------------------
+  Future<void> _readFromCameraAndOcr() async {
+    final photos = await Navigator.push<List<XFile>>(
+      context,
+      MaterialPageRoute(builder: (_) => const CameraCapturePage()),
+    );
+
+    if (!mounted || photos == null || photos.isEmpty) return;
+
+    final paths = photos.map((e) => e.path).toList();
+    final perImageTexts = await OcrTextExtractor.extractNormalizedTextsPerImage(
+      paths,
+    );
+    final merged = OcrTextExtractor.mergeNonEmpty(perImageTexts);
+    if (merged.isEmpty) return;
+
+    final lower = merged.toLowerCase();
+
+    final foundBrands = _allBrands
+        .where((b) => lower.contains(b.name))
+        .toList();
+    if (foundBrands.isNotEmpty) {
+      _brandTextSet = foundBrands.first.name;
+      await _handleBrandResolve(foundBrands.first.name);
+    }
+
+    final foundMaterials = _allMaterials
+        .where((m) => lower.contains(m.name))
+        .toList();
+    if (foundMaterials.isNotEmpty) {
+      _materialTextSet = foundMaterials.first.name;
+      await _handleMaterialResolve(foundMaterials.first.name);
+    }
+
+    final foundColors = OcrAnalyzer.matchKeywords(
+      mergedText: merged,
+      keywords: _allColors.map((c) => c.name).toList(),
+    );
+    if (foundColors.isNotEmpty) {
+      _colorTextSet = foundColors.first;
+      await _handleColorResolve(foundColors.first);
     }
 
     if (mounted) setState(() {});
   }
 
+  // -----------------------
+  // BRAND RESOLVE
+  // -----------------------
+  Future<void> _handleBrandResolve(String raw) async {
+    final input = raw.trim().toLowerCase();
+    if (input.isEmpty) return;
+
+    final match = _allBrands.where((b) => b.name == input).toList();
+    if (match.isNotEmpty) {
+      setState(() {
+        _selectedBrand = match.first;
+        _brandTextSet = match.first.name;
+      });
+      return;
+    }
+
+    final created = await showDialog<BrandModel?>(
+      context: context,
+      builder: (dialogContext) => AlertDialog(
+        title: Text(AppStrings.of(Localizations.localeOf(context)).addBrand),
+        content: Text(input),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.pop(dialogContext),
+            child: Text(AppStrings.of(Localizations.localeOf(context)).cancel),
+          ),
+          ElevatedButton(
+            onPressed: () async {
+              await _brandRepository.add(input);
+              final all = await _brandRepository.getAll();
+              final b = all.firstWhere((e) => e.name == input);
+              Navigator.pop(dialogContext, b);
+            },
+            child: Text(AppStrings.of(Localizations.localeOf(context)).ok),
+          ),
+        ],
+      ),
+    );
+
+    if (created != null) {
+      setState(() {
+        _selectedBrand = created;
+        _brandTextSet = created.name;
+        _allBrands.add(created);
+      });
+    }
+  }
+
+  // -----------------------
+  // MATERIAL RESOLVE
+  // -----------------------
+  Future<void> _handleMaterialResolve(String raw) async {
+    final input = raw.trim().toLowerCase();
+    if (input.isEmpty) return;
+
+    final match = _allMaterials.where((m) => m.name == input).toList();
+    if (match.isNotEmpty) {
+      setState(() {
+        _selectedMaterial = match.first;
+        _materialTextSet = match.first.name;
+      });
+      return;
+    }
+
+    final created = await showDialog<MaterialModel?>(
+      context: context,
+      builder: (dialogContext) => AlertDialog(
+        title: Text(AppStrings.of(Localizations.localeOf(context)).addMaterial),
+        content: Text(input),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.pop(dialogContext),
+            child: Text(AppStrings.of(Localizations.localeOf(context)).cancel),
+          ),
+          ElevatedButton(
+            onPressed: () async {
+              await _materialRepository.add(input);
+              final all = await _materialRepository.getAll();
+              final m = all.firstWhere((e) => e.name == input);
+              Navigator.pop(dialogContext, m);
+            },
+            child: Text(AppStrings.of(Localizations.localeOf(context)).ok),
+          ),
+        ],
+      ),
+    );
+
+    if (created != null) {
+      setState(() {
+        _selectedMaterial = created;
+        _materialTextSet = created.name;
+        _allMaterials.add(created);
+      });
+    }
+  }
+
+  // -----------------------
+  // COLOR RESOLVE
+  // -----------------------
+  Future<void> _handleColorResolve(String raw) async {
+    final input = raw.trim();
+    if (input.isEmpty) return;
+
+    final locale = Localizations.localeOf(context);
+    final match = await _colorRepository.findByNameOrTerm(
+      input,
+      lang: locale.languageCode,
+    );
+
+    if (match != null) {
+      setState(() {
+        _selectedColor = match;
+        _colorTextSet = match.name.toLowerCase();
+      });
+      return;
+    }
+
+    final created = await showDialog<ColorModel?>(
+      context: context,
+      builder: (_) => ColorSelectPopup(enteredText: input),
+    );
+
+    if (created != null) {
+      setState(() {
+        _selectedColor = created;
+        _colorTextSet = created.name.toLowerCase();
+      });
+    }
+  }
+
+  // -----------------------
+  // SAVE
+  // -----------------------
   Future<void> _saveFilament() async {
     if (!_formKey.currentState!.validate()) return;
-    if (_selectedLocation == null) return;
+
+    _isSaving = true;
+
+    if (_selectedBrand == null && _brandText.isNotEmpty) {
+      await _handleBrandResolve(_brandText);
+    }
+    if (_selectedMaterial == null && _materialText.isNotEmpty) {
+      await _handleMaterialResolve(_materialText);
+    }
+    if (_selectedColor == null && _colorText.isNotEmpty) {
+      await _handleColorResolve(_colorText);
+    }
+
+    if (_selectedBrand == null ||
+        _selectedMaterial == null ||
+        _selectedColor == null ||
+        _selectedLocation == null) {
+      _isSaving = false;
+      return;
+    }
 
     final filament = Filament(
       id: 0,
-      brand: _brandController.text.trim().toLowerCase(),
-      material: _selectedMaterial,
-      color: _colorController.text.trim().toLowerCase(),
+      brandId: _selectedBrand!.id,
+      materialId: _selectedMaterial!.id,
+      colorId: _selectedColor!.id,
       status: FilamentStatus.active,
       locationId: _selectedLocation!.id,
     );
 
     await _repository.insertFilament(filament);
 
-    if (mounted) {
-      Navigator.pop(context, true);
-    }
+    if (mounted) Navigator.pop(context, true);
+    _isSaving = false;
   }
 
   @override
@@ -142,109 +333,107 @@ class _FilamentAddPageState extends State<FilamentAddPage> {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.stretch,
               children: [
-                /// BRAND
-                DropdownButtonFormField<String>(
-                  decoration: InputDecoration(labelText: strings.brand),
-                  items: [
-                    ..._availableBrands.map(
-                      (v) => DropdownMenuItem(value: v, child: Text(v)),
-                    ),
-                    DropdownMenuItem(
-                      value: '__new__',
-                      child: Text(strings.addNew),
-                    ),
-                  ],
-                  onChanged: (v) {
-                    setState(() {
-                      _isCustomBrand = (v == '__new__');
-                      if (!_isCustomBrand && v != null) {
-                        _brandController.text = v.trim().toLowerCase();
-                      }
-                    });
-                  },
-                  validator: (_) =>
-                      _brandController.text.isEmpty ? strings.required : null,
+                ElevatedButton.icon(
+                  icon: const Icon(Icons.camera_alt),
+                  label: Text(strings.scanReadFromCamera),
+                  onPressed: _readFromCameraAndOcr,
                 ),
+                const SizedBox(height: 16),
 
-                if (_isCustomBrand) ...[
-                  const SizedBox(height: 8),
-                  TextFormField(
-                    controller: _brandController,
-                    decoration: InputDecoration(labelText: strings.newBrand),
-                    validator: (v) =>
-                        v == null || v.isEmpty ? strings.required : null,
-                  ),
-                ],
-
-                const SizedBox(height: 12),
-
-                /// MATERIAL
-                DropdownButtonFormField<FilamentMaterial>(
-                  initialValue: _selectedMaterial,
-                  decoration: InputDecoration(labelText: strings.material),
-                  items: FilamentMaterial.values.map((m) {
-                    return DropdownMenuItem(
-                      value: m,
-                      child: Text(m.name.toUpperCase()),
+                Autocomplete<BrandModel>(
+                  displayStringForOption: (b) => b.name,
+                  optionsBuilder: (t) => _allBrands,
+                  onSelected: (b) {
+                    _selectedBrand = b;
+                    _brandTextSet = b.name;
+                  },
+                  fieldViewBuilder: (_, ctrl, f, __) {
+                    _brandFieldCtrl = ctrl;
+                    return Focus(
+                      onFocusChange: (hasFocus) {
+                        if (!hasFocus) _handleBrandResolve(_brandText);
+                      },
+                      child: TextFormField(
+                        controller: ctrl,
+                        focusNode: f,
+                        decoration: InputDecoration(labelText: strings.brand),
+                        validator: (v) =>
+                            v == null || v.isEmpty ? strings.required : null,
+                      ),
                     );
-                  }).toList(),
-                  onChanged: (v) => setState(() => _selectedMaterial = v!),
+                  },
                 ),
 
                 const SizedBox(height: 12),
 
-                /// COLOR
-                DropdownButtonFormField<String>(
-                  decoration: InputDecoration(labelText: strings.color),
-                  items: [
-                    ..._availableColors.map(
-                      (v) => DropdownMenuItem(value: v, child: _colorItem(v)),
-                    ),
-                    DropdownMenuItem(
-                      value: '__new__',
-                      child: Text(strings.addNew),
-                    ),
-                  ],
-                  onChanged: (v) {
-                    setState(() {
-                      _isCustomColor = (v == '__new__');
-                      if (!_isCustomColor && v != null) {
-                        _colorController.text = v.trim().toLowerCase();
-                      }
-                    });
+                Autocomplete<MaterialModel>(
+                  displayStringForOption: (m) => m.name,
+                  optionsBuilder: (t) => _allMaterials,
+                  onSelected: (m) {
+                    _selectedMaterial = m;
+                    _materialTextSet = m.name;
                   },
-                  validator: (_) =>
-                      _colorController.text.isEmpty ? strings.required : null,
+                  fieldViewBuilder: (_, ctrl, f, __) {
+                    _materialFieldCtrl = ctrl;
+                    return Focus(
+                      onFocusChange: (hasFocus) {
+                        if (!hasFocus) _handleMaterialResolve(_materialText);
+                      },
+                      child: TextFormField(
+                        controller: ctrl,
+                        focusNode: f,
+                        decoration: InputDecoration(
+                          labelText: strings.material,
+                        ),
+                        validator: (v) =>
+                            v == null || v.isEmpty ? strings.required : null,
+                      ),
+                    );
+                  },
                 ),
 
-                if (_isCustomColor) ...[
-                  const SizedBox(height: 8),
-                  TextFormField(
-                    controller: _colorController,
-                    decoration: InputDecoration(labelText: strings.newColor),
-                    validator: (v) =>
-                        v == null || v.isEmpty ? strings.required : null,
-                  ),
-                ],
+                const SizedBox(height: 12),
 
-                /// 🔹 LOCATION
-                if (_locations.length > 1) ...[
-                  const SizedBox(height: 12),
-                  DropdownButtonFormField<Location>(
-                    initialValue: _selectedLocation,
-                    decoration: InputDecoration(labelText: strings.location),
-                    items: _locations
-                        .map(
-                          (l) => DropdownMenuItem<Location>(
-                            value: l,
-                            child: Text(l.name),
-                          ),
-                        )
-                        .toList(),
-                    onChanged: (v) => setState(() => _selectedLocation = v),
-                    validator: (v) => v == null ? strings.required : null,
-                  ),
-                ],
+                Autocomplete<ColorModel>(
+                  displayStringForOption: (c) => c.name,
+                  optionsBuilder: (t) => _allColors,
+                  onSelected: (c) {
+                    _selectedColor = c;
+                    _colorTextSet = c.name;
+                  },
+                  fieldViewBuilder: (_, ctrl, f, __) {
+                    _colorFieldCtrl = ctrl;
+                    return Focus(
+                      onFocusChange: (hasFocus) {
+                        if (!hasFocus) _handleColorResolve(_colorText);
+                      },
+                      child: TextFormField(
+                        controller: ctrl,
+                        focusNode: f,
+                        decoration: InputDecoration(labelText: strings.color),
+                        validator: (v) =>
+                            v == null || v.isEmpty ? strings.required : null,
+                      ),
+                    );
+                  },
+                ),
+
+                const SizedBox(height: 12),
+
+                DropdownButtonFormField<Location>(
+                  value: _selectedLocation,
+                  decoration: InputDecoration(labelText: strings.location),
+                  items: _locations
+                      .map(
+                        (l) => DropdownMenuItem<Location>(
+                          value: l,
+                          child: Text(l.name),
+                        ),
+                      )
+                      .toList(),
+                  onChanged: (v) => setState(() => _selectedLocation = v),
+                  validator: (v) => v == null ? strings.required : null,
+                ),
 
                 const SizedBox(height: 24),
 
@@ -257,24 +446,6 @@ class _FilamentAddPageState extends State<FilamentAddPage> {
           ),
         ),
       ),
-    );
-  }
-
-  Widget _colorItem(String value) {
-    final c = _presetColors[value];
-    return Row(
-      children: [
-        Container(
-          width: 16,
-          height: 16,
-          margin: const EdgeInsets.only(right: 8),
-          decoration: BoxDecoration(
-            color: c ?? Colors.transparent,
-            border: Border.all(color: Colors.grey),
-          ),
-        ),
-        Text(value),
-      ],
     );
   }
 }

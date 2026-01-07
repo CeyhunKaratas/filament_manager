@@ -10,7 +10,14 @@ class AppStrings {
     return AppStrings(locale);
   }
 
-  static const supportedLocales = [Locale('en'), Locale('tr')];
+  static const supportedLocales = [
+    Locale('en'),
+    Locale('de'),
+    Locale('tr'),
+    Locale('fr'),
+    Locale('it'),
+    Locale('es'),
+  ];
 
   String get addFilament {
     switch (locale.languageCode) {
@@ -579,6 +586,270 @@ class AppStrings {
         return 'Yeni tarama başlat';
       default:
         return 'Start new scan';
+    }
+  }
+
+  // =========================
+  // DEFINITIONS / COMMON UI
+  // =========================
+
+  String get definitionsTitle {
+    switch (locale.languageCode) {
+      case 'tr':
+        return 'Tanımlar';
+      default:
+        return 'Definitions';
+    }
+  }
+
+  String get brandsTitle {
+    switch (locale.languageCode) {
+      case 'tr':
+        return 'Markalar';
+      default:
+        return 'Brands';
+    }
+  }
+
+  String get materialsTitle {
+    switch (locale.languageCode) {
+      case 'tr':
+        return 'Tipler';
+      default:
+        return 'Materials';
+    }
+  }
+
+  String get colorsTitle {
+    switch (locale.languageCode) {
+      case 'tr':
+        return 'Renkler';
+      default:
+        return 'Colors';
+    }
+  }
+
+  String get nameLabel {
+    switch (locale.languageCode) {
+      case 'tr':
+        return 'Ad';
+      default:
+        return 'Name';
+    }
+  }
+
+  String get editBrandTitle {
+    switch (locale.languageCode) {
+      case 'tr':
+        return 'Markayı düzenle';
+      default:
+        return 'Edit brand';
+    }
+  }
+
+  String get editMaterialTitle {
+    switch (locale.languageCode) {
+      case 'tr':
+        return 'Tipi düzenle';
+      default:
+        return 'Edit material';
+    }
+  }
+
+  String get editColorTitle {
+    switch (locale.languageCode) {
+      case 'tr':
+        return 'Rengi düzenle';
+      default:
+        return 'Edit color';
+    }
+  }
+
+  String get newMaterial {
+    switch (locale.languageCode) {
+      case 'tr':
+        return 'Yeni tip';
+      default:
+        return 'New material';
+    }
+  }
+
+  String get pickColor {
+    switch (locale.languageCode) {
+      case 'tr':
+        return 'Renk seç';
+      default:
+        return 'Pick color';
+    }
+  }
+
+  String get changeColor {
+    switch (locale.languageCode) {
+      case 'tr':
+        return 'Rengi değiştir';
+      default:
+        return 'Change color';
+    }
+  }
+
+  String get manageColorsSubtitle {
+    switch (locale.languageCode) {
+      case 'tr':
+        return 'Renk listesini yönet';
+      default:
+        return 'Manage color list';
+    }
+  }
+
+  String get manageBrandsSubtitle {
+    switch (locale.languageCode) {
+      case 'tr':
+        return 'Marka listesini yönet';
+      default:
+        return 'Manage brand list';
+    }
+  }
+
+  String get manageMaterialsSubtitle {
+    switch (locale.languageCode) {
+      case 'tr':
+        return 'Tip listesini yönet';
+      default:
+        return 'Manage material list';
+    }
+  }
+
+  String get definitions {
+    switch (locale.languageCode) {
+      case 'tr':
+        return 'Tanımlar';
+      default:
+        return 'Definitions';
+    }
+  }
+
+  String get manageColors {
+    switch (locale.languageCode) {
+      case 'tr':
+        return 'Renkleri yönet';
+      default:
+        return 'Manage colors';
+    }
+  }
+
+  String get manageBrands {
+    switch (locale.languageCode) {
+      case 'tr':
+        return 'Markaları yönet';
+      default:
+        return 'Manage brands';
+    }
+  }
+
+  String get manageMaterials {
+    switch (locale.languageCode) {
+      case 'tr':
+        return 'Tipleri yönet';
+      default:
+        return 'Manage materials';
+    }
+  }
+
+  String get editColor {
+    switch (locale.languageCode) {
+      case 'tr':
+        return 'Rengi düzenle';
+      default:
+        return 'Edit color';
+    }
+  }
+
+  String get editBrand {
+    switch (locale.languageCode) {
+      case 'tr':
+        return 'Markayı düzenle';
+      default:
+        return 'Edit brand';
+    }
+  }
+
+  String get editMaterial {
+    switch (locale.languageCode) {
+      case 'tr':
+        return 'Tipi düzenle';
+      default:
+        return 'Edit material';
+    }
+  }
+
+  String get appTitle {
+    switch (locale.languageCode) {
+      //Don't translate, always only one return
+      default:
+        return 'Filament Manager';
+    }
+  }
+
+  String get printers {
+    switch (locale.languageCode) {
+      case 'tr':
+        return 'Yazıcılar';
+      default:
+        return 'Printers';
+    }
+  }
+
+  String get scanOcr {
+    switch (locale.languageCode) {
+      case 'tr':
+        return 'OCR Test';
+      default:
+        return 'Scan OCR';
+    }
+  }
+
+  String get addBrand {
+    switch (locale.languageCode) {
+      case 'tr':
+        return 'Marka ekle';
+      default:
+        return 'Add brand';
+    }
+  }
+
+  String get addMaterial {
+    switch (locale.languageCode) {
+      case 'tr':
+        return 'Materyal ekle';
+      default:
+        return 'Add material';
+    }
+  }
+
+  String get filament {
+    switch (locale.languageCode) {
+      case 'tr':
+        return 'Filament';
+      default:
+        return 'Filament';
+    }
+  }
+
+  String get status {
+    switch (locale.languageCode) {
+      case 'tr':
+        return 'Durum';
+      default:
+        return 'Status';
+    }
+  }
+
+  String get spools {
+    switch (locale.languageCode) {
+      case 'tr':
+        return 'Makara';
+      default:
+        return 'Spools';
     }
   }
 }

@@ -2,15 +2,19 @@ import 'dart:io';
 
 import 'package:camera/camera.dart';
 import 'package:flutter/material.dart';
-import 'package:google_mlkit_text_recognition/google_mlkit_text_recognition.dart';
 
+import '../../core/ocr/ocr_analyzer.dart';
+import '../../core/ocr/ocr_result.dart';
+import '../../core/ocr/ocr_text_extractor.dart';
 import '../../core/widgets/app_drawer.dart';
 import '../../l10n/app_strings.dart';
 import 'camera_capture_page.dart';
 
-enum ScanPhase { idle, processingOcr, resultReady }
+import '../definitions/brands/brand_repository.dart';
+import '../definitions/materials/material_repository.dart';
+import '../definitions/colors/color_repository.dart';
 
-enum OcrQuality { none, weak, good }
+enum ScanPhase { idle, processingOcr, resultReady }
 
 class ScanOcrPage extends StatefulWidget {
   const ScanOcrPage({super.key});
@@ -20,10 +24,6 @@ class ScanOcrPage extends StatefulWidget {
 }
 
 class _ScanOcrPageState extends State<ScanOcrPage> {
-  final TextRecognizer _textRecognizer = TextRecognizer(
-    script: TextRecognitionScript.latin,
-  );
-
   ScanPhase _phase = ScanPhase.idle;
 
   final List<XFile> _capturedImages = [];
@@ -38,58 +38,7 @@ class _ScanOcrPageState extends State<ScanOcrPage> {
   final List<String> _foundMaterials = [];
   final List<String> _foundColors = [];
 
-  // Basit demo listeleri (istersen genişletiriz)
-  static const List<String> _brandKeywords = [
-    'anycubic',
-    'creality',
-    'bambu',
-    'bambulab',
-    'prusa',
-    'elegoo',
-    'sunlu',
-    'esun',
-    'polymaker',
-  ];
-
-  static const List<String> _materialKeywords = [
-    'pla',
-    'petg',
-    'abs',
-    'asa',
-    'tpu',
-    'nylon',
-    'pa',
-    'pc',
-    'pva',
-  ];
-
-  static const List<String> _colorKeywords = [
-    'yellow',
-    'red',
-    'blue',
-    'green',
-    'black',
-    'white',
-    'grey',
-    'gray',
-    'orange',
-    'purple',
-    'pink',
-    'brown',
-    'silver',
-    'gold',
-    'transparent',
-    'clear',
-  ];
-
-  @override
-  void dispose() {
-    _textRecognizer.close();
-    super.dispose();
-  }
-
   // ---------- CAMERA ----------
-
   Future<void> _readFromCamera() async {
     final photos = await Navigator.push<List<XFile>>(
       context,
@@ -106,7 +55,6 @@ class _ScanOcrPageState extends State<ScanOcrPage> {
   }
 
   // ---------- OCR ----------
-
   Future<void> _processOcr() async {
     if (_capturedImages.isEmpty) return;
 
@@ -123,33 +71,51 @@ class _ScanOcrPageState extends State<ScanOcrPage> {
       _foundColors.clear();
     });
 
-    final buffer = StringBuffer();
-
     try {
-      for (final image in _capturedImages) {
-        final inputImage = InputImage.fromFilePath(image.path);
-        final result = await _textRecognizer.processImage(inputImage);
+      final paths = _capturedImages.map((e) => e.path).toList();
 
-        final normalized = _normalizeOcrText(result.text);
-        final quality = _evaluateOcrQuality(normalized);
+      final perImageTexts =
+          await OcrTextExtractor.extractNormalizedTextsPerImage(paths);
 
-        _ocrTextsPerImage.add(normalized);
-        _ocrQualityPerImage.add(quality);
-
-        if (normalized.isNotEmpty) {
-          buffer.writeln(normalized);
-        }
+      final perImageQuality = <OcrQuality>[];
+      for (final t in perImageTexts) {
+        perImageQuality.add(OcrAnalyzer.evaluateOcrQuality(t));
       }
 
-      final merged = buffer.toString().trim();
-      final analysis = _analyzeKeywords(merged);
+      final merged = OcrTextExtractor.mergeNonEmpty(perImageTexts);
+
+      final brandRepo = BrandRepository();
+      final materialRepo = MaterialRepository();
+      final colorRepo = ColorRepository();
+
+      final brands = await brandRepo.getAll();
+      final materials = await materialRepo.getAll();
+      final colors = await colorRepo.getAll();
+
+      final foundBrands = OcrAnalyzer.matchKeywords(
+        mergedText: merged,
+        keywords: brands.map((e) => e.name).toList(),
+      );
+
+      final foundMaterials = OcrAnalyzer.matchKeywords(
+        mergedText: merged,
+        keywords: materials.map((e) => e.name).toList(),
+      );
+
+      final foundColors = OcrAnalyzer.matchKeywords(
+        mergedText: merged,
+        keywords: colors.map((e) => e.name).toList(),
+      );
 
       setState(() {
+        _ocrTextsPerImage.addAll(perImageTexts);
+        _ocrQualityPerImage.addAll(perImageQuality);
+
         _mergedOcrText = merged;
 
-        _foundBrands.addAll(analysis.foundBrands);
-        _foundMaterials.addAll(analysis.foundMaterials);
-        _foundColors.addAll(analysis.foundColors);
+        _foundBrands.addAll(foundBrands);
+        _foundMaterials.addAll(foundMaterials);
+        _foundColors.addAll(foundColors);
 
         _phase = ScanPhase.resultReady;
       });
@@ -178,30 +144,6 @@ class _ScanOcrPageState extends State<ScanOcrPage> {
     });
   }
 
-  // ---------- HELPERS ----------
-
-  String _normalizeOcrText(String raw) {
-    if (raw.trim().isEmpty) return '';
-
-    final lines = raw
-        .toLowerCase()
-        .split('\n')
-        .map((l) => l.trim())
-        .where((l) => l.isNotEmpty)
-        .toSet();
-
-    return lines.join('\n');
-  }
-
-  OcrQuality _evaluateOcrQuality(String text) {
-    if (text.trim().isEmpty) return OcrQuality.none;
-
-    final wordCount = text.split(RegExp(r'\s+')).length;
-    if (wordCount < 3) return OcrQuality.weak;
-
-    return OcrQuality.good;
-  }
-
   String _qualityLabel(OcrQuality q) {
     switch (q) {
       case OcrQuality.none:
@@ -213,32 +155,7 @@ class _ScanOcrPageState extends State<ScanOcrPage> {
     }
   }
 
-  _KeywordAnalysisResult _analyzeKeywords(String mergedText) {
-    final text = mergedText.toLowerCase();
-
-    final brands = _brandKeywords.where((k) => _containsWord(text, k)).toSet();
-    final materials = _materialKeywords
-        .where((k) => _containsWord(text, k))
-        .toSet();
-    final colors = _colorKeywords.where((k) => _containsWord(text, k)).toSet();
-
-    return _KeywordAnalysisResult(
-      foundBrands: brands.toList()..sort(),
-      foundMaterials: materials.toList()..sort(),
-      foundColors: colors.toList()..sort(),
-    );
-  }
-
-  bool _containsWord(String haystack, String keyword) {
-    // basit word boundary: harf/sayı dışı karakterlerle sınırlandır
-    final pattern = RegExp(
-      r'(^|[^a-z0-9])' + RegExp.escape(keyword) + r'([^a-z0-9]|$)',
-    );
-    return pattern.hasMatch(haystack);
-  }
-
   // ---------- UI ----------
-
   @override
   Widget build(BuildContext context) {
     final s = AppStrings.of(Localizations.localeOf(context));
@@ -275,7 +192,16 @@ class _ScanOcrPageState extends State<ScanOcrPage> {
         );
 
       case ScanPhase.processingOcr:
-        return const Center(child: CircularProgressIndicator());
+        return Center(
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              const CircularProgressIndicator(),
+              const SizedBox(height: 12),
+              Text(s.scanProcessing),
+            ],
+          ),
+        );
 
       case ScanPhase.resultReady:
         return SingleChildScrollView(
@@ -287,12 +213,9 @@ class _ScanOcrPageState extends State<ScanOcrPage> {
                 const SizedBox(height: 12),
               ],
 
-              // --- KEYWORD ANALYSIS (TEST) ---
-              _buildKeywordSection(context),
-
+              _buildKeywordSection(context, s),
               const SizedBox(height: 24),
 
-              // --- MERGED OCR ---
               Text(
                 s.scanMergedOcrTitle,
                 style: Theme.of(context).textTheme.titleMedium,
@@ -301,10 +224,8 @@ class _ScanOcrPageState extends State<ScanOcrPage> {
               SelectableText(
                 _mergedOcrText.isEmpty ? s.scanOcrRawTextEmpty : _mergedOcrText,
               ),
-
               const SizedBox(height: 24),
 
-              // --- PER PHOTO OCR ---
               Text(
                 s.scanPerPhotoOcrTitle,
                 style: Theme.of(context).textTheme.titleMedium,
@@ -354,10 +275,10 @@ class _ScanOcrPageState extends State<ScanOcrPage> {
     }
   }
 
-  Widget _buildKeywordSection(BuildContext context) {
+  Widget _buildKeywordSection(BuildContext context, AppStrings s) {
     Widget chips(List<String> items) {
       if (items.isEmpty) {
-        return const Text('—');
+        return Text(s.scanOcrAnalysisEmpty);
       }
       return Wrap(
         spacing: 8,
@@ -370,7 +291,7 @@ class _ScanOcrPageState extends State<ScanOcrPage> {
       crossAxisAlignment: CrossAxisAlignment.stretch,
       children: [
         Text(
-          'basit analiz (test)',
+          s.scanOcrAnalysisTitle,
           style: Theme.of(context).textTheme.titleMedium,
         ),
         const SizedBox(height: 8),
@@ -388,16 +309,4 @@ class _ScanOcrPageState extends State<ScanOcrPage> {
       ],
     );
   }
-}
-
-class _KeywordAnalysisResult {
-  final List<String> foundBrands;
-  final List<String> foundMaterials;
-  final List<String> foundColors;
-
-  _KeywordAnalysisResult({
-    required this.foundBrands,
-    required this.foundMaterials,
-    required this.foundColors,
-  });
 }

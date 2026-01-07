@@ -1,16 +1,12 @@
-import 'filament_material.dart';
-
-enum FilamentStatus {
-  active,
-  low,
-  finished,
-}
+enum FilamentStatus { active, low, finished }
 
 class Filament {
   final int id;
-  final String brand;
-  final FilamentMaterial material;
-  final String color;
+
+  final int brandId;
+  final int materialId;
+  final int colorId;
+
   final FilamentStatus status;
 
   /// Filament'in kalıcı lokasyonu (DEFAULT = 1)
@@ -20,40 +16,42 @@ class Filament {
   final int? printerId;
   final int? slot;
 
+  /// Ana fotoğraf yolu (opsiyonel)
+  final String? mainPhotoPath;
+
   Filament({
     required this.id,
-    required this.brand,
-    required this.material,
-    required this.color,
+    required this.brandId,
+    required this.materialId,
+    required this.colorId,
     required this.status,
     required this.locationId,
     this.printerId,
     this.slot,
+    this.mainPhotoPath,
   });
 
   Filament copyWith({
     int? id,
-    String? brand,
-    FilamentMaterial? material,
-    String? color,
+    int? brandId,
+    int? materialId,
+    int? colorId,
     FilamentStatus? status,
     int? locationId,
     int? printerId,
     int? slot,
+    String? mainPhotoPath,
   }) {
     return Filament(
       id: id ?? this.id,
-      brand: brand ?? this.brand,
-      material: material ?? this.material,
-      color: color ?? this.color,
+      brandId: brandId ?? this.brandId,
+      materialId: materialId ?? this.materialId,
+      colorId: colorId ?? this.colorId,
       status: status ?? this.status,
-
-      // location her zaman korunur, bilinçli değiştirilebilir
       locationId: locationId ?? this.locationId,
-
-      // ⚠️ BİLİNÇLİ: null override serbest (unassign için)
       printerId: printerId,
       slot: slot,
+      mainPhotoPath: mainPhotoPath ?? this.mainPhotoPath,
     );
   }
 }
