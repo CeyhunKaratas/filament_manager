@@ -7,6 +7,11 @@ and this project follows [Semantic Versioning](https://semver.org/).
 
 ---
 
+## [0.1.1-alpha] – 2026-XX-XX
+
+### Fixed
+- Slot list not updating when changing printer in assign dialog
+
 ## [0.1.0-alpha] – 2026-01-XX
 
 ### Added

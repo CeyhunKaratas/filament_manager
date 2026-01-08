@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 
 import '../../../l10n/app_strings.dart';
 import 'brand_repository.dart';
-import 'brand_model.dart';
 
 class BrandSelectPopup extends StatefulWidget {
   final String enteredText;

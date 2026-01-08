@@ -1,4 +1,3 @@
-import 'package:sqflite/sqflite.dart';
 import '../../../core/database/database_helper.dart';
 import '../../../core/database/tables.dart';
 import 'color_model.dart';
@@ -45,7 +44,7 @@ class ColorRepository {
     );
   }
 
-    Future<ColorModel?> getByName(String name) async {
+  Future<ColorModel?> getByName(String name) async {
     final db = await DatabaseHelper.instance.database;
 
     final rows = await db.query(
@@ -70,7 +69,8 @@ class ColorRepository {
     // 2) color_terms match (alias / other language)
     final db = await DatabaseHelper.instance.database;
 
-    final rows = await db.rawQuery('''
+    final rows = await db.rawQuery(
+      '''
       SELECT c.*
       FROM ${ColorTable.tableName} c
       INNER JOIN ${ColorTermTable.tableName} t
@@ -78,10 +78,11 @@ class ColorRepository {
       WHERE LOWER(t.${ColorTermTable.columnTerm}) = LOWER(?)
         AND (t.${ColorTermTable.columnLang} IS NULL OR t.${ColorTermTable.columnLang} = ?)
       LIMIT 1
-    ''', [trimmed, lang]);
+    ''',
+      [trimmed, lang],
+    );
 
     if (rows.isEmpty) return null;
     return ColorModel.fromMap(rows.first);
   }
-
 }

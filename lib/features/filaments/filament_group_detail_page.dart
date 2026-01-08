@@ -178,89 +178,98 @@ class _FilamentGroupDetailPageState extends State<FilamentGroupDetailPage> {
 
     showDialog(
       context: context,
-      builder: (_) => AlertDialog(
-        title: Text(strings.assignSpool),
-        content: Column(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            DropdownButtonFormField<Printer>(
-              initialValue: selectedPrinter,
-              items: _printers
-                  .map((p) => DropdownMenuItem(value: p, child: Text(p.name)))
-                  .toList(),
-              onChanged: (v) {
-                selectedPrinter = v!;
-                selectedSlot = 1;
-              },
-              decoration: InputDecoration(labelText: strings.printer),
-            ),
-            const SizedBox(height: 12),
-            DropdownButtonFormField<int>(
-              initialValue: selectedSlot,
-              items: slotsFor(selectedPrinter)
-                  .map(
-                    (s) => DropdownMenuItem(
-                      value: s,
-                      child: Text('${strings.slot} $s'),
-                    ),
-                  )
-                  .toList(),
-              onChanged: (v) => selectedSlot = v!,
-              decoration: InputDecoration(labelText: strings.slot),
-            ),
-          ],
-        ),
-        actions: [
-          TextButton(
-            onPressed: () => Navigator.pop(context),
-            child: Text(strings.cancel),
+      builder: (_) => StatefulBuilder(
+        builder: (context, setDialogState) => AlertDialog(
+          title: Text(strings.assignSpool),
+          content: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              DropdownButtonFormField<Printer>(
+                initialValue: selectedPrinter,
+                items: _printers
+                    .map((p) => DropdownMenuItem(value: p, child: Text(p.name)))
+                    .toList(),
+                onChanged: (v) {
+                  setDialogState(() {
+                    selectedPrinter = v!;
+                    selectedSlot = 1;
+                  });
+                },
+                decoration: InputDecoration(labelText: strings.printer),
+              ),
+              const SizedBox(height: 12),
+              DropdownButtonFormField<int>(
+                key: ValueKey(selectedPrinter.id),
+                initialValue: selectedSlot,
+                items: slotsFor(selectedPrinter)
+                    .map(
+                      (s) => DropdownMenuItem(
+                        value: s,
+                        child: Text('${strings.slot} $s'),
+                      ),
+                    )
+                    .toList(),
+                onChanged: (v) {
+                  setDialogState(() {
+                    selectedSlot = v!;
+                  });
+                },
+                decoration: InputDecoration(labelText: strings.slot),
+              ),
+            ],
           ),
-          ElevatedButton(
-            onPressed: () async {
-              try {
-                await _repository.assignFilament(
-                  filament.id,
-                  selectedPrinter.id!,
-                  selectedSlot,
-                );
-              } on SlotOccupiedException {
-                final confirmed = await showDialog<bool>(
-                  context: context,
-                  builder: (_) => AlertDialog(
-                    title: Text(strings.slotOccupiedTitle),
-                    content: Text(strings.slotOccupiedMessage),
-                    actions: [
-                      TextButton(
-                        onPressed: () => Navigator.pop(context, false),
-                        child: Text(strings.cancel),
-                      ),
-                      ElevatedButton(
-                        onPressed: () => Navigator.pop(context, true),
-                        child: Text(strings.continueLabel),
-                      ),
-                    ],
-                  ),
-                );
-
-                if (confirmed == true) {
+          actions: [
+            TextButton(
+              onPressed: () => Navigator.pop(context),
+              child: Text(strings.cancel),
+            ),
+            ElevatedButton(
+              onPressed: () async {
+                try {
                   await _repository.assignFilament(
                     filament.id,
                     selectedPrinter.id!,
                     selectedSlot,
-                    force: true,
                   );
-                } else {
-                  return;
-                }
-              }
+                } on SlotOccupiedException {
+                  final confirmed = await showDialog<bool>(
+                    context: context,
+                    builder: (_) => AlertDialog(
+                      title: Text(strings.slotOccupiedTitle),
+                      content: Text(strings.slotOccupiedMessage),
+                      actions: [
+                        TextButton(
+                          onPressed: () => Navigator.pop(context, false),
+                          child: Text(strings.cancel),
+                        ),
+                        ElevatedButton(
+                          onPressed: () => Navigator.pop(context, true),
+                          child: Text(strings.continueLabel),
+                        ),
+                      ],
+                    ),
+                  );
 
-              _changed = true;
-              Navigator.pop(context);
-              await _reloadFromDb();
-            },
-            child: Text(strings.assign),
-          ),
-        ],
+                  if (confirmed == true) {
+                    await _repository.assignFilament(
+                      filament.id,
+                      selectedPrinter.id!,
+                      selectedSlot,
+                      force: true,
+                    );
+                  } else {
+                    return;
+                  }
+                }
+
+                if (!mounted) return;
+                Navigator.pop(context);
+                await _reloadFromDb();
+              },
+              child: Text(strings.assign),
+            ),
+          ],
+        ),
       ),
     );
   }
