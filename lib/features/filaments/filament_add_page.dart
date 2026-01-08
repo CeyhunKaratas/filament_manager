@@ -77,122 +77,155 @@ class _FilamentAddPageState extends State<FilamentAddPage> {
     _loadLocations();
   }
 
+  @override
+  void dispose() {
+    _brandController.dispose();
+    _materialController.dispose();
+    _colorController.dispose();
+    super.dispose();
+  }
+
   Future<void> _loadBrands() async {
-    _allBrands = await _brandRepository.getAll();
-    if (mounted) setState(() {});
+    try {
+      _allBrands = await _brandRepository.getAll();
+      if (mounted) setState(() {});
+    } catch (e) {
+      debugPrint('Error loading brands: $e');
+    }
   }
 
   Future<void> _loadMaterials() async {
-    _allMaterials = await _materialRepository.getAll();
-    if (mounted) setState(() {});
+    try {
+      _allMaterials = await _materialRepository.getAll();
+      if (mounted) setState(() {});
+    } catch (e) {
+      debugPrint('Error loading materials: $e');
+    }
   }
 
   Future<void> _loadColors() async {
-    _allColors = await _colorRepository.getAll();
-    if (mounted) setState(() {});
+    try {
+      _allColors = await _colorRepository.getAll();
+      if (mounted) setState(() {});
+    } catch (e) {
+      debugPrint('Error loading colors: $e');
+    }
   }
 
   Future<void> _loadLocations() async {
-    _locations = await _locationRepository.getAllLocations();
-    if (_locations.isNotEmpty && _selectedLocation == null) {
-      _selectedLocation = _locations.first;
+    try {
+      _locations = await _locationRepository.getAllLocations();
+      if (_locations.isNotEmpty && _selectedLocation == null) {
+        _selectedLocation = _locations.first;
+      }
+      if (mounted) setState(() {});
+    } catch (e) {
+      debugPrint('Error loading locations: $e');
     }
-    if (mounted) setState(() {});
   }
 
   // -----------------------
   // OCR
   // -----------------------
   Future<void> _readFromCameraAndOcr() async {
-    final photos = await Navigator.push<List<XFile>>(
-      context,
-      MaterialPageRoute(builder: (_) => const CameraCapturePage()),
-    );
+    try {
+      final photos = await Navigator.push<List<XFile>>(
+        context,
+        MaterialPageRoute(builder: (_) => const CameraCapturePage()),
+      );
 
-    if (!mounted || photos == null || photos.isEmpty) return;
+      if (!mounted || photos == null || photos.isEmpty) return;
 
-    final paths = photos.map((e) => e.path).toList();
-    final perImageTexts = await OcrTextExtractor.extractNormalizedTextsPerImage(
-      paths,
-    );
-    final merged = OcrTextExtractor.mergeNonEmpty(perImageTexts);
-    if (merged.isEmpty) return;
+      final paths = photos.map((e) => e.path).toList();
+      final perImageTexts =
+          await OcrTextExtractor.extractNormalizedTextsPerImage(paths);
+      final merged = OcrTextExtractor.mergeNonEmpty(perImageTexts);
+      if (merged.isEmpty) return;
 
-    final lower = merged.toLowerCase();
+      final lower = merged.toLowerCase();
 
-    final foundBrands = _allBrands
-        .where((b) => lower.contains(b.name))
-        .toList();
-    if (foundBrands.isNotEmpty) {
-      _brandTextSet = foundBrands.first.name;
-      await _handleBrandResolve(foundBrands.first.name);
+      final foundBrands = _allBrands
+          .where((b) => lower.contains(b.name))
+          .toList();
+      if (foundBrands.isNotEmpty) {
+        _brandTextSet = foundBrands.first.name;
+        await _handleBrandResolve(foundBrands.first.name);
+      }
+
+      final foundMaterials = _allMaterials
+          .where((m) => lower.contains(m.name))
+          .toList();
+      if (foundMaterials.isNotEmpty) {
+        _materialTextSet = foundMaterials.first.name;
+        await _handleMaterialResolve(foundMaterials.first.name);
+      }
+
+      final foundColors = OcrAnalyzer.matchKeywords(
+        mergedText: merged,
+        keywords: _allColors.map((c) => c.name).toList(),
+      );
+      if (foundColors.isNotEmpty) {
+        _colorTextSet = foundColors.first;
+        await _handleColorResolve(foundColors.first);
+      }
+
+      if (mounted) setState(() {});
+    } catch (e) {
+      debugPrint('Error in OCR: $e');
     }
-
-    final foundMaterials = _allMaterials
-        .where((m) => lower.contains(m.name))
-        .toList();
-    if (foundMaterials.isNotEmpty) {
-      _materialTextSet = foundMaterials.first.name;
-      await _handleMaterialResolve(foundMaterials.first.name);
-    }
-
-    final foundColors = OcrAnalyzer.matchKeywords(
-      mergedText: merged,
-      keywords: _allColors.map((c) => c.name).toList(),
-    );
-    if (foundColors.isNotEmpty) {
-      _colorTextSet = foundColors.first;
-      await _handleColorResolve(foundColors.first);
-    }
-
-    if (mounted) setState(() {});
   }
 
   // -----------------------
   // BRAND RESOLVE
   // -----------------------
   Future<void> _handleBrandResolve(String raw) async {
-    final input = raw.trim().toLowerCase();
-    if (input.isEmpty) return;
+    try {
+      final input = raw.trim().toLowerCase();
+      if (input.isEmpty) return;
 
-    final match = _allBrands.where((b) => b.name == input).toList();
-    if (match.isNotEmpty) {
-      setState(() {
-        _selectedBrand = match.first;
-        _brandTextSet = match.first.name;
-      });
-      return;
-    }
+      final match = _allBrands.where((b) => b.name == input).toList();
+      if (match.isNotEmpty) {
+        setState(() {
+          _selectedBrand = match.first;
+          _brandTextSet = match.first.name;
+        });
+        return;
+      }
 
-    final created = await showDialog<BrandModel?>(
-      context: context,
-      builder: (dialogContext) => AlertDialog(
-        title: Text(AppStrings.of(Localizations.localeOf(context)).addBrand),
-        content: Text(input),
-        actions: [
-          TextButton(
-            onPressed: () => Navigator.pop(dialogContext),
-            child: Text(AppStrings.of(Localizations.localeOf(context)).cancel),
-          ),
-          ElevatedButton(
-            onPressed: () async {
-              await _brandRepository.add(input);
-              final all = await _brandRepository.getAll();
-              final b = all.firstWhere((e) => e.name == input);
-              Navigator.pop(dialogContext, b);
-            },
-            child: Text(AppStrings.of(Localizations.localeOf(context)).ok),
-          ),
-        ],
-      ),
-    );
+      final created = await showDialog<BrandModel?>(
+        context: context,
+        builder: (dialogContext) => AlertDialog(
+          title: Text(AppStrings.of(Localizations.localeOf(context)).addBrand),
+          content: Text(input),
+          actions: [
+            TextButton(
+              onPressed: () => Navigator.pop(dialogContext),
+              child: Text(
+                AppStrings.of(Localizations.localeOf(context)).cancel,
+              ),
+            ),
+            ElevatedButton(
+              onPressed: () async {
+                await _brandRepository.add(input);
+                final all = await _brandRepository.getAll();
+                final b = all.firstWhere((e) => e.name == input);
+                Navigator.pop(dialogContext, b);
+              },
+              child: Text(AppStrings.of(Localizations.localeOf(context)).ok),
+            ),
+          ],
+        ),
+      );
 
-    if (created != null) {
-      setState(() {
-        _selectedBrand = created;
-        _brandTextSet = created.name;
-        _allBrands.add(created);
-      });
+      if (created != null) {
+        setState(() {
+          _selectedBrand = created;
+          _brandTextSet = created.name;
+          _allBrands.add(created);
+        });
+      }
+    } catch (e) {
+      debugPrint('Error resolving brand: $e');
     }
   }
 
@@ -200,47 +233,55 @@ class _FilamentAddPageState extends State<FilamentAddPage> {
   // MATERIAL RESOLVE
   // -----------------------
   Future<void> _handleMaterialResolve(String raw) async {
-    final input = raw.trim().toLowerCase();
-    if (input.isEmpty) return;
+    try {
+      final input = raw.trim().toLowerCase();
+      if (input.isEmpty) return;
 
-    final match = _allMaterials.where((m) => m.name == input).toList();
-    if (match.isNotEmpty) {
-      setState(() {
-        _selectedMaterial = match.first;
-        _materialTextSet = match.first.name;
-      });
-      return;
-    }
+      final match = _allMaterials.where((m) => m.name == input).toList();
+      if (match.isNotEmpty) {
+        setState(() {
+          _selectedMaterial = match.first;
+          _materialTextSet = match.first.name;
+        });
+        return;
+      }
 
-    final created = await showDialog<MaterialModel?>(
-      context: context,
-      builder: (dialogContext) => AlertDialog(
-        title: Text(AppStrings.of(Localizations.localeOf(context)).addMaterial),
-        content: Text(input),
-        actions: [
-          TextButton(
-            onPressed: () => Navigator.pop(dialogContext),
-            child: Text(AppStrings.of(Localizations.localeOf(context)).cancel),
+      final created = await showDialog<MaterialModel?>(
+        context: context,
+        builder: (dialogContext) => AlertDialog(
+          title: Text(
+            AppStrings.of(Localizations.localeOf(context)).addMaterial,
           ),
-          ElevatedButton(
-            onPressed: () async {
-              await _materialRepository.add(input);
-              final all = await _materialRepository.getAll();
-              final m = all.firstWhere((e) => e.name == input);
-              Navigator.pop(dialogContext, m);
-            },
-            child: Text(AppStrings.of(Localizations.localeOf(context)).ok),
-          ),
-        ],
-      ),
-    );
+          content: Text(input),
+          actions: [
+            TextButton(
+              onPressed: () => Navigator.pop(dialogContext),
+              child: Text(
+                AppStrings.of(Localizations.localeOf(context)).cancel,
+              ),
+            ),
+            ElevatedButton(
+              onPressed: () async {
+                await _materialRepository.add(input);
+                final all = await _materialRepository.getAll();
+                final m = all.firstWhere((e) => e.name == input);
+                Navigator.pop(dialogContext, m);
+              },
+              child: Text(AppStrings.of(Localizations.localeOf(context)).ok),
+            ),
+          ],
+        ),
+      );
 
-    if (created != null) {
-      setState(() {
-        _selectedMaterial = created;
-        _materialTextSet = created.name;
-        _allMaterials.add(created);
-      });
+      if (created != null) {
+        setState(() {
+          _selectedMaterial = created;
+          _materialTextSet = created.name;
+          _allMaterials.add(created);
+        });
+      }
+    } catch (e) {
+      debugPrint('Error resolving material: $e');
     }
   }
 
@@ -248,33 +289,37 @@ class _FilamentAddPageState extends State<FilamentAddPage> {
   // COLOR RESOLVE
   // -----------------------
   Future<void> _handleColorResolve(String raw) async {
-    final input = raw.trim();
-    if (input.isEmpty) return;
+    try {
+      final input = raw.trim();
+      if (input.isEmpty) return;
 
-    final locale = Localizations.localeOf(context);
-    final match = await _colorRepository.findByNameOrTerm(
-      input,
-      lang: locale.languageCode,
-    );
+      final locale = Localizations.localeOf(context);
+      final match = await _colorRepository.findByNameOrTerm(
+        input,
+        lang: locale.languageCode,
+      );
 
-    if (match != null) {
-      setState(() {
-        _selectedColor = match;
-        _colorTextSet = match.name.toLowerCase();
-      });
-      return;
-    }
+      if (match != null) {
+        setState(() {
+          _selectedColor = match;
+          _colorTextSet = match.name.toLowerCase();
+        });
+        return;
+      }
 
-    final created = await showDialog<ColorModel?>(
-      context: context,
-      builder: (_) => ColorSelectPopup(enteredText: input),
-    );
+      final created = await showDialog<ColorModel?>(
+        context: context,
+        builder: (_) => ColorSelectPopup(enteredText: input),
+      );
 
-    if (created != null) {
-      setState(() {
-        _selectedColor = created;
-        _colorTextSet = created.name.toLowerCase();
-      });
+      if (created != null) {
+        setState(() {
+          _selectedColor = created;
+          _colorTextSet = created.name.toLowerCase();
+        });
+      }
+    } catch (e) {
+      debugPrint('Error resolving color: $e');
     }
   }
 
@@ -284,39 +329,49 @@ class _FilamentAddPageState extends State<FilamentAddPage> {
   Future<void> _saveFilament() async {
     if (!_formKey.currentState!.validate()) return;
 
-    _isSaving = true;
+    setState(() {
+      _isSaving = true;
+    });
 
-    if (_selectedBrand == null && _brandText.isNotEmpty) {
-      await _handleBrandResolve(_brandText);
+    try {
+      if (_selectedBrand == null && _brandText.isNotEmpty) {
+        await _handleBrandResolve(_brandText);
+      }
+      if (_selectedMaterial == null && _materialText.isNotEmpty) {
+        await _handleMaterialResolve(_materialText);
+      }
+      if (_selectedColor == null && _colorText.isNotEmpty) {
+        await _handleColorResolve(_colorText);
+      }
+
+      if (_selectedBrand == null ||
+          _selectedMaterial == null ||
+          _selectedColor == null ||
+          _selectedLocation == null) {
+        return;
+      }
+
+      final filament = Filament(
+        id: 0,
+        brandId: _selectedBrand!.id,
+        materialId: _selectedMaterial!.id,
+        colorId: _selectedColor!.id,
+        status: FilamentStatus.active,
+        locationId: _selectedLocation!.id,
+      );
+
+      await _repository.insertFilament(filament);
+
+      if (mounted) Navigator.pop(context, true);
+    } catch (e) {
+      debugPrint('Error saving filament: $e');
+    } finally {
+      if (mounted) {
+        setState(() {
+          _isSaving = false;
+        });
+      }
     }
-    if (_selectedMaterial == null && _materialText.isNotEmpty) {
-      await _handleMaterialResolve(_materialText);
-    }
-    if (_selectedColor == null && _colorText.isNotEmpty) {
-      await _handleColorResolve(_colorText);
-    }
-
-    if (_selectedBrand == null ||
-        _selectedMaterial == null ||
-        _selectedColor == null ||
-        _selectedLocation == null) {
-      _isSaving = false;
-      return;
-    }
-
-    final filament = Filament(
-      id: 0,
-      brandId: _selectedBrand!.id,
-      materialId: _selectedMaterial!.id,
-      colorId: _selectedColor!.id,
-      status: FilamentStatus.active,
-      locationId: _selectedLocation!.id,
-    );
-
-    await _repository.insertFilament(filament);
-
-    if (mounted) Navigator.pop(context, true);
-    _isSaving = false;
   }
 
   @override
@@ -342,7 +397,14 @@ class _FilamentAddPageState extends State<FilamentAddPage> {
 
                 Autocomplete<BrandModel>(
                   displayStringForOption: (b) => b.name,
-                  optionsBuilder: (t) => _allBrands,
+                  optionsBuilder: (textEditingValue) {
+                    if (textEditingValue.text.isEmpty) return _allBrands;
+                    return _allBrands.where(
+                      (b) => b.name.toLowerCase().contains(
+                        textEditingValue.text.toLowerCase(),
+                      ),
+                    );
+                  },
                   onSelected: (b) {
                     _selectedBrand = b;
                     _brandTextSet = b.name;
@@ -368,7 +430,14 @@ class _FilamentAddPageState extends State<FilamentAddPage> {
 
                 Autocomplete<MaterialModel>(
                   displayStringForOption: (m) => m.name,
-                  optionsBuilder: (t) => _allMaterials,
+                  optionsBuilder: (textEditingValue) {
+                    if (textEditingValue.text.isEmpty) return _allMaterials;
+                    return _allMaterials.where(
+                      (m) => m.name.toLowerCase().contains(
+                        textEditingValue.text.toLowerCase(),
+                      ),
+                    );
+                  },
                   onSelected: (m) {
                     _selectedMaterial = m;
                     _materialTextSet = m.name;
@@ -396,7 +465,14 @@ class _FilamentAddPageState extends State<FilamentAddPage> {
 
                 Autocomplete<ColorModel>(
                   displayStringForOption: (c) => c.name,
-                  optionsBuilder: (t) => _allColors,
+                  optionsBuilder: (textEditingValue) {
+                    if (textEditingValue.text.isEmpty) return _allColors;
+                    return _allColors.where(
+                      (c) => c.name.toLowerCase().contains(
+                        textEditingValue.text.toLowerCase(),
+                      ),
+                    );
+                  },
                   onSelected: (c) {
                     _selectedColor = c;
                     _colorTextSet = c.name;
@@ -438,8 +514,14 @@ class _FilamentAddPageState extends State<FilamentAddPage> {
                 const SizedBox(height: 24),
 
                 ElevatedButton(
-                  onPressed: _saveFilament,
-                  child: Text(strings.save),
+                  onPressed: _isSaving ? null : _saveFilament,
+                  child: _isSaving
+                      ? const SizedBox(
+                          width: 20,
+                          height: 20,
+                          child: CircularProgressIndicator(strokeWidth: 2),
+                        )
+                      : Text(strings.save),
                 ),
               ],
             ),

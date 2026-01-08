@@ -19,6 +19,7 @@ class _PrinterListPageState extends State<PrinterListPage> {
   final PrinterRepository _repository = PrinterRepository();
 
   List<Printer> _printers = [];
+  bool _isLoading = true;
 
   @override
   void initState() {
@@ -27,38 +28,110 @@ class _PrinterListPageState extends State<PrinterListPage> {
   }
 
   Future<void> _load() async {
-    _printers = await _repository.getAllPrinters();
-    setState(() {});
+    try {
+      setState(() {
+        _isLoading = true;
+      });
+
+      _printers = await _repository.getAllPrinters();
+
+      if (mounted) {
+        setState(() {
+          _isLoading = false;
+        });
+      }
+    } catch (e) {
+      debugPrint('Error loading printers: $e');
+      if (mounted) {
+        setState(() {
+          _isLoading = false;
+        });
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text('Failed to load printers: $e'),
+            backgroundColor: Colors.red,
+          ),
+        );
+      }
+    }
   }
 
   Future<void> _deletePrinter(Printer printer) async {
     final strings = AppStrings.of(Localizations.localeOf(context));
 
-    final confirm = await showDialog<bool>(
-      context: context,
-      builder: (_) => AlertDialog(
-        title: Text(strings.delete),
-        content: Text(printer.name),
-        actions: [
-          TextButton(
-            onPressed: () => Navigator.pop(context, false),
-            child: Text(strings.cancel),
-          ),
-          TextButton(
-            onPressed: () => Navigator.pop(context, true),
-            child: Text(
-              strings.delete,
-              style: const TextStyle(color: Colors.red),
+    try {
+      // Check if printer has assigned filaments
+      final filamentCount = await _repository.getAssignedFilamentCount(
+        printer.id!,
+      );
+
+      if (filamentCount > 0) {
+        // Printer has filaments - show warning and options
+        final action = await showDialog<String>(
+          context: context,
+          builder: (_) => AlertDialog(
+            title: Text(strings.delete),
+            content: Text(
+              'This printer has $filamentCount assigned filament(s). '
+              'What would you like to do?',
             ),
+            actions: [
+              TextButton(
+                onPressed: () => Navigator.pop(context, 'cancel'),
+                child: Text(strings.cancel),
+              ),
+              TextButton(
+                onPressed: () => Navigator.pop(context, 'unassign'),
+                child: const Text('Move to storage & delete'),
+              ),
+            ],
           ),
-        ],
-      ),
-    );
+        );
 
-    if (confirm != true) return;
+        if (action != 'unassign') return;
 
-    await _repository.deletePrinter(printer.id!);
-    _load();
+        // Unassign filaments and delete printer
+        await _repository.deletePrinter(printer.id!, unassignFilaments: true);
+      } else {
+        // No filaments - simple confirmation
+        final confirm = await showDialog<bool>(
+          context: context,
+          builder: (_) => AlertDialog(
+            title: Text(strings.delete),
+            content: Text(printer.name),
+            actions: [
+              TextButton(
+                onPressed: () => Navigator.pop(context, false),
+                child: Text(strings.cancel),
+              ),
+              TextButton(
+                onPressed: () => Navigator.pop(context, true),
+                child: Text(
+                  strings.delete,
+                  style: const TextStyle(color: Colors.red),
+                ),
+              ),
+            ],
+          ),
+        );
+
+        if (confirm != true) return;
+
+        await _repository.deletePrinter(printer.id!);
+      }
+
+      await _load();
+    } catch (e) {
+      debugPrint('Error deleting printer: $e');
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text('Failed to delete printer: $e'),
+            backgroundColor: Colors.red,
+          ),
+        );
+      }
+    }
   }
 
   @override
@@ -66,14 +139,12 @@ class _PrinterListPageState extends State<PrinterListPage> {
     final strings = AppStrings.of(Localizations.localeOf(context));
 
     return Scaffold(
-  drawer: const AppDrawer(current: 'printers'),
-      appBar: AppBar(
-        title: Text(strings.printer),
-      ),
-      body: _printers.isEmpty
-          ? Center(
-              child: Text(strings.noPrinters),
-            )
+      drawer: const AppDrawer(current: 'printers'),
+      appBar: AppBar(title: Text(strings.printer)),
+      body: _isLoading
+          ? const Center(child: CircularProgressIndicator())
+          : _printers.isEmpty
+          ? Center(child: Text(strings.noPrinters))
           : ListView.separated(
               itemCount: _printers.length,
               separatorBuilder: (_, __) => const Divider(height: 1),
@@ -81,15 +152,14 @@ class _PrinterListPageState extends State<PrinterListPage> {
                 final printer = _printers[index];
                 return ListTile(
                   title: Text(printer.name),
-                  subtitle:
-                      Text('${strings.slot}: ${printer.slotCount}'),
-                    onTap: () {
-                      Navigator.of(context).push(
-                        MaterialPageRoute(
-                          builder: (_) => PrinterDetailPage(printer: printer),
-                        ),
-                      );
-                    },
+                  subtitle: Text('${strings.slot}: ${printer.slotCount}'),
+                  onTap: () {
+                    Navigator.of(context).push(
+                      MaterialPageRoute(
+                        builder: (_) => PrinterDetailPage(printer: printer),
+                      ),
+                    );
+                  },
                   onLongPress: () => _deletePrinter(printer),
                 );
               },

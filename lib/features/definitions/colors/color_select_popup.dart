@@ -8,10 +8,7 @@ import 'color_term_repository.dart';
 class ColorSelectPopup extends StatefulWidget {
   final String enteredText;
 
-  const ColorSelectPopup({
-    super.key,
-    required this.enteredText,
-  });
+  const ColorSelectPopup({super.key, required this.enteredText});
 
   @override
   State<ColorSelectPopup> createState() => _ColorSelectPopupState();
@@ -26,6 +23,8 @@ class _ColorSelectPopupState extends State<ColorSelectPopup> {
 
   List<ColorModel> _allColors = [];
   ColorModel? _selectedExisting;
+
+  bool _isSaving = false;
 
   // Basit palette (external package yok)
   final List<Color> _palette = const [
@@ -52,8 +51,20 @@ class _ColorSelectPopupState extends State<ColorSelectPopup> {
   }
 
   Future<void> _loadColors() async {
-    _allColors = await _colorRepo.getAll();
-    if (mounted) setState(() {});
+    try {
+      _allColors = await _colorRepo.getAll();
+      if (mounted) setState(() {});
+    } catch (e) {
+      debugPrint('Error loading colors: $e');
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text('Failed to load colors: $e'),
+            backgroundColor: Colors.red,
+          ),
+        );
+      }
+    }
   }
 
   String _toHex(Color c) {
@@ -65,34 +76,57 @@ class _ColorSelectPopupState extends State<ColorSelectPopup> {
     final input = widget.enteredText.trim();
     if (input.isEmpty) return;
 
-    final locale = Localizations.localeOf(context);
-    final lang = locale.languageCode;
+    setState(() {
+      _isSaving = true;
+    });
 
-    if (_isNewColor) {
-      // güvenlik: yine de var mı kontrol
-      final existing = await _colorRepo.getByName(input);
-      if (existing != null) {
-        if (mounted) Navigator.pop(context, existing);
+    try {
+      final locale = Localizations.localeOf(context);
+      final lang = locale.languageCode;
+
+      if (_isNewColor) {
+        // güvenlik: yine de var mı kontrol
+        final existing = await _colorRepo.getByName(input);
+        if (existing != null) {
+          if (mounted) Navigator.pop(context, existing);
+          return;
+        }
+
+        await _colorRepo.add(input.toLowerCase(), _toHex(_picked));
+        final created = await _colorRepo.getByName(input);
+
+        if (mounted) Navigator.pop(context, created);
         return;
       }
 
-      await _colorRepo.add(input.toLowerCase(), _toHex(_picked));
-      final created = await _colorRepo.getByName(input);
+      // alias flow
+      if (_selectedExisting == null) return;
 
-      if (mounted) Navigator.pop(context, created);
-      return;
+      await _termRepo.addTerm(
+        colorId: _selectedExisting!.id,
+        term: input.toLowerCase(),
+        lang: lang,
+      );
+
+      if (mounted) Navigator.pop(context, _selectedExisting);
+    } catch (e) {
+      debugPrint('Error confirming color: $e');
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text('Failed to add color: $e'),
+            backgroundColor: Colors.red,
+          ),
+        );
+        Navigator.pop(context);
+      }
+    } finally {
+      if (mounted) {
+        setState(() {
+          _isSaving = false;
+        });
+      }
     }
-
-    // alias flow
-    if (_selectedExisting == null) return;
-
-    await _termRepo.addTerm(
-      colorId: _selectedExisting!.id,
-      term: input.toLowerCase(),
-      lang: lang,
-    );
-
-    if (mounted) Navigator.pop(context, _selectedExisting);
   }
 
   @override
@@ -116,10 +150,12 @@ class _ColorSelectPopupState extends State<ColorSelectPopup> {
             CheckboxListTile(
               contentPadding: EdgeInsets.zero,
               value: _isNewColor,
-              onChanged: (v) => setState(() {
-                _isNewColor = v ?? true;
-                if (_isNewColor) _selectedExisting = null;
-              }),
+              onChanged: _isSaving
+                  ? null
+                  : (v) => setState(() {
+                      _isNewColor = v ?? true;
+                      if (_isNewColor) _selectedExisting = null;
+                    }),
               title: Text(strings.newColor),
               controlAffinity: ListTileControlAffinity.leading,
             ),
@@ -134,7 +170,7 @@ class _ColorSelectPopupState extends State<ColorSelectPopup> {
                 children: _palette.map((c) {
                   final selected = c.value == _picked.value;
                   return InkWell(
-                    onTap: () => setState(() => _picked = c),
+                    onTap: _isSaving ? null : () => setState(() => _picked = c),
                     child: Container(
                       width: 34,
                       height: 34,
@@ -163,7 +199,9 @@ class _ColorSelectPopupState extends State<ColorSelectPopup> {
                       ),
                     )
                     .toList(),
-                onChanged: (v) => setState(() => _selectedExisting = v),
+                onChanged: _isSaving
+                    ? null
+                    : (v) => setState(() => _selectedExisting = v),
               ),
             ],
           ],
@@ -171,12 +209,18 @@ class _ColorSelectPopupState extends State<ColorSelectPopup> {
       ),
       actions: [
         TextButton(
-          onPressed: () => Navigator.pop(context),
+          onPressed: _isSaving ? null : () => Navigator.pop(context),
           child: Text(strings.cancel),
         ),
         ElevatedButton(
-          onPressed: _confirm,
-          child: Text(strings.ok),
+          onPressed: _isSaving ? null : _confirm,
+          child: _isSaving
+              ? const SizedBox(
+                  width: 16,
+                  height: 16,
+                  child: CircularProgressIndicator(strokeWidth: 2),
+                )
+              : Text(strings.ok),
         ),
       ],
     );

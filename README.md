@@ -8,7 +8,7 @@ The app focuses on **clarity, speed and daily usability**, not cloud features or
 
 ## 🚧 Project Status
 
-- **Current version:** `0.1.0-alpha`
+- **Current version:** `0.1.1-alpha`
 - **Stage:** Alpha (internal / limited testing)
 - **Database:** Local SQLite (persistent)
 - **Platform:** Android (iOS not tested yet)
@@ -30,16 +30,16 @@ This project is actively used by its author and under continuous development.
 ### Grouping Logic
 - Filaments are grouped by: brand + material + color
 - Group list shows:
-- Only active / low filaments in counts
-- Groups with only finished filaments are hidden
+  - Only active / low filaments in counts
+  - Groups with only finished filaments are hidden
 - Group detail screens hide finished filaments
 
 ### OCR (Experimental)
 - Scan filament labels using the device camera
 - OCR assists with:
-- Brand detection
-- Material detection
-- Color detection
+  - Brand detection
+  - Material detection
+  - Color detection
 - OCR results **never auto-save**
 - User confirmation is always required
 
@@ -69,26 +69,27 @@ This project is actively used by its author and under continuous development.
 - Database stores **IDs only**
 - UI displays **names**
 - Filament grouping is strictly ID-based
-- Database schema is considered **stable starting from v0.1.0-alpha**
-
-Breaking database changes will increment the **major version**.
+- **Database version: v1** (stable as of v0.1.1-alpha)
+- Breaking database changes will increment the **major version**
 
 ---
 
 ## 📦 Project Structure (Simplified)
+```
 lib/
 ├─ core/
-│ ├─ database/
-│ ├─ models/
-│ ├─ ocr/
-│ └─ widgets/
+│  ├─ database/
+│  ├─ models/
+│  ├─ ocr/
+│  └─ widgets/
 ├─ features/
-│ ├─ filaments/
-│ ├─ printers/
-│ ├─ scan/
-│ └─ definitions/
+│  ├─ filaments/
+│  ├─ printers/
+│  ├─ scan/
+│  └─ definitions/
 ├─ l10n/
 └─ main.dart
+```
 
 ---
 

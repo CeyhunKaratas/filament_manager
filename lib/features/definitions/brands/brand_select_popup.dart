@@ -18,20 +18,49 @@ class BrandSelectPopup extends StatefulWidget {
 class _BrandSelectPopupState extends State<BrandSelectPopup> {
   final BrandRepository _repo = BrandRepository();
 
+  bool _isSaving = false;
+
   Future<void> _confirm() async {
     final name = widget.enteredText.trim().toLowerCase();
     if (name.isEmpty) return;
 
-    final existing = await _repo.getByName(name);
-    if (existing != null) {
-      Navigator.pop(context, existing);
-      return;
+    setState(() {
+      _isSaving = true;
+    });
+
+    try {
+      final existing = await _repo.getByName(name);
+      if (existing != null) {
+        if (mounted) {
+          Navigator.pop(context, existing);
+        }
+        return;
+      }
+
+      await _repo.add(name);
+      final created = await _repo.getByName(name);
+
+      if (mounted) {
+        Navigator.pop(context, created);
+      }
+    } catch (e) {
+      debugPrint('Error confirming brand: $e');
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text('Failed to add brand: $e'),
+            backgroundColor: Colors.red,
+          ),
+        );
+        Navigator.pop(context);
+      }
+    } finally {
+      if (mounted) {
+        setState(() {
+          _isSaving = false;
+        });
+      }
     }
-
-    await _repo.add(name);
-    final created = await _repo.getByName(name);
-
-    Navigator.pop(context, created);
   }
 
   @override
@@ -46,12 +75,18 @@ class _BrandSelectPopupState extends State<BrandSelectPopup> {
       ),
       actions: [
         TextButton(
-          onPressed: () => Navigator.pop(context),
+          onPressed: _isSaving ? null : () => Navigator.pop(context),
           child: Text(strings.cancel),
         ),
         ElevatedButton(
-          onPressed: _confirm,
-          child: Text(strings.ok),
+          onPressed: _isSaving ? null : _confirm,
+          child: _isSaving
+              ? const SizedBox(
+                  width: 16,
+                  height: 16,
+                  child: CircularProgressIndicator(strokeWidth: 2),
+                )
+              : Text(strings.ok),
         ),
       ],
     );

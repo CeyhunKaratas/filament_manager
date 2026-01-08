@@ -56,56 +56,114 @@ class _FilamentGroupDetailPageState extends State<FilamentGroupDetailPage> {
   }
 
   Future<void> _loadDefinitions() async {
-    final brands = await _brandRepo.getAll();
-    final materials = await _materialRepo.getAll();
-    final colors = await _colorRepo.getAll();
+    try {
+      final brands = await _brandRepo.getAll();
+      final materials = await _materialRepo.getAll();
+      final colors = await _colorRepo.getAll();
 
-    _brandName = brands.firstWhere((b) => b.id == widget.group.brandId).name;
+      final brand = brands.firstWhere(
+        (b) => b.id == widget.group.brandId,
+        orElse: () => throw Exception('Brand not found'),
+      );
+      _brandName = brand.name;
 
-    _materialName = materials
-        .firstWhere((m) => m.id == widget.group.materialId)
-        .name;
+      final material = materials.firstWhere(
+        (m) => m.id == widget.group.materialId,
+        orElse: () => throw Exception('Material not found'),
+      );
+      _materialName = material.name;
 
-    _colorModel = colors.firstWhere((c) => c.id == widget.group.colorId);
+      final color = colors.firstWhere(
+        (c) => c.id == widget.group.colorId,
+        orElse: () => throw Exception('Color not found'),
+      );
+      _colorModel = color;
 
-    if (mounted) setState(() {});
+      if (mounted) setState(() {});
+    } catch (e) {
+      debugPrint('Error loading definitions: $e');
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text('Failed to load definitions: $e'),
+            backgroundColor: Colors.red,
+          ),
+        );
+      }
+    }
   }
 
   Future<void> _reloadFromDb() async {
-    if (widget.group.items.isEmpty) {
-      _items = [];
+    try {
+      if (widget.group.items.isEmpty) {
+        _items = [];
+        if (mounted) setState(() {});
+        return;
+      }
+
+      final first = widget.group.items.first;
+      final all = await _repository.getAllFilaments();
+
+      _items = all
+          .where(
+            (f) =>
+                f.brandId == first.brandId &&
+                f.materialId == first.materialId &&
+                f.colorId == first.colorId &&
+                f.status != FilamentStatus.finished,
+          )
+          .toList();
+
       if (mounted) setState(() {});
-      return;
-    }
 
-    final first = widget.group.items.first;
-    final all = await _repository.getAllFilaments();
-
-    _items = all
-        .where(
-          (f) =>
-              f.brandId == first.brandId &&
-              f.materialId == first.materialId &&
-              f.colorId == first.colorId &&
-              f.status != FilamentStatus.finished,
-        )
-        .toList();
-
-    if (mounted) setState(() {});
-
-    if (_items.isEmpty && mounted) {
-      Navigator.pop(context, true);
+      if (_items.isEmpty && mounted) {
+        Navigator.pop(context, true);
+      }
+    } catch (e) {
+      debugPrint('Error reloading filaments: $e');
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text('Failed to reload filaments: $e'),
+            backgroundColor: Colors.red,
+          ),
+        );
+      }
     }
   }
 
   Future<void> _loadPrinters() async {
-    _printers = await _printerRepo.getAllPrinters();
-    if (mounted) setState(() {});
+    try {
+      _printers = await _printerRepo.getAllPrinters();
+      if (mounted) setState(() {});
+    } catch (e) {
+      debugPrint('Error loading printers: $e');
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text('Failed to load printers: $e'),
+            backgroundColor: Colors.red,
+          ),
+        );
+      }
+    }
   }
 
   Future<void> _loadLocations() async {
-    _locations = await _locationRepo.getAllLocations();
-    if (mounted) setState(() {});
+    try {
+      _locations = await _locationRepo.getAllLocations();
+      if (mounted) setState(() {});
+    } catch (e) {
+      debugPrint('Error loading locations: $e');
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text('Failed to load locations: $e'),
+            backgroundColor: Colors.red,
+          ),
+        );
+      }
+    }
   }
 
   Future<void> _deleteFilament(Filament filament) async {
@@ -134,12 +192,24 @@ class _FilamentGroupDetailPageState extends State<FilamentGroupDetailPage> {
 
     if (confirm != true) return;
 
-    await _repository.deleteFilament(filament.id);
-    _changed = true;
-    await _reloadFromDb();
+    try {
+      await _repository.deleteFilament(filament.id);
+      _changed = true;
+      await _reloadFromDb();
 
-    if (_items.isEmpty && mounted) {
-      Navigator.pop(context, true);
+      if (_items.isEmpty && mounted) {
+        Navigator.pop(context, true);
+      }
+    } catch (e) {
+      debugPrint('Error deleting filament: $e');
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text('Failed to delete filament: $e'),
+            backgroundColor: Colors.red,
+          ),
+        );
+      }
     }
   }
 
@@ -260,6 +330,17 @@ class _FilamentGroupDetailPageState extends State<FilamentGroupDetailPage> {
                   } else {
                     return;
                   }
+                } catch (e) {
+                  debugPrint('Error assigning filament: $e');
+                  if (mounted) {
+                    ScaffoldMessenger.of(context).showSnackBar(
+                      SnackBar(
+                        content: Text('Failed to assign filament: $e'),
+                        backgroundColor: Colors.red,
+                      ),
+                    );
+                  }
+                  return;
                 }
 
                 if (!mounted) return;
@@ -296,9 +377,21 @@ class _FilamentGroupDetailPageState extends State<FilamentGroupDetailPage> {
 
     if (selected == null || selected == filament.status) return;
 
-    await _repository.updateFilament(filament.copyWith(status: selected));
-    _changed = true;
-    await _reloadFromDb();
+    try {
+      await _repository.updateFilament(filament.copyWith(status: selected));
+      _changed = true;
+      await _reloadFromDb();
+    } catch (e) {
+      debugPrint('Error changing status: $e');
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text('Failed to change status: $e'),
+            backgroundColor: Colors.red,
+          ),
+        );
+      }
+    }
   }
 
   @override
@@ -390,34 +483,49 @@ class _FilamentGroupDetailPageState extends State<FilamentGroupDetailPage> {
                     _statusChip(filament.status, strings),
                     PopupMenuButton<String>(
                       onSelected: (value) async {
-                        if (value == 'assign') {
-                          _assignSlot(filament);
-                          return;
-                        }
-
-                        if (value.startsWith('status_')) {
-                          final statusName = value.replaceFirst('status_', '');
-                          final newStatus = FilamentStatus.values.firstWhere(
-                            (e) => e.name == statusName,
-                          );
-                          if (newStatus != filament.status) {
-                            await _repository.updateFilament(
-                              filament.copyWith(status: newStatus),
-                            );
-                            _changed = true;
-                            await _reloadFromDb();
+                        try {
+                          if (value == 'assign') {
+                            _assignSlot(filament);
+                            return;
                           }
-                          return;
-                        }
 
-                        if (value == 'unassign') {
-                          await _handleUnassignWithLocation(filament);
-                          return;
-                        }
+                          if (value.startsWith('status_')) {
+                            final statusName = value.replaceFirst(
+                              'status_',
+                              '',
+                            );
+                            final newStatus = FilamentStatus.values.firstWhere(
+                              (e) => e.name == statusName,
+                            );
+                            if (newStatus != filament.status) {
+                              await _repository.updateFilament(
+                                filament.copyWith(status: newStatus),
+                              );
+                              _changed = true;
+                              await _reloadFromDb();
+                            }
+                            return;
+                          }
 
-                        if (value == 'move_location') {
-                          await _handleMoveToLocation(filament);
-                          return;
+                          if (value == 'unassign') {
+                            await _handleUnassignWithLocation(filament);
+                            return;
+                          }
+
+                          if (value == 'move_location') {
+                            await _handleMoveToLocation(filament);
+                            return;
+                          }
+                        } catch (e) {
+                          debugPrint('Error in menu action: $e');
+                          if (mounted) {
+                            ScaffoldMessenger.of(context).showSnackBar(
+                              SnackBar(
+                                content: Text('Operation failed: $e'),
+                                backgroundColor: Colors.red,
+                              ),
+                            );
+                          }
                         }
                       },
                       itemBuilder: (_) => [
@@ -550,13 +658,25 @@ class _FilamentGroupDetailPageState extends State<FilamentGroupDetailPage> {
       targetLocation = selected;
     }
 
-    await _repository.unassignFilamentToLocation(
-      filamentId: filament.id,
-      locationId: targetLocation.id,
-    );
+    try {
+      await _repository.unassignFilamentToLocation(
+        filamentId: filament.id,
+        locationId: targetLocation.id,
+      );
 
-    _changed = true;
-    await _reloadFromDb();
+      _changed = true;
+      await _reloadFromDb();
+    } catch (e) {
+      debugPrint('Error unassigning filament: $e');
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text('Failed to unassign filament: $e'),
+            backgroundColor: Colors.red,
+          ),
+        );
+      }
+    }
   }
 
   Future<void> _handleMoveToLocation(Filament filament) async {
@@ -582,11 +702,23 @@ class _FilamentGroupDetailPageState extends State<FilamentGroupDetailPage> {
 
     if (selected == null) return;
 
-    await _repository.updateFilament(
-      filament.copyWith(locationId: selected.id),
-    );
+    try {
+      await _repository.updateFilament(
+        filament.copyWith(locationId: selected.id),
+      );
 
-    _changed = true;
-    await _reloadFromDb();
+      _changed = true;
+      await _reloadFromDb();
+    } catch (e) {
+      debugPrint('Error moving to location: $e');
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text('Failed to move to location: $e'),
+            backgroundColor: Colors.red,
+          ),
+        );
+      }
+    }
   }
 }

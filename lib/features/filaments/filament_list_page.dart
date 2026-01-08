@@ -54,26 +54,44 @@ class _FilamentListPageState extends State<FilamentListPage> {
     _loadFilaments();
   }
 
+  @override
+  void dispose() {
+    // No controllers to dispose in this widget
+    super.dispose();
+  }
+
   void _loadFilaments() {
     _filamentsFuture = _repository.getAllFilaments();
   }
 
   Future<void> _loadDefinitions() async {
-    final brands = await _brandRepo.getAll();
-    final materials = await _materialRepo.getAll();
-    final colors = await _colorRepo.getAll();
+    try {
+      final brands = await _brandRepo.getAll();
+      final materials = await _materialRepo.getAll();
+      final colors = await _colorRepo.getAll();
 
-    for (final b in brands) {
-      _brandNames[b.id] = b.name;
-    }
-    for (final m in materials) {
-      _materialNames[m.id] = m.name;
-    }
-    for (final c in colors) {
-      _colors[c.id] = c;
-    }
+      for (final b in brands) {
+        _brandNames[b.id] = b.name;
+      }
+      for (final m in materials) {
+        _materialNames[m.id] = m.name;
+      }
+      for (final c in colors) {
+        _colors[c.id] = c;
+      }
 
-    if (mounted) setState(() {});
+      if (mounted) setState(() {});
+    } catch (e) {
+      debugPrint('Error loading definitions: $e');
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text('Failed to load definitions: $e'),
+            backgroundColor: Colors.red,
+          ),
+        );
+      }
+    }
   }
 
   @override
@@ -187,15 +205,18 @@ class _FilamentListPageState extends State<FilamentListPage> {
         },
       ),
       floatingActionButton: FloatingActionButton(
-        onPressed: () {
-          Navigator.push(
+        onPressed: () async {
+          final changed = await Navigator.push(
             context,
             MaterialPageRoute(builder: (_) => const FilamentAddPage()),
-          ).then((_) {
+          );
+
+          if (changed == true) {
+            await _loadDefinitions(); // ← Definitions'ı yeniden yükle
             setState(() {
               _filamentsFuture = _repository.getAllFilaments();
             });
-          });
+          }
         },
         child: const Icon(Icons.add),
       ),

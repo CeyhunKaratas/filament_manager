@@ -7,12 +7,32 @@ and this project follows [Semantic Versioning](https://semver.org/).
 
 ---
 
-## [0.1.1-alpha] – 2026-XX-XX
+## [0.1.1-alpha] — 2026-01-08
+
+### Changed
+- **Database version reset to v1** - Fresh start for official first release
+- Previous development versions (v2-v6) deprecated
 
 ### Fixed
 - Slot list not updating when changing printer in assign dialog
+- Autocomplete search not filtering results in filament add screen
+- New brands/materials/colors showing as "-" in group list after adding
+- Printer deletion leaving orphan filaments (now moves them to default location)
 
-## [0.1.0-alpha] – 2026-01-XX
+### Improved
+- Added error handling to all database operations
+- Fixed memory leaks (TextEditingController disposal)
+- Added loading indicators for async operations
+- Improved printer deletion flow with user confirmation
+
+### Notes
+- ⚠️ **Breaking Change**: Previous development versions require app reinstall
+- This is the first stable database version (v1)
+- Database schema is now considered stable
+
+---
+
+## [0.1.0-alpha] — 2026-01-07
 
 ### Added
 - Core filament management with brand, material and color definitions

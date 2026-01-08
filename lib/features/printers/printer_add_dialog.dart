@@ -19,19 +19,49 @@ class _PrinterAddDialogState extends State<PrinterAddDialog> {
 
   final PrinterRepository _repository = PrinterRepository();
 
+  bool _isSaving = false;
+
+  @override
+  void dispose() {
+    _nameController.dispose();
+    _slotController.dispose();
+    super.dispose();
+  }
+
   Future<void> _save() async {
     if (!_formKey.currentState!.validate()) return;
 
-    final printer = Printer(
-    name: _nameController.text.trim(),
-    slotCount: int.parse(_slotController.text),
-    );
+    setState(() {
+      _isSaving = true;
+    });
 
+    try {
+      final printer = Printer(
+        name: _nameController.text.trim(),
+        slotCount: int.parse(_slotController.text),
+      );
 
-    await _repository.insertPrinter(printer);
+      await _repository.insertPrinter(printer);
 
-    if (mounted) {
-      Navigator.pop(context, true);
+      if (mounted) {
+        Navigator.pop(context, true);
+      }
+    } catch (e) {
+      debugPrint('Error saving printer: $e');
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text('Failed to save printer: $e'),
+            backgroundColor: Colors.red,
+          ),
+        );
+      }
+    } finally {
+      if (mounted) {
+        setState(() {
+          _isSaving = false;
+        });
+      }
     }
   }
 
@@ -49,9 +79,7 @@ class _PrinterAddDialogState extends State<PrinterAddDialog> {
             /// PRINTER NAME
             TextFormField(
               controller: _nameController,
-              decoration: InputDecoration(
-                labelText: strings.printer,
-              ),
+              decoration: InputDecoration(labelText: strings.printer),
               validator: (v) =>
                   v == null || v.isEmpty ? strings.required : null,
             ),
@@ -62,9 +90,7 @@ class _PrinterAddDialogState extends State<PrinterAddDialog> {
             TextFormField(
               controller: _slotController,
               keyboardType: TextInputType.number,
-              decoration: InputDecoration(
-                labelText: strings.slot,
-              ),
+              decoration: InputDecoration(labelText: strings.slot),
               validator: (v) {
                 if (v == null || v.isEmpty) return strings.required;
                 final value = int.tryParse(v);
@@ -79,12 +105,18 @@ class _PrinterAddDialogState extends State<PrinterAddDialog> {
       ),
       actions: [
         TextButton(
-          onPressed: () => Navigator.pop(context, false),
+          onPressed: _isSaving ? null : () => Navigator.pop(context, false),
           child: Text(strings.cancel),
         ),
         ElevatedButton(
-          onPressed: _save,
-          child: Text(strings.save),
+          onPressed: _isSaving ? null : _save,
+          child: _isSaving
+              ? const SizedBox(
+                  width: 16,
+                  height: 16,
+                  child: CircularProgressIndicator(strokeWidth: 2),
+                )
+              : Text(strings.save),
         ),
       ],
     );
