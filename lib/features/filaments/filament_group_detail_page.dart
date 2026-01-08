@@ -114,10 +114,13 @@ class _FilamentGroupDetailPageState extends State<FilamentGroupDetailPage> {
           )
           .toList();
 
-      if (mounted) setState(() {});
-
-      if (_items.isEmpty && mounted) {
-        Navigator.pop(context, true);
+      if (mounted) {
+        if (_items.isEmpty) {
+          // Tüm filamentler bitti, geri dön
+          Navigator.pop(context, true);
+        } else {
+          setState(() {});
+        }
       }
     } catch (e) {
       debugPrint('Error reloading filaments: $e');
@@ -195,11 +198,11 @@ class _FilamentGroupDetailPageState extends State<FilamentGroupDetailPage> {
     try {
       await _repository.deleteFilament(filament.id);
       _changed = true;
+
+      // Reload and check if list is now empty
       await _reloadFromDb();
 
-      if (_items.isEmpty && mounted) {
-        Navigator.pop(context, true);
-      }
+      // _reloadFromDb handles navigation if list is empty
     } catch (e) {
       debugPrint('Error deleting filament: $e');
       if (mounted) {

@@ -852,4 +852,232 @@ class AppStrings {
         return 'Spools';
     }
   }
+
+  // Mevcut dosyanın SONUNA ekleyin (spools getter'ından sonra):
+
+  String get settings {
+    switch (locale.languageCode) {
+      case 'tr':
+        return 'Ayarlar';
+      default:
+        return 'Settings';
+    }
+  }
+
+  String get exportData {
+    switch (locale.languageCode) {
+      case 'tr':
+        return 'Verileri Dışa Aktar';
+      default:
+        return 'Export Data';
+    }
+  }
+
+  String get importData {
+    switch (locale.languageCode) {
+      case 'tr':
+        return 'Verileri İçe Aktar';
+      default:
+        return 'Import Data';
+    }
+  }
+
+  String get exportSuccess {
+    switch (locale.languageCode) {
+      case 'tr':
+        return 'Veriler başarıyla dışa aktarıldı';
+      default:
+        return 'Data exported successfully';
+    }
+  }
+
+  String get exportFailed {
+    switch (locale.languageCode) {
+      case 'tr':
+        return 'Dışa aktarma başarısız';
+      default:
+        return 'Export failed';
+    }
+  }
+
+  String get importSuccess {
+    switch (locale.languageCode) {
+      case 'tr':
+        return 'Veriler başarıyla içe aktarıldı';
+      default:
+        return 'Data imported successfully';
+    }
+  }
+
+  String get importFailed {
+    switch (locale.languageCode) {
+      case 'tr':
+        return 'İçe aktarma başarısız';
+      default:
+        return 'Import failed';
+    }
+  }
+
+  String get replaceAll {
+    switch (locale.languageCode) {
+      case 'tr':
+        return 'Tümünü Değiştir';
+      default:
+        return 'Replace All';
+    }
+  }
+
+  String get replaceAllWarning {
+    switch (locale.languageCode) {
+      case 'tr':
+        return 'Bu işlem mevcut tüm verileri silip dosyadan yükleyecek. Devam edilsin mi?';
+      default:
+        return 'This will delete all existing data and import from file. Continue?';
+    }
+  }
+
+  String get merge {
+    switch (locale.languageCode) {
+      case 'tr':
+        return 'Birleştir';
+      default:
+        return 'Merge';
+    }
+  }
+
+  String get mergeInfo {
+    switch (locale.languageCode) {
+      case 'tr':
+        return 'Mevcut verileri koru, dosyadan yenilerini ekle';
+      default:
+        return 'Keep existing data and add new items from file';
+    }
+  }
+
+  String get selectImportMode {
+    switch (locale.languageCode) {
+      case 'tr':
+        return 'İçe Aktarma Modunu Seç';
+      default:
+        return 'Select Import Mode';
+    }
+  }
+
+  String get fileNotSelected {
+    switch (locale.languageCode) {
+      case 'tr':
+        return 'Dosya seçilmedi';
+      default:
+        return 'No file selected';
+    }
+  }
+
+  String get invalidFileFormat {
+    switch (locale.languageCode) {
+      case 'tr':
+        return 'Geçersiz dosya formatı';
+      default:
+        return 'Invalid file format';
+    }
+  }
+
+  // Onboarding
+  String get onboardingWelcomeTitle {
+    switch (locale.languageCode) {
+      case 'tr':
+        return 'Filament Manager\'a Hoş Geldiniz';
+      default:
+        return 'Welcome to Filament Manager';
+    }
+  }
+
+  String get onboardingWelcomeDesc {
+    switch (locale.languageCode) {
+      case 'tr':
+        return 'Filament stokunuzu kolayca takip edin, yazıcılara atayın ve organize edin.';
+      default:
+        return 'Easily track your filament stock, assign to printers, and stay organized.';
+    }
+  }
+
+  String get onboardingAddTitle {
+    switch (locale.languageCode) {
+      case 'tr':
+        return 'Filamentlerinizi Ekleyin';
+      default:
+        return 'Add Your Filaments';
+    }
+  }
+
+  String get onboardingAddDesc {
+    switch (locale.languageCode) {
+      case 'tr':
+        return 'Marka, malzeme ve renk bilgileriyle filamentlerinizi kaydedin. Durum takibi yapın.';
+      default:
+        return 'Save your filaments with brand, material and color info. Track their status.';
+    }
+  }
+
+  String get onboardingPrinterTitle {
+    switch (locale.languageCode) {
+      case 'tr':
+        return 'Yazıcılara Atayın';
+      default:
+        return 'Assign to Printers';
+    }
+  }
+
+  String get onboardingPrinterDesc {
+    switch (locale.languageCode) {
+      case 'tr':
+        return 'Filamentleri yazıcı slotlarına atayın. Hangi filament hangi yazıcıda hızlıca görün.';
+      default:
+        return 'Assign filaments to printer slots. Quickly see which filament is in which printer.';
+    }
+  }
+
+  String get onboardingOcrTitle {
+    switch (locale.languageCode) {
+      case 'tr':
+        return 'OCR ile Etiket Tarayın';
+      default:
+        return 'Scan Labels with OCR';
+    }
+  }
+
+  String get onboardingOcrDesc {
+    switch (locale.languageCode) {
+      case 'tr':
+        return 'Kamerayı kullanarak etiketleri tarayın. Marka, renk ve malzeme bilgileri otomatik doldurulur.';
+      default:
+        return 'Use the camera to scan labels. Brand, color and material info are auto-filled.';
+    }
+  }
+
+  String get skip {
+    switch (locale.languageCode) {
+      case 'tr':
+        return 'Atla';
+      default:
+        return 'Skip';
+    }
+  }
+
+  String get next {
+    switch (locale.languageCode) {
+      case 'tr':
+        return 'İleri';
+      default:
+        return 'Next';
+    }
+  }
+
+  String get getStarted {
+    switch (locale.languageCode) {
+      case 'tr':
+        return 'Başlayalım';
+      default:
+        return 'Get Started';
+    }
+  }
 }

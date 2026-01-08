@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import '../../l10n/app_strings.dart';
 
-
 class AppDrawer extends StatelessWidget {
   final String current;
 
@@ -27,10 +26,7 @@ class AppDrawer extends StatelessWidget {
       child: ListView(
         children: [
           DrawerHeader(
-            child: Text(
-              strings.appTitle,
-              style: const TextStyle(fontSize: 20),
-            ),
+            child: Text(strings.appTitle, style: const TextStyle(fontSize: 20)),
           ),
 
           _DrawerItem(
@@ -62,7 +58,7 @@ class AppDrawer extends StatelessWidget {
           ),
 
           // --------------------
-          // DEFINITIONS (NEW)
+          // DEFINITIONS
           // --------------------
           const Divider(),
 
@@ -71,6 +67,18 @@ class AppDrawer extends StatelessWidget {
             label: strings.definitions,
             selected: current == 'definitions',
             onTap: () => _navigate(context, 'definitions'),
+          ),
+
+          // --------------------
+          // SETTINGS
+          // --------------------
+          const Divider(),
+
+          _DrawerItem(
+            icon: Icons.settings,
+            label: strings.settings,
+            selected: current == 'settings',
+            onTap: () => _navigate(context, 'settings'),
           ),
         ],
       ),
