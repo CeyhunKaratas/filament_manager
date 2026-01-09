@@ -7,6 +7,40 @@ and this project follows [Semantic Versioning](https://semver.org/).
 
 ---
 
+## [0.2.0-alpha] — 2026-01-09
+
+### Added
+- **Export/Import Data** - Backup and restore all data as JSON
+  - Export creates shareable JSON file
+  - Import supports two modes: Replace All or Merge
+  - Automatic backup file copying to Downloads folder
+- **Settings Page** - New dedicated settings screen
+  - Export data functionality
+  - Import data functionality
+  - App version info
+- **Onboarding Screen** - First-time user tutorial
+  - 4-slide introduction to app features
+  - Welcome, Add Filaments, Assign to Printers, OCR Scan
+  - Skip and Next navigation
+  - Shows only on first launch
+
+### Fixed
+- Black screen when deleting last filament in group
+- Definition cache not updating after adding new brand/material/color
+- Autocomplete search not filtering results properly
+
+### Improved
+- All artifact code now includes proper error handling
+- Better user feedback with loading indicators
+- Consistent error messages across the app
+
+### Technical
+- Added `path_provider`, `share_plus`, `shared_preferences` packages
+- Android SDK updated to compile against SDK 36
+- Build configuration optimized for release
+
+---
+
 ## [0.1.1-alpha] — 2026-01-08
 
 ### Changed
@@ -53,7 +87,6 @@ and this project follows [Semantic Versioning](https://semver.org/).
 ### Known Issues
 - OCR accuracy depends heavily on lighting and label quality
 - Autocomplete fields may require focus change to trigger resolution
-- No data export or backup yet
 
 ### Notes
 - This is an **alpha release** intended for internal and limited testing

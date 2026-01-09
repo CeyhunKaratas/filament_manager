@@ -8,7 +8,7 @@ The app focuses on **clarity, speed and daily usability**, not cloud features or
 
 ## 🚧 Project Status
 
-- **Current version:** `0.1.1-alpha`
+- **Current version:** `0.2.0-alpha`
 - **Stage:** Alpha (internal / limited testing)
 - **Database:** Local SQLite (persistent)
 - **Platform:** Android (iOS not tested yet)
@@ -33,6 +33,18 @@ This project is actively used by its author and under continuous development.
   - Only active / low filaments in counts
   - Groups with only finished filaments are hidden
 - Group detail screens hide finished filaments
+
+### Data Management
+- **Export Data** - Backup all your data to a JSON file
+- **Import Data** - Restore from backup with two modes:
+  - Replace All: Delete existing data and restore from backup
+  - Merge: Keep existing data and add items from backup
+- Backup files can be shared via any app
+
+### Onboarding
+- First-time user tutorial
+- Introduction to key features
+- Can be skipped
 
 ### OCR (Experimental)
 - Scan filament labels using the device camera
@@ -81,12 +93,15 @@ lib/
 │  ├─ database/
 │  ├─ models/
 │  ├─ ocr/
+│  ├─ export_import/
 │  └─ widgets/
 ├─ features/
 │  ├─ filaments/
 │  ├─ printers/
 │  ├─ scan/
-│  └─ definitions/
+│  ├─ definitions/
+│  ├─ settings/
+│  └─ onboarding/
 ├─ l10n/
 └─ main.dart
 ```
@@ -110,9 +125,9 @@ All changes are documented in [`CHANGELOG.md`](./CHANGELOG.md).
 ## ⚠️ Known Limitations
 
 - OCR accuracy depends on lighting and label quality
-- No data export or backup yet
 - No cloud sync
 - UI polish is still in progress
+- Import requires backup file to be in Downloads folder
 
 ---
 
@@ -120,17 +135,24 @@ All changes are documented in [`CHANGELOG.md`](./CHANGELOG.md).
 
 - This version is intended for **personal and limited testing**
 - The database is persistent — uninstalling the app will remove data
-- Backups are not yet supported
+- Always export your data before updating to a new version
 
 ---
 
-## 🛣️ Roadmap (High-Level)
+## 🛣️ Roadmap
 
-Planned (not in alpha):
-- Reporting / statistics
-- Export / backup
-- Cloud sync
-- Improved OCR confidence scoring
+### Planned for 0.3.0-beta
+- Inventory Report (detailed view of all spools)
+  - Filterable by status, brand, material, location
+  - Sortable columns
+  - Show/hide finished filaments toggle
+- Statistics dashboard
+- UI polish and refinements
+
+### Future (post-beta)
+- Cloud sync (optional)
+- Multiple language support improvements
+- Advanced reporting
 
 ---
 
