@@ -93,25 +93,23 @@ This project is actively used by its author and under continuous development.
 ---
 
 ## 📦 Project Structure (Simplified)
-```
 lib/
 ├─ core/
-│  ├─ database/
-│  ├─ models/
-│  ├─ ocr/
-│  ├─ export_import/
-│  └─ widgets/
+│ ├─ database/
+│ ├─ models/
+│ ├─ ocr/
+│ ├─ export_import/
+│ └─ widgets/
 ├─ features/
-│  ├─ filaments/
-│  ├─ printers/
-│  ├─ scan/
-│  ├─ definitions/
-│  ├─ settings/
-│  ├─ onboarding/
-│  └─ reports/
+│ ├─ filaments/
+│ ├─ printers/
+│ ├─ scan/
+│ ├─ definitions/
+│ ├─ settings/
+│ ├─ onboarding/
+│ └─ reports/
 ├─ l10n/
 └─ main.dart
-```
 
 ---
 
@@ -143,6 +141,9 @@ All changes are documented in [`CHANGELOG.md`](./CHANGELOG.md).
 - This version is intended for **limited public testing**
 - The database is persistent — uninstalling the app will remove data
 - Always export your data before updating to a new version
+- Import mode guidance:
+  - **Replace All** is the default / safest option
+  - **Merge** is advanced and should be used carefully
 
 ---
 

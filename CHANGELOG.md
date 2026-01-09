@@ -25,6 +25,13 @@ and this project follows [Semantic Versioning](https://semver.org/).
 - Project stage changed from Alpha to Beta
 - App is now ready for limited public testing
 
+### Notes
+- Database is persistent — uninstalling the app will remove data
+- Export your data before updating to a new version
+- Import mode guidance:
+  - Replace All = default / safest
+  - Merge = advanced / use carefully
+
 ---
 
 ## [0.2.0-alpha] — 2026-01-09

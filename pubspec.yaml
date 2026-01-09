@@ -1,5 +1,5 @@
 name: filament_manager
-description: "3D Farm Manager"
+description: "Filament Manager"
 publish_to: 'none'
 version: 0.3.0-beta+1
 
@@ -21,7 +21,7 @@ dependencies:
   uuid: ^4.4.0
 
   image_picker: ^1.0.7
-  google_mlkit_text_recognition: ^0.11.0
+  google_mlkit_text_recognition: ^0.15.0
 
   camera: ^0.10.5+9
   cross_file: ^0.3.4+2
@@ -32,6 +32,7 @@ dependencies:
   path_provider: ^2.1.1
   share_plus: ^7.2.1
   shared_preferences: ^2.5.4
+  url_launcher: ^6.2.6
 
 dev_dependencies:
   flutter_test:

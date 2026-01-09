@@ -9,7 +9,7 @@ import 'backup_data_model.dart';
 
 class ExportImportService {
   static const String _backupVersion = '1';
-  static const String _appVersion = '0.2.0-alpha';
+  static const String _appVersion = '0.3.0-beta';
 
   /// Export all data to JSON file and share it
   Future<String> exportData() async {
@@ -87,7 +87,7 @@ class ExportImportService {
   /// Import data from a file path
   /// Note: For import, user must manually place the backup file in Downloads folder
   /// and we'll read from there
-  Future<void> importData({required bool replaceMode}) async {
+  Future<bool> importData({required bool replaceMode}) async {
     try {
       // Get Downloads directory (Android specific)
       Directory? downloadsDir;
@@ -150,8 +150,11 @@ class ExportImportService {
       await _importTable(db, 'locations', backup.data['locations'] as List);
       await _importTable(db, 'printers', backup.data['printers'] as List);
       await _importTable(db, 'filaments', backup.data['filaments'] as List);
+
+      return true;
     } catch (e) {
-      throw Exception('Import failed: $e');
+      debugPrint('Import failed: $e');
+      return false;
     }
   }
 

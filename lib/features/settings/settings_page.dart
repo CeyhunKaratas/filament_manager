@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import '../../l10n/app_strings.dart';
 import '../../core/widgets/app_drawer.dart';
 import '../../core/export_import/export_import_service.dart';
+import 'package:url_launcher/url_launcher.dart';
 
 class SettingsPage extends StatefulWidget {
   const SettingsPage({super.key});
@@ -105,9 +106,12 @@ class _SettingsPageState extends State<SettingsPage> {
     });
 
     try {
-      await _exportImportService.importData(replaceMode: replaceMode);
+      final success = await _exportImportService.importData(
+        replaceMode: replaceMode,
+      );
 
-      if (mounted) {
+      if (mounted && success) {
+        setState(() {});
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
             content: Text(strings.importSuccess),
@@ -188,7 +192,68 @@ class _SettingsPageState extends State<SettingsPage> {
           const Divider(),
           ListTile(
             title: Text(strings.appTitle),
-            subtitle: const Text('Version 0.2.0-alpha'),
+            subtitle: const Text('Version 0.3.0-beta'),
+          ),
+
+          const SizedBox(height: 12),
+
+          // Durumade Info
+          const Divider(),
+          const ListTile(
+            title: Text('About Durumade'),
+            subtitle: Text(
+              'This app was originally created to support internal inventory '
+              'tracking for the Durumade handmade workshop.',
+            ),
+          ),
+
+          ListTile(
+            leading: const Icon(Icons.link),
+            title: const Text('Durumade on Instagram'),
+            subtitle: const Text('instagram.com/duruepoxidharz'),
+            onTap: () async {
+              final uri = Uri.parse('https://instagram.com/duruepoxidharz');
+              if (await canLaunchUrl(uri)) {
+                await launchUrl(uri, mode: LaunchMode.externalApplication);
+              }
+            },
+          ),
+
+          ListTile(
+            leading: const Icon(Icons.public),
+            title: const Text('Durumade Website'),
+            subtitle: const Text('durumade.com'),
+            onTap: () async {
+              final uri = Uri.parse('https://durumade.com');
+              if (await canLaunchUrl(uri)) {
+                await launchUrl(uri, mode: LaunchMode.externalApplication);
+              }
+            },
+          ),
+
+          const SizedBox(height: 24),
+
+          // Feedback
+          const Divider(),
+          const ListTile(
+            title: Text('Feedback'),
+            subtitle: Text(
+              'Help improve the app by reporting issues or sharing ideas.',
+            ),
+          ),
+
+          ListTile(
+            leading: const Icon(Icons.bug_report),
+            title: const Text('Report a bug / Send feedback'),
+            subtitle: const Text('GitHub Issues'),
+            onTap: () async {
+              final uri = Uri.parse(
+                'https://github.com/CeyhunKaratas/filament_manager/issues',
+              );
+              if (await canLaunchUrl(uri)) {
+                await launchUrl(uri, mode: LaunchMode.externalApplication);
+              }
+            },
           ),
         ],
       ),

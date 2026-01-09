@@ -17,13 +17,13 @@ The app allows users to:
 - Store filaments in locations when not assigned
 - Use OCR (camera-based) to assist filament entry (experimental)
 
-The app is currently in **alpha stage** and is actively used by the developer.
+The app is currently in **beta stage** and is actively used by the developer.
 
 ---
 
 ## 2. Current Version
 
-- Version: **0.1.0-alpha**
+- Version: **0.3.0-beta**
 - Version source: `pubspec.yaml`
 - Changelog: `CHANGELOG.md`
 - Database: SQLite (local, persistent)
@@ -90,7 +90,6 @@ OCR is split into **core logic** and **UI layers**.
 ### Core OCR (reusable)
 Location: lib/core/ocr/
 
-
 Responsibilities:
 - Text extraction
 - Normalization
@@ -116,7 +115,6 @@ UI decides how to apply these results.
 ## 7. Add Filament Screen Rules
 
 Location: lib/features/filaments/filament_add_page.dart
-
 
 Rules:
 - Uses Autocomplete fields for:
@@ -164,8 +162,8 @@ Semantic Versioning:
 - MINOR → new feature, DB compatible
 - PATCH → UI / bugfix
 
-Alpha versions use: x.y.z-alpha
-
+Alpha versions use: x.y.z-alpha  
+Beta versions use: x.y.z-beta
 
 Every version must be documented in `CHANGELOG.md`.
 
@@ -196,4 +194,3 @@ When working on this project:
 - Respect existing working code
 
 This project is actively used by its author.
-

@@ -23,6 +23,14 @@ class AppStrings {
     switch (locale.languageCode) {
       case 'tr':
         return 'Filament Ekle';
+      case 'de':
+        return 'Filament hinzufügen';
+      case 'fr':
+        return 'Add Filament';
+      case 'it':
+        return 'Add Filament';
+      case 'es':
+        return 'Add Filament';
       default:
         return 'Add Filament';
     }
@@ -32,6 +40,14 @@ class AppStrings {
     switch (locale.languageCode) {
       case 'tr':
         return 'Marka';
+      case 'de':
+        return 'Marke';
+      case 'fr':
+        return 'Brand';
+      case 'it':
+        return 'Brand';
+      case 'es':
+        return 'Brand';
       default:
         return 'Brand';
     }
@@ -41,6 +57,14 @@ class AppStrings {
     switch (locale.languageCode) {
       case 'tr':
         return 'Renk';
+      case 'de':
+        return 'Farbe';
+      case 'fr':
+        return 'Color';
+      case 'it':
+        return 'Color';
+      case 'es':
+        return 'Color';
       default:
         return 'Color';
     }
@@ -50,6 +74,14 @@ class AppStrings {
     switch (locale.languageCode) {
       case 'tr':
         return 'Malzeme';
+      case 'de':
+        return 'Material';
+      case 'fr':
+        return 'Material';
+      case 'it':
+        return 'Material';
+      case 'es':
+        return 'Material';
       default:
         return 'Material';
     }
@@ -59,6 +91,14 @@ class AppStrings {
     switch (locale.languageCode) {
       case 'tr':
         return 'Kaydet';
+      case 'de':
+        return 'Speichern';
+      case 'fr':
+        return 'Save';
+      case 'it':
+        return 'Save';
+      case 'es':
+        return 'Save';
       default:
         return 'Save';
     }
@@ -68,6 +108,14 @@ class AppStrings {
     switch (locale.languageCode) {
       case 'tr':
         return 'Zorunlu';
+      case 'de':
+        return 'Erforderlich';
+      case 'fr':
+        return 'Required';
+      case 'it':
+        return 'Required';
+      case 'es':
+        return 'Required';
       default:
         return 'Required';
     }
@@ -77,6 +125,14 @@ class AppStrings {
     switch (locale.languageCode) {
       case 'tr':
         return '+ Yeni ekle';
+      case 'de':
+        return '+ Neu hinzufügen';
+      case 'fr':
+        return '+ Add new';
+      case 'it':
+        return '+ Add new';
+      case 'es':
+        return '+ Add new';
       default:
         return '+ Add new';
     }
@@ -86,6 +142,14 @@ class AppStrings {
     switch (locale.languageCode) {
       case 'tr':
         return 'Filamentler';
+      case 'de':
+        return 'Filamente';
+      case 'fr':
+        return 'Filaments';
+      case 'it':
+        return 'Filaments';
+      case 'es':
+        return 'Filaments';
       default:
         return 'Filaments';
     }
@@ -95,6 +159,14 @@ class AppStrings {
     switch (locale.languageCode) {
       case 'tr':
         return 'Filament yok';
+      case 'de':
+        return 'Keine Filamente';
+      case 'fr':
+        return 'No filaments';
+      case 'it':
+        return 'No filaments';
+      case 'es':
+        return 'No filaments';
       default:
         return 'No filaments';
     }
@@ -104,6 +176,14 @@ class AppStrings {
     switch (locale.languageCode) {
       case 'tr':
         return 'Hata';
+      case 'de':
+        return 'Fehler';
+      case 'fr':
+        return 'Error';
+      case 'it':
+        return 'Error';
+      case 'es':
+        return 'Error';
       default:
         return 'Error';
     }
@@ -113,6 +193,14 @@ class AppStrings {
     switch (locale.languageCode) {
       case 'tr':
         return 'Yeni marka';
+      case 'de':
+        return 'Neue Marke';
+      case 'fr':
+        return 'New brand';
+      case 'it':
+        return 'New brand';
+      case 'es':
+        return 'New brand';
       default:
         return 'New brand';
     }
@@ -122,6 +210,14 @@ class AppStrings {
     switch (locale.languageCode) {
       case 'tr':
         return 'Yeni renk';
+      case 'de':
+        return 'Neue Farbe';
+      case 'fr':
+        return 'New color';
+      case 'it':
+        return 'New color';
+      case 'es':
+        return 'New color';
       default:
         return 'New color';
     }
@@ -131,6 +227,14 @@ class AppStrings {
     switch (locale.languageCode) {
       case 'tr':
         return 'Makara Sil';
+      case 'de':
+        return 'Spule löschen';
+      case 'fr':
+        return 'Delete Spool';
+      case 'it':
+        return 'Delete Spool';
+      case 'es':
+        return 'Delete Spool';
       default:
         return 'Delete Spool';
     }
@@ -140,6 +244,14 @@ class AppStrings {
     switch (locale.languageCode) {
       case 'tr':
         return 'Makara silmek istediğinize emin misiniz?';
+      case 'de':
+        return 'Möchten Sie die Spule wirklich löschen?';
+      case 'fr':
+        return 'Do you want delete the spool?';
+      case 'it':
+        return 'Do you want delete the spool?';
+      case 'es':
+        return 'Do you want delete the spool?';
       default:
         return 'Do you want delete the spool?';
     }
@@ -149,6 +261,14 @@ class AppStrings {
     switch (locale.languageCode) {
       case 'tr':
         return 'İptal';
+      case 'de':
+        return 'Abbrechen';
+      case 'fr':
+        return 'Cancel';
+      case 'it':
+        return 'Cancel';
+      case 'es':
+        return 'Cancel';
       default:
         return 'Cancel';
     }
@@ -158,6 +278,14 @@ class AppStrings {
     switch (locale.languageCode) {
       case 'tr':
         return 'Sil';
+      case 'de':
+        return 'Löschen';
+      case 'fr':
+        return 'Delete';
+      case 'it':
+        return 'Delete';
+      case 'es':
+        return 'Delete';
       default:
         return 'Delete';
     }
@@ -167,6 +295,14 @@ class AppStrings {
     switch (locale.languageCode) {
       case 'tr':
         return 'Makara';
+      case 'de':
+        return 'Spule';
+      case 'fr':
+        return 'Spool';
+      case 'it':
+        return 'Spool';
+      case 'es':
+        return 'Spool';
       default:
         return 'Spool';
     }
@@ -176,6 +312,14 @@ class AppStrings {
     switch (locale.languageCode) {
       case 'tr':
         return 'Aktif';
+      case 'de':
+        return 'Aktiv';
+      case 'fr':
+        return 'Active';
+      case 'it':
+        return 'Active';
+      case 'es':
+        return 'Active';
       default:
         return 'Active';
     }
@@ -185,6 +329,14 @@ class AppStrings {
     switch (locale.languageCode) {
       case 'tr':
         return 'Az';
+      case 'de':
+        return 'Niedrig';
+      case 'fr':
+        return 'Low';
+      case 'it':
+        return 'Low';
+      case 'es':
+        return 'Low';
       default:
         return 'Low';
     }
@@ -194,6 +346,14 @@ class AppStrings {
     switch (locale.languageCode) {
       case 'tr':
         return 'Bitti';
+      case 'de':
+        return 'Aufgebraucht';
+      case 'fr':
+        return 'Finished';
+      case 'it':
+        return 'Finished';
+      case 'es':
+        return 'Finished';
       default:
         return 'Finished';
     }
@@ -215,6 +375,14 @@ class AppStrings {
     switch (locale.languageCode) {
       case 'tr':
         return 'Makara → Printer Atama';
+      case 'de':
+        return 'Spool → Printer Assignment';
+      case 'fr':
+        return 'Spool → Printer Assignment';
+      case 'it':
+        return 'Spool → Printer Assignment';
+      case 'es':
+        return 'Spool → Printer Assignment';
       default:
         return 'Spool → Printer Assignment';
     }
@@ -224,6 +392,14 @@ class AppStrings {
     switch (locale.languageCode) {
       case 'tr':
         return 'Makara Ata';
+      case 'de':
+        return 'Spule zuweisen';
+      case 'fr':
+        return 'Assign Spool';
+      case 'it':
+        return 'Assign Spool';
+      case 'es':
+        return 'Assign Spool';
       default:
         return 'Assign Spool';
     }
@@ -233,6 +409,14 @@ class AppStrings {
     switch (locale.languageCode) {
       case 'tr':
         return 'Ata';
+      case 'de':
+        return 'Zuweisen';
+      case 'fr':
+        return 'Assign';
+      case 'it':
+        return 'Assign';
+      case 'es':
+        return 'Assign';
       default:
         return 'Assign';
     }
@@ -242,6 +426,14 @@ class AppStrings {
     switch (locale.languageCode) {
       case 'tr':
         return 'Atamayı Kaldır';
+      case 'de':
+        return 'Zuweisung entfernen';
+      case 'fr':
+        return 'Unassign';
+      case 'it':
+        return 'Unassign';
+      case 'es':
+        return 'Unassign';
       default:
         return 'Unassign';
     }
@@ -251,6 +443,14 @@ class AppStrings {
     switch (locale.languageCode) {
       case 'tr':
         return 'Atanmamış';
+      case 'de':
+        return 'Nicht zugewiesen';
+      case 'fr':
+        return 'Unassigned';
+      case 'it':
+        return 'Unassigned';
+      case 'es':
+        return 'Unassigned';
       default:
         return 'Unassigned';
     }
@@ -259,6 +459,14 @@ class AppStrings {
   String get printer {
     switch (locale.languageCode) {
       case 'tr':
+        return 'Printer';
+      case 'de':
+        return 'Drucker';
+      case 'fr':
+        return 'Printer';
+      case 'it':
+        return 'Printer';
+      case 'es':
         return 'Printer';
       default:
         return 'Printer';
@@ -269,6 +477,14 @@ class AppStrings {
     switch (locale.languageCode) {
       case 'tr':
         return 'Slot';
+      case 'de':
+        return 'Slot';
+      case 'fr':
+        return 'Slot';
+      case 'it':
+        return 'Slot';
+      case 'es':
+        return 'Slot';
       default:
         return 'Slot';
     }
@@ -278,6 +494,14 @@ class AppStrings {
     switch (locale.languageCode) {
       case 'tr':
         return 'Yazıcı yok';
+      case 'de':
+        return 'Keine Drucker';
+      case 'fr':
+        return 'No printers';
+      case 'it':
+        return 'No printers';
+      case 'es':
+        return 'No printers';
       default:
         return 'No printers';
     }
@@ -287,6 +511,14 @@ class AppStrings {
     switch (locale.languageCode) {
       case 'tr':
         return 'Bu slot zaten dolu';
+      case 'de':
+        return 'Dieser Slot ist bereits belegt';
+      case 'fr':
+        return 'This slot is already in use';
+      case 'it':
+        return 'This slot is already in use';
+      case 'es':
+        return 'This slot is already in use';
       default:
         return 'This slot is already in use';
     }
@@ -296,6 +528,14 @@ class AppStrings {
     switch (locale.languageCode) {
       case 'tr':
         return 'Tamam';
+      case 'de':
+        return 'OK';
+      case 'fr':
+        return 'OK';
+      case 'it':
+        return 'OK';
+      case 'es':
+        return 'OK';
       default:
         return 'OK';
     }
@@ -305,6 +545,14 @@ class AppStrings {
     switch (locale.languageCode) {
       case 'tr':
         return 'Slot Değiştir';
+      case 'de':
+        return 'Slot ändern';
+      case 'fr':
+        return 'Change Slot';
+      case 'it':
+        return 'Change Slot';
+      case 'es':
+        return 'Change Slot';
       default:
         return 'Change Slot';
     }
@@ -314,6 +562,14 @@ class AppStrings {
     switch (locale.languageCode) {
       case 'tr':
         return 'Slot dolu';
+      case 'de':
+        return 'Slot belegt';
+      case 'fr':
+        return 'Slot occupied';
+      case 'it':
+        return 'Slot occupied';
+      case 'es':
+        return 'Slot occupied';
       default:
         return 'Slot occupied';
     }
@@ -323,6 +579,14 @@ class AppStrings {
     switch (locale.languageCode) {
       case 'tr':
         return 'Bu slot dolu. Devam ederseniz eski filament bu slottan kaldırılacak.';
+      case 'de':
+        return 'Dieser Slot ist belegt. Wenn Sie fortfahren, wird das alte Filament entfernt.';
+      case 'fr':
+        return 'This slot is occupied. If you continue, the old filament will be removed from this slot.';
+      case 'it':
+        return 'This slot is occupied. If you continue, the old filament will be removed from this slot.';
+      case 'es':
+        return 'This slot is occupied. If you continue, the old filament will be removed from this slot.';
       default:
         return 'This slot is occupied. If you continue, the old filament will be removed from this slot.';
     }
@@ -332,6 +596,14 @@ class AppStrings {
     switch (locale.languageCode) {
       case 'tr':
         return 'Devam';
+      case 'de':
+        return 'Fortfahren';
+      case 'fr':
+        return 'Continue';
+      case 'it':
+        return 'Continue';
+      case 'es':
+        return 'Continue';
       default:
         return 'Continue';
     }
@@ -341,6 +613,14 @@ class AppStrings {
     switch (locale.languageCode) {
       case 'tr':
         return 'Boş';
+      case 'de':
+        return 'Leer';
+      case 'fr':
+        return 'Empty';
+      case 'it':
+        return 'Empty';
+      case 'es':
+        return 'Empty';
       default:
         return 'Empty';
     }
@@ -350,6 +630,14 @@ class AppStrings {
     switch (locale.languageCode) {
       case 'tr':
         return 'Lokasyon';
+      case 'de':
+        return 'Standort';
+      case 'fr':
+        return 'Location';
+      case 'it':
+        return 'Location';
+      case 'es':
+        return 'Location';
       default:
         return 'Location';
     }
@@ -359,6 +647,14 @@ class AppStrings {
     switch (locale.languageCode) {
       case 'tr':
         return 'Varsayılan';
+      case 'de':
+        return 'Standard';
+      case 'fr':
+        return 'Default';
+      case 'it':
+        return 'Default';
+      case 'es':
+        return 'Default';
       default:
         return 'Default';
     }
@@ -368,6 +664,14 @@ class AppStrings {
     switch (locale.languageCode) {
       case 'tr':
         return 'Lokasyon yok';
+      case 'de':
+        return 'Keine Standorte';
+      case 'fr':
+        return 'No location';
+      case 'it':
+        return 'No location';
+      case 'es':
+        return 'No location';
       default:
         return 'No location';
     }
@@ -377,6 +681,14 @@ class AppStrings {
     switch (locale.languageCode) {
       case 'tr':
         return 'Lokasyon';
+      case 'de':
+        return 'Standort';
+      case 'fr':
+        return 'Location';
+      case 'it':
+        return 'Location';
+      case 'es':
+        return 'Location';
       default:
         return 'Location';
     }
@@ -386,6 +698,14 @@ class AppStrings {
     switch (locale.languageCode) {
       case 'tr':
         return 'Lokasyon ekle';
+      case 'de':
+        return 'Standort hinzufügen';
+      case 'fr':
+        return 'Add location';
+      case 'it':
+        return 'Add location';
+      case 'es':
+        return 'Add location';
       default:
         return 'Add location';
     }
@@ -395,6 +715,14 @@ class AppStrings {
     switch (locale.languageCode) {
       case 'tr':
         return 'Lokasyon adı';
+      case 'de':
+        return 'Standortname';
+      case 'fr':
+        return 'Location name';
+      case 'it':
+        return 'Location name';
+      case 'es':
+        return 'Location name';
       default:
         return 'Location name';
     }
@@ -404,6 +732,14 @@ class AppStrings {
     switch (locale.languageCode) {
       case 'tr':
         return 'Ekle';
+      case 'de':
+        return 'Hinzufügen';
+      case 'fr':
+        return 'Add';
+      case 'it':
+        return 'Add';
+      case 'es':
+        return 'Add';
       default:
         return 'Add';
     }
@@ -413,6 +749,14 @@ class AppStrings {
     switch (locale.languageCode) {
       case 'tr':
         return 'Lokasyon boş değil';
+      case 'de':
+        return 'Standort ist nicht leer';
+      case 'fr':
+        return 'Location is not empty';
+      case 'it':
+        return 'Location is not empty';
+      case 'es':
+        return 'Location is not empty';
       default:
         return 'Location is not empty';
     }
@@ -422,6 +766,14 @@ class AppStrings {
     switch (locale.languageCode) {
       case 'tr':
         return 'Lokasyon seç';
+      case 'de':
+        return 'Standort auswählen';
+      case 'fr':
+        return 'Select location';
+      case 'it':
+        return 'Select location';
+      case 'es':
+        return 'Select location';
       default:
         return 'Select location';
     }
@@ -431,6 +783,14 @@ class AppStrings {
     switch (locale.languageCode) {
       case 'tr':
         return 'Lokasyona taşı';
+      case 'de':
+        return 'Zu Standort verschieben';
+      case 'fr':
+        return 'Move to location';
+      case 'it':
+        return 'Move to location';
+      case 'es':
+        return 'Move to location';
       default:
         return 'Move to location';
     }
@@ -440,6 +800,14 @@ class AppStrings {
     switch (locale.languageCode) {
       case 'tr':
         return 'Özel renkler';
+      case 'de':
+        return 'Benutzerdefinierte Farben';
+      case 'fr':
+        return 'Custom colors';
+      case 'it':
+        return 'Custom colors';
+      case 'es':
+        return 'Custom colors';
       default:
         return 'Custom colors';
     }
@@ -448,6 +816,14 @@ class AppStrings {
   String get scanOcrTitle {
     switch (locale.languageCode) {
       case 'tr':
+        return 'Scan / OCR';
+      case 'de':
+        return 'Scan / OCR';
+      case 'fr':
+        return 'Scan / OCR';
+      case 'it':
+        return 'Scan / OCR';
+      case 'es':
         return 'Scan / OCR';
       default:
         return 'Scan / OCR';
@@ -458,6 +834,14 @@ class AppStrings {
     switch (locale.languageCode) {
       case 'tr':
         return 'Fotoğraf çek ve OCR çalıştır';
+      case 'de':
+        return 'Foto aufnehmen und OCR starten';
+      case 'fr':
+        return 'Take photo & run OCR';
+      case 'it':
+        return 'Take photo & run OCR';
+      case 'es':
+        return 'Take photo & run OCR';
       default:
         return 'Take photo & run OCR';
     }
@@ -467,6 +851,14 @@ class AppStrings {
     switch (locale.languageCode) {
       case 'tr':
         return 'Ham OCR Metni';
+      case 'de':
+        return 'Roh-OCR-Text';
+      case 'fr':
+        return 'Raw OCR Text';
+      case 'it':
+        return 'Raw OCR Text';
+      case 'es':
+        return 'Raw OCR Text';
       default:
         return 'Raw OCR Text';
     }
@@ -476,6 +868,14 @@ class AppStrings {
     switch (locale.languageCode) {
       case 'tr':
         return 'Henüz OCR sonucu yok.';
+      case 'de':
+        return 'Noch kein OCR-Ergebnis.';
+      case 'fr':
+        return 'No OCR result yet.';
+      case 'it':
+        return 'No OCR result yet.';
+      case 'es':
+        return 'No OCR result yet.';
       default:
         return 'No OCR result yet.';
     }
@@ -485,6 +885,14 @@ class AppStrings {
     switch (locale.languageCode) {
       case 'tr':
         return 'Basit Anahtar Kelime Analizi';
+      case 'de':
+        return 'Einfache Schlüsselwortanalyse';
+      case 'fr':
+        return 'Basic Keyword Analysis';
+      case 'it':
+        return 'Basic Keyword Analysis';
+      case 'es':
+        return 'Basic Keyword Analysis';
       default:
         return 'Basic Keyword Analysis';
     }
@@ -494,6 +902,14 @@ class AppStrings {
     switch (locale.languageCode) {
       case 'tr':
         return 'Eşleşen anahtar kelime bulunamadı.';
+      case 'de':
+        return 'Keine passenden Schlüsselwörter gefunden.';
+      case 'fr':
+        return 'No keyword hits found.';
+      case 'it':
+        return 'No keyword hits found.';
+      case 'es':
+        return 'No keyword hits found.';
       default:
         return 'No keyword hits found.';
     }
@@ -503,6 +919,14 @@ class AppStrings {
     switch (locale.languageCode) {
       case 'tr':
         return 'Not: Bu ekran sadece OCR testi içindir. DB’ye kayıt yapmaz, filament oluşturmaz.';
+      case 'de':
+        return 'Note: This page is for OCR testing only. It does not write to DB or create filaments.';
+      case 'fr':
+        return 'Note: This page is for OCR testing only. It does not write to DB or create filaments.';
+      case 'it':
+        return 'Note: This page is for OCR testing only. It does not write to DB or create filaments.';
+      case 'es':
+        return 'Note: This page is for OCR testing only. It does not write to DB or create filaments.';
       default:
         return 'Note: This page is for OCR testing only. It does not write to DB or create filaments.';
     }
@@ -512,6 +936,14 @@ class AppStrings {
     switch (locale.languageCode) {
       case 'tr':
         return 'Verileri kameradan oku';
+      case 'de':
+        return 'Daten aus der Kamera lesen';
+      case 'fr':
+        return 'Read from camera';
+      case 'it':
+        return 'Read from camera';
+      case 'es':
+        return 'Read from camera';
       default:
         return 'Read from camera';
     }
@@ -521,6 +953,14 @@ class AppStrings {
     switch (locale.languageCode) {
       case 'tr':
         return 'İhtiyacınız olan fotoğrafları çekin.';
+      case 'de':
+        return 'Machen Sie die benötigten Fotos.';
+      case 'fr':
+        return 'Take the photos you need.';
+      case 'it':
+        return 'Take the photos you need.';
+      case 'es':
+        return 'Take the photos you need.';
       default:
         return 'Take the photos you need.';
     }
@@ -530,6 +970,14 @@ class AppStrings {
     switch (locale.languageCode) {
       case 'tr':
         return '$count foto çekildi';
+      case 'de':
+        return '$count photos taken';
+      case 'fr':
+        return '$count photos taken';
+      case 'it':
+        return '$count photos taken';
+      case 'es':
+        return '$count photos taken';
       default:
         return '$count photos taken';
     }
@@ -539,6 +987,14 @@ class AppStrings {
     switch (locale.languageCode) {
       case 'tr':
         return 'TAMAM';
+      case 'de':
+        return 'FERTIG';
+      case 'fr':
+        return 'DONE';
+      case 'it':
+        return 'DONE';
+      case 'es':
+        return 'DONE';
       default:
         return 'DONE';
     }
@@ -548,6 +1004,14 @@ class AppStrings {
     switch (locale.languageCode) {
       case 'tr':
         return 'Kamera başlatılamadı';
+      case 'de':
+        return 'Kamera konnte nicht gestartet werden';
+      case 'fr':
+        return 'Camera could not be initialized';
+      case 'it':
+        return 'Camera could not be initialized';
+      case 'es':
+        return 'Camera could not be initialized';
       default:
         return 'Camera could not be initialized';
     }
@@ -557,6 +1021,14 @@ class AppStrings {
     switch (locale.languageCode) {
       case 'tr':
         return 'OCR çalıştırılıyor...';
+      case 'de':
+        return 'OCR wird ausgeführt...';
+      case 'fr':
+        return 'Running OCR...';
+      case 'it':
+        return 'Running OCR...';
+      case 'es':
+        return 'Running OCR...';
       default:
         return 'Running OCR...';
     }
@@ -566,6 +1038,14 @@ class AppStrings {
     switch (locale.languageCode) {
       case 'tr':
         return 'Birleşik OCR Metni';
+      case 'de':
+        return 'Zusammengeführter OCR-Text';
+      case 'fr':
+        return 'Merged OCR Text';
+      case 'it':
+        return 'Merged OCR Text';
+      case 'es':
+        return 'Merged OCR Text';
       default:
         return 'Merged OCR Text';
     }
@@ -575,6 +1055,14 @@ class AppStrings {
     switch (locale.languageCode) {
       case 'tr':
         return 'Fotoğraf Bazlı OCR Sonuçları';
+      case 'de':
+        return 'OCR-Ergebnisse pro Foto';
+      case 'fr':
+        return 'Per-photo OCR Results';
+      case 'it':
+        return 'Per-photo OCR Results';
+      case 'es':
+        return 'Per-photo OCR Results';
       default:
         return 'Per-photo OCR Results';
     }
@@ -584,6 +1072,14 @@ class AppStrings {
     switch (locale.languageCode) {
       case 'tr':
         return 'Yeni tarama başlat';
+      case 'de':
+        return 'Neuen Scan starten';
+      case 'fr':
+        return 'Start new scan';
+      case 'it':
+        return 'Start new scan';
+      case 'es':
+        return 'Start new scan';
       default:
         return 'Start new scan';
     }
@@ -597,6 +1093,14 @@ class AppStrings {
     switch (locale.languageCode) {
       case 'tr':
         return 'Tanımlar';
+      case 'de':
+        return 'Definitionen';
+      case 'fr':
+        return 'Definitions';
+      case 'it':
+        return 'Definitions';
+      case 'es':
+        return 'Definitions';
       default:
         return 'Definitions';
     }
@@ -606,6 +1110,14 @@ class AppStrings {
     switch (locale.languageCode) {
       case 'tr':
         return 'Markalar';
+      case 'de':
+        return 'Marken';
+      case 'fr':
+        return 'Brands';
+      case 'it':
+        return 'Brands';
+      case 'es':
+        return 'Brands';
       default:
         return 'Brands';
     }
@@ -615,6 +1127,14 @@ class AppStrings {
     switch (locale.languageCode) {
       case 'tr':
         return 'Tipler';
+      case 'de':
+        return 'Materialien';
+      case 'fr':
+        return 'Materials';
+      case 'it':
+        return 'Materials';
+      case 'es':
+        return 'Materials';
       default:
         return 'Materials';
     }
@@ -624,6 +1144,14 @@ class AppStrings {
     switch (locale.languageCode) {
       case 'tr':
         return 'Renkler';
+      case 'de':
+        return 'Farben';
+      case 'fr':
+        return 'Colors';
+      case 'it':
+        return 'Colors';
+      case 'es':
+        return 'Colors';
       default:
         return 'Colors';
     }
@@ -633,6 +1161,14 @@ class AppStrings {
     switch (locale.languageCode) {
       case 'tr':
         return 'Ad';
+      case 'de':
+        return 'Name';
+      case 'fr':
+        return 'Name';
+      case 'it':
+        return 'Name';
+      case 'es':
+        return 'Name';
       default:
         return 'Name';
     }
@@ -642,6 +1178,14 @@ class AppStrings {
     switch (locale.languageCode) {
       case 'tr':
         return 'Markayı düzenle';
+      case 'de':
+        return 'Marke bearbeiten';
+      case 'fr':
+        return 'Edit brand';
+      case 'it':
+        return 'Edit brand';
+      case 'es':
+        return 'Edit brand';
       default:
         return 'Edit brand';
     }
@@ -651,6 +1195,14 @@ class AppStrings {
     switch (locale.languageCode) {
       case 'tr':
         return 'Tipi düzenle';
+      case 'de':
+        return 'Material bearbeiten';
+      case 'fr':
+        return 'Edit material';
+      case 'it':
+        return 'Edit material';
+      case 'es':
+        return 'Edit material';
       default:
         return 'Edit material';
     }
@@ -660,6 +1212,14 @@ class AppStrings {
     switch (locale.languageCode) {
       case 'tr':
         return 'Rengi düzenle';
+      case 'de':
+        return 'Farbe bearbeiten';
+      case 'fr':
+        return 'Edit color';
+      case 'it':
+        return 'Edit color';
+      case 'es':
+        return 'Edit color';
       default:
         return 'Edit color';
     }
@@ -669,6 +1229,14 @@ class AppStrings {
     switch (locale.languageCode) {
       case 'tr':
         return 'Yeni tip';
+      case 'de':
+        return 'Neues Material';
+      case 'fr':
+        return 'New material';
+      case 'it':
+        return 'New material';
+      case 'es':
+        return 'New material';
       default:
         return 'New material';
     }
@@ -678,6 +1246,14 @@ class AppStrings {
     switch (locale.languageCode) {
       case 'tr':
         return 'Renk seç';
+      case 'de':
+        return 'Farbe wählen';
+      case 'fr':
+        return 'Pick color';
+      case 'it':
+        return 'Pick color';
+      case 'es':
+        return 'Pick color';
       default:
         return 'Pick color';
     }
@@ -687,6 +1263,14 @@ class AppStrings {
     switch (locale.languageCode) {
       case 'tr':
         return 'Rengi değiştir';
+      case 'de':
+        return 'Farbe ändern';
+      case 'fr':
+        return 'Change color';
+      case 'it':
+        return 'Change color';
+      case 'es':
+        return 'Change color';
       default:
         return 'Change color';
     }
@@ -696,6 +1280,14 @@ class AppStrings {
     switch (locale.languageCode) {
       case 'tr':
         return 'Renk listesini yönet';
+      case 'de':
+        return 'Farbliste verwalten';
+      case 'fr':
+        return 'Manage color list';
+      case 'it':
+        return 'Manage color list';
+      case 'es':
+        return 'Manage color list';
       default:
         return 'Manage color list';
     }
@@ -705,6 +1297,14 @@ class AppStrings {
     switch (locale.languageCode) {
       case 'tr':
         return 'Marka listesini yönet';
+      case 'de':
+        return 'Markenliste verwalten';
+      case 'fr':
+        return 'Manage brand list';
+      case 'it':
+        return 'Manage brand list';
+      case 'es':
+        return 'Manage brand list';
       default:
         return 'Manage brand list';
     }
@@ -714,6 +1314,14 @@ class AppStrings {
     switch (locale.languageCode) {
       case 'tr':
         return 'Tip listesini yönet';
+      case 'de':
+        return 'Materialliste verwalten';
+      case 'fr':
+        return 'Manage material list';
+      case 'it':
+        return 'Manage material list';
+      case 'es':
+        return 'Manage material list';
       default:
         return 'Manage material list';
     }
@@ -723,6 +1331,14 @@ class AppStrings {
     switch (locale.languageCode) {
       case 'tr':
         return 'Tanımlar';
+      case 'de':
+        return 'Definitionen';
+      case 'fr':
+        return 'Definitions';
+      case 'it':
+        return 'Definitions';
+      case 'es':
+        return 'Definitions';
       default:
         return 'Definitions';
     }
@@ -732,6 +1348,14 @@ class AppStrings {
     switch (locale.languageCode) {
       case 'tr':
         return 'Renkleri yönet';
+      case 'de':
+        return 'Farben verwalten';
+      case 'fr':
+        return 'Manage colors';
+      case 'it':
+        return 'Manage colors';
+      case 'es':
+        return 'Manage colors';
       default:
         return 'Manage colors';
     }
@@ -741,6 +1365,14 @@ class AppStrings {
     switch (locale.languageCode) {
       case 'tr':
         return 'Markaları yönet';
+      case 'de':
+        return 'Marken verwalten';
+      case 'fr':
+        return 'Manage brands';
+      case 'it':
+        return 'Manage brands';
+      case 'es':
+        return 'Manage brands';
       default:
         return 'Manage brands';
     }
@@ -750,6 +1382,14 @@ class AppStrings {
     switch (locale.languageCode) {
       case 'tr':
         return 'Tipleri yönet';
+      case 'de':
+        return 'Materialien verwalten';
+      case 'fr':
+        return 'Manage materials';
+      case 'it':
+        return 'Manage materials';
+      case 'es':
+        return 'Manage materials';
       default:
         return 'Manage materials';
     }
@@ -759,6 +1399,14 @@ class AppStrings {
     switch (locale.languageCode) {
       case 'tr':
         return 'Rengi düzenle';
+      case 'de':
+        return 'Farbe bearbeiten';
+      case 'fr':
+        return 'Edit color';
+      case 'it':
+        return 'Edit color';
+      case 'es':
+        return 'Edit color';
       default:
         return 'Edit color';
     }
@@ -768,6 +1416,14 @@ class AppStrings {
     switch (locale.languageCode) {
       case 'tr':
         return 'Markayı düzenle';
+      case 'de':
+        return 'Marke bearbeiten';
+      case 'fr':
+        return 'Edit brand';
+      case 'it':
+        return 'Edit brand';
+      case 'es':
+        return 'Edit brand';
       default:
         return 'Edit brand';
     }
@@ -777,6 +1433,14 @@ class AppStrings {
     switch (locale.languageCode) {
       case 'tr':
         return 'Tipi düzenle';
+      case 'de':
+        return 'Material bearbeiten';
+      case 'fr':
+        return 'Edit material';
+      case 'it':
+        return 'Edit material';
+      case 'es':
+        return 'Edit material';
       default:
         return 'Edit material';
     }
@@ -785,8 +1449,16 @@ class AppStrings {
   String get appTitle {
     switch (locale.languageCode) {
       //Don't translate, always only one return
+      case 'de':
+        return '3D Farm Manager';
+      case 'fr':
+        return '3D Farm Manager';
+      case 'it':
+        return '3D Farm Manager';
+      case 'es':
+        return '3D Farm Manager';
       default:
-        return 'Filament Manager';
+        return '3D Farm Manager';
     }
   }
 
@@ -794,6 +1466,14 @@ class AppStrings {
     switch (locale.languageCode) {
       case 'tr':
         return 'Yazıcılar';
+      case 'de':
+        return 'Drucker';
+      case 'fr':
+        return 'Printers';
+      case 'it':
+        return 'Printers';
+      case 'es':
+        return 'Printers';
       default:
         return 'Printers';
     }
@@ -803,6 +1483,14 @@ class AppStrings {
     switch (locale.languageCode) {
       case 'tr':
         return 'OCR Test';
+      case 'de':
+        return 'OCR scannen';
+      case 'fr':
+        return 'Scan OCR';
+      case 'it':
+        return 'Scan OCR';
+      case 'es':
+        return 'Scan OCR';
       default:
         return 'Scan OCR';
     }
@@ -812,6 +1500,14 @@ class AppStrings {
     switch (locale.languageCode) {
       case 'tr':
         return 'Marka ekle';
+      case 'de':
+        return 'Marke hinzufügen';
+      case 'fr':
+        return 'Add brand';
+      case 'it':
+        return 'Add brand';
+      case 'es':
+        return 'Add brand';
       default:
         return 'Add brand';
     }
@@ -821,6 +1517,14 @@ class AppStrings {
     switch (locale.languageCode) {
       case 'tr':
         return 'Materyal ekle';
+      case 'de':
+        return 'Material hinzufügen';
+      case 'fr':
+        return 'Add material';
+      case 'it':
+        return 'Add material';
+      case 'es':
+        return 'Add material';
       default:
         return 'Add material';
     }
@@ -829,6 +1533,14 @@ class AppStrings {
   String get filament {
     switch (locale.languageCode) {
       case 'tr':
+        return 'Filament';
+      case 'de':
+        return 'Filament';
+      case 'fr':
+        return 'Filament';
+      case 'it':
+        return 'Filament';
+      case 'es':
         return 'Filament';
       default:
         return 'Filament';
@@ -839,6 +1551,14 @@ class AppStrings {
     switch (locale.languageCode) {
       case 'tr':
         return 'Durum';
+      case 'de':
+        return 'Status';
+      case 'fr':
+        return 'Status';
+      case 'it':
+        return 'Status';
+      case 'es':
+        return 'Status';
       default:
         return 'Status';
     }
@@ -848,6 +1568,14 @@ class AppStrings {
     switch (locale.languageCode) {
       case 'tr':
         return 'Makara';
+      case 'de':
+        return 'Spulen';
+      case 'fr':
+        return 'Spools';
+      case 'it':
+        return 'Spools';
+      case 'es':
+        return 'Spools';
       default:
         return 'Spools';
     }
@@ -859,6 +1587,14 @@ class AppStrings {
     switch (locale.languageCode) {
       case 'tr':
         return 'Ayarlar';
+      case 'de':
+        return 'Einstellungen';
+      case 'fr':
+        return 'Settings';
+      case 'it':
+        return 'Settings';
+      case 'es':
+        return 'Settings';
       default:
         return 'Settings';
     }
@@ -868,6 +1604,14 @@ class AppStrings {
     switch (locale.languageCode) {
       case 'tr':
         return 'Verileri Dışa Aktar';
+      case 'de':
+        return 'Daten exportieren';
+      case 'fr':
+        return 'Export Data';
+      case 'it':
+        return 'Export Data';
+      case 'es':
+        return 'Export Data';
       default:
         return 'Export Data';
     }
@@ -877,6 +1621,14 @@ class AppStrings {
     switch (locale.languageCode) {
       case 'tr':
         return 'Verileri İçe Aktar';
+      case 'de':
+        return 'Daten importieren';
+      case 'fr':
+        return 'Import Data';
+      case 'it':
+        return 'Import Data';
+      case 'es':
+        return 'Import Data';
       default:
         return 'Import Data';
     }
@@ -886,6 +1638,14 @@ class AppStrings {
     switch (locale.languageCode) {
       case 'tr':
         return 'Veriler başarıyla dışa aktarıldı';
+      case 'de':
+        return 'Daten erfolgreich exportiert';
+      case 'fr':
+        return 'Data exported successfully';
+      case 'it':
+        return 'Data exported successfully';
+      case 'es':
+        return 'Data exported successfully';
       default:
         return 'Data exported successfully';
     }
@@ -895,6 +1655,14 @@ class AppStrings {
     switch (locale.languageCode) {
       case 'tr':
         return 'Dışa aktarma başarısız';
+      case 'de':
+        return 'Export fehlgeschlagen';
+      case 'fr':
+        return 'Export failed';
+      case 'it':
+        return 'Export failed';
+      case 'es':
+        return 'Export failed';
       default:
         return 'Export failed';
     }
@@ -904,6 +1672,14 @@ class AppStrings {
     switch (locale.languageCode) {
       case 'tr':
         return 'Veriler başarıyla içe aktarıldı';
+      case 'de':
+        return 'Daten erfolgreich importiert';
+      case 'fr':
+        return 'Data imported successfully';
+      case 'it':
+        return 'Data imported successfully';
+      case 'es':
+        return 'Data imported successfully';
       default:
         return 'Data imported successfully';
     }
@@ -913,6 +1689,14 @@ class AppStrings {
     switch (locale.languageCode) {
       case 'tr':
         return 'İçe aktarma başarısız';
+      case 'de':
+        return 'Import fehlgeschlagen';
+      case 'fr':
+        return 'Import failed';
+      case 'it':
+        return 'Import failed';
+      case 'es':
+        return 'Import failed';
       default:
         return 'Import failed';
     }
@@ -922,6 +1706,14 @@ class AppStrings {
     switch (locale.languageCode) {
       case 'tr':
         return 'Tümünü Değiştir';
+      case 'de':
+        return 'Alle ersetzen';
+      case 'fr':
+        return 'Replace All';
+      case 'it':
+        return 'Replace All';
+      case 'es':
+        return 'Replace All';
       default:
         return 'Replace All';
     }
@@ -931,6 +1723,14 @@ class AppStrings {
     switch (locale.languageCode) {
       case 'tr':
         return 'Bu işlem mevcut tüm verileri silip dosyadan yükleyecek. Devam edilsin mi?';
+      case 'de':
+        return 'This will delete all existing data and import from file. Continue?';
+      case 'fr':
+        return 'This will delete all existing data and import from file. Continue?';
+      case 'it':
+        return 'This will delete all existing data and import from file. Continue?';
+      case 'es':
+        return 'This will delete all existing data and import from file. Continue?';
       default:
         return 'This will delete all existing data and import from file. Continue?';
     }
@@ -940,6 +1740,14 @@ class AppStrings {
     switch (locale.languageCode) {
       case 'tr':
         return 'Birleştir';
+      case 'de':
+        return 'Zusammenführen';
+      case 'fr':
+        return 'Merge';
+      case 'it':
+        return 'Merge';
+      case 'es':
+        return 'Merge';
       default:
         return 'Merge';
     }
@@ -949,6 +1757,14 @@ class AppStrings {
     switch (locale.languageCode) {
       case 'tr':
         return 'Mevcut verileri koru, dosyadan yenilerini ekle';
+      case 'de':
+        return 'Keep existing data and add new items from file';
+      case 'fr':
+        return 'Keep existing data and add new items from file';
+      case 'it':
+        return 'Keep existing data and add new items from file';
+      case 'es':
+        return 'Keep existing data and add new items from file';
       default:
         return 'Keep existing data and add new items from file';
     }
@@ -958,6 +1774,14 @@ class AppStrings {
     switch (locale.languageCode) {
       case 'tr':
         return 'İçe Aktarma Modunu Seç';
+      case 'de':
+        return 'Importmodus auswählen';
+      case 'fr':
+        return 'Select Import Mode';
+      case 'it':
+        return 'Select Import Mode';
+      case 'es':
+        return 'Select Import Mode';
       default:
         return 'Select Import Mode';
     }
@@ -967,6 +1791,14 @@ class AppStrings {
     switch (locale.languageCode) {
       case 'tr':
         return 'Dosya seçilmedi';
+      case 'de':
+        return 'No file selected';
+      case 'fr':
+        return 'No file selected';
+      case 'it':
+        return 'No file selected';
+      case 'es':
+        return 'No file selected';
       default:
         return 'No file selected';
     }
@@ -976,6 +1808,14 @@ class AppStrings {
     switch (locale.languageCode) {
       case 'tr':
         return 'Geçersiz dosya formatı';
+      case 'de':
+        return 'Ungültiges Dateiformat';
+      case 'fr':
+        return 'Invalid file format';
+      case 'it':
+        return 'Invalid file format';
+      case 'es':
+        return 'Invalid file format';
       default:
         return 'Invalid file format';
     }
@@ -986,6 +1826,14 @@ class AppStrings {
     switch (locale.languageCode) {
       case 'tr':
         return 'Filament Manager\'a Hoş Geldiniz';
+      case 'de':
+        return 'Willkommen bei Filament Manager';
+      case 'fr':
+        return 'Welcome to Filament Manager';
+      case 'it':
+        return 'Welcome to Filament Manager';
+      case 'es':
+        return 'Welcome to Filament Manager';
       default:
         return 'Welcome to Filament Manager';
     }
@@ -995,6 +1843,14 @@ class AppStrings {
     switch (locale.languageCode) {
       case 'tr':
         return 'Filament stokunuzu kolayca takip edin, yazıcılara atayın ve organize edin.';
+      case 'de':
+        return 'Easily track your filament stock, assign to printers, and stay organized.';
+      case 'fr':
+        return 'Easily track your filament stock, assign to printers, and stay organized.';
+      case 'it':
+        return 'Easily track your filament stock, assign to printers, and stay organized.';
+      case 'es':
+        return 'Easily track your filament stock, assign to printers, and stay organized.';
       default:
         return 'Easily track your filament stock, assign to printers, and stay organized.';
     }
@@ -1004,6 +1860,14 @@ class AppStrings {
     switch (locale.languageCode) {
       case 'tr':
         return 'Filamentlerinizi Ekleyin';
+      case 'de':
+        return 'Add Your Filaments';
+      case 'fr':
+        return 'Add Your Filaments';
+      case 'it':
+        return 'Add Your Filaments';
+      case 'es':
+        return 'Add Your Filaments';
       default:
         return 'Add Your Filaments';
     }
@@ -1013,6 +1877,14 @@ class AppStrings {
     switch (locale.languageCode) {
       case 'tr':
         return 'Marka, malzeme ve renk bilgileriyle filamentlerinizi kaydedin. Durum takibi yapın.';
+      case 'de':
+        return 'Save your filaments with brand, material and color info. Track their status.';
+      case 'fr':
+        return 'Save your filaments with brand, material and color info. Track their status.';
+      case 'it':
+        return 'Save your filaments with brand, material and color info. Track their status.';
+      case 'es':
+        return 'Save your filaments with brand, material and color info. Track their status.';
       default:
         return 'Save your filaments with brand, material and color info. Track their status.';
     }
@@ -1022,6 +1894,14 @@ class AppStrings {
     switch (locale.languageCode) {
       case 'tr':
         return 'Yazıcılara Atayın';
+      case 'de':
+        return 'Assign to Printers';
+      case 'fr':
+        return 'Assign to Printers';
+      case 'it':
+        return 'Assign to Printers';
+      case 'es':
+        return 'Assign to Printers';
       default:
         return 'Assign to Printers';
     }
@@ -1031,6 +1911,14 @@ class AppStrings {
     switch (locale.languageCode) {
       case 'tr':
         return 'Filamentleri yazıcı slotlarına atayın. Hangi filament hangi yazıcıda hızlıca görün.';
+      case 'de':
+        return 'Assign filaments to printer slots. Quickly see which filament is in which printer.';
+      case 'fr':
+        return 'Assign filaments to printer slots. Quickly see which filament is in which printer.';
+      case 'it':
+        return 'Assign filaments to printer slots. Quickly see which filament is in which printer.';
+      case 'es':
+        return 'Assign filaments to printer slots. Quickly see which filament is in which printer.';
       default:
         return 'Assign filaments to printer slots. Quickly see which filament is in which printer.';
     }
@@ -1040,6 +1928,14 @@ class AppStrings {
     switch (locale.languageCode) {
       case 'tr':
         return 'OCR ile Etiket Tarayın';
+      case 'de':
+        return 'Scan Labels with OCR';
+      case 'fr':
+        return 'Scan Labels with OCR';
+      case 'it':
+        return 'Scan Labels with OCR';
+      case 'es':
+        return 'Scan Labels with OCR';
       default:
         return 'Scan Labels with OCR';
     }
@@ -1049,6 +1945,14 @@ class AppStrings {
     switch (locale.languageCode) {
       case 'tr':
         return 'Kamerayı kullanarak etiketleri tarayın. Marka, renk ve malzeme bilgileri otomatik doldurulur.';
+      case 'de':
+        return 'Use the camera to scan labels. Brand, color and material info are auto-filled.';
+      case 'fr':
+        return 'Use the camera to scan labels. Brand, color and material info are auto-filled.';
+      case 'it':
+        return 'Use the camera to scan labels. Brand, color and material info are auto-filled.';
+      case 'es':
+        return 'Use the camera to scan labels. Brand, color and material info are auto-filled.';
       default:
         return 'Use the camera to scan labels. Brand, color and material info are auto-filled.';
     }
@@ -1058,6 +1962,14 @@ class AppStrings {
     switch (locale.languageCode) {
       case 'tr':
         return 'Atla';
+      case 'de':
+        return 'Überspringen';
+      case 'fr':
+        return 'Skip';
+      case 'it':
+        return 'Skip';
+      case 'es':
+        return 'Skip';
       default:
         return 'Skip';
     }
@@ -1067,6 +1979,14 @@ class AppStrings {
     switch (locale.languageCode) {
       case 'tr':
         return 'İleri';
+      case 'de':
+        return 'Weiter';
+      case 'fr':
+        return 'Next';
+      case 'it':
+        return 'Next';
+      case 'es':
+        return 'Next';
       default:
         return 'Next';
     }
@@ -1076,6 +1996,14 @@ class AppStrings {
     switch (locale.languageCode) {
       case 'tr':
         return 'Başlayalım';
+      case 'de':
+        return 'Los geht’s';
+      case 'fr':
+        return 'Get Started';
+      case 'it':
+        return 'Get Started';
+      case 'es':
+        return 'Get Started';
       default:
         return 'Get Started';
     }
@@ -1085,6 +2013,14 @@ class AppStrings {
     switch (locale.languageCode) {
       case 'tr':
         return 'Raporlar';
+      case 'de':
+        return 'Berichte';
+      case 'fr':
+        return 'Reports';
+      case 'it':
+        return 'Reports';
+      case 'es':
+        return 'Reports';
       default:
         return 'Reports';
     }
@@ -1094,6 +2030,14 @@ class AppStrings {
     switch (locale.languageCode) {
       case 'tr':
         return 'Envanter Raporu';
+      case 'de':
+        return 'Bestandsbericht';
+      case 'fr':
+        return 'Inventory Report';
+      case 'it':
+        return 'Inventory Report';
+      case 'es':
+        return 'Inventory Report';
       default:
         return 'Inventory Report';
     }
@@ -1103,6 +2047,14 @@ class AppStrings {
     switch (locale.languageCode) {
       case 'tr':
         return 'Filtrele';
+      case 'de':
+        return 'Filtern nach';
+      case 'fr':
+        return 'Filter By';
+      case 'it':
+        return 'Filter By';
+      case 'es':
+        return 'Filter By';
       default:
         return 'Filter By';
     }
@@ -1112,6 +2064,14 @@ class AppStrings {
     switch (locale.languageCode) {
       case 'tr':
         return 'Sırala';
+      case 'de':
+        return 'Sortieren nach';
+      case 'fr':
+        return 'Sort By';
+      case 'it':
+        return 'Sort By';
+      case 'es':
+        return 'Sort By';
       default:
         return 'Sort By';
     }
@@ -1121,6 +2081,14 @@ class AppStrings {
     switch (locale.languageCode) {
       case 'tr':
         return 'Bitenleri Göster';
+      case 'de':
+        return 'Fertige anzeigen';
+      case 'fr':
+        return 'Show Finished';
+      case 'it':
+        return 'Show Finished';
+      case 'es':
+        return 'Show Finished';
       default:
         return 'Show Finished';
     }
@@ -1130,6 +2098,14 @@ class AppStrings {
     switch (locale.languageCode) {
       case 'tr':
         return 'Tüm Durumlar';
+      case 'de':
+        return 'Alle Status';
+      case 'fr':
+        return 'All Statuses';
+      case 'it':
+        return 'All Statuses';
+      case 'es':
+        return 'All Statuses';
       default:
         return 'All Statuses';
     }
@@ -1139,6 +2115,14 @@ class AppStrings {
     switch (locale.languageCode) {
       case 'tr':
         return 'Tüm Markalar';
+      case 'de':
+        return 'Alle Marken';
+      case 'fr':
+        return 'All Brands';
+      case 'it':
+        return 'All Brands';
+      case 'es':
+        return 'All Brands';
       default:
         return 'All Brands';
     }
@@ -1148,6 +2132,14 @@ class AppStrings {
     switch (locale.languageCode) {
       case 'tr':
         return 'Tüm Tipler';
+      case 'de':
+        return 'Alle Materialien';
+      case 'fr':
+        return 'All Materials';
+      case 'it':
+        return 'All Materials';
+      case 'es':
+        return 'All Materials';
       default:
         return 'All Materials';
     }
@@ -1157,6 +2149,14 @@ class AppStrings {
     switch (locale.languageCode) {
       case 'tr':
         return 'Toplam Makara';
+      case 'de':
+        return 'Gesamtspulen';
+      case 'fr':
+        return 'Total Spools';
+      case 'it':
+        return 'Total Spools';
+      case 'es':
+        return 'Total Spools';
       default:
         return 'Total Spools';
     }
