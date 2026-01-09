@@ -7,6 +7,26 @@ and this project follows [Semantic Versioning](https://semver.org/).
 
 ---
 
+## [0.3.0-beta] — 2026-01-09
+
+### Added
+- **Inventory Report** - New reporting feature
+  - View all filaments in a filterable list
+  - Filter by status (Active/Low/Finished)
+  - Filter by brand
+  - Filter by material
+  - Toggle to show/hide finished filaments
+  - Summary count of total spools
+  - Visual status indicators with color dots
+  - Location display (printer/slot or storage location)
+- Reports menu item added to navigation drawer
+
+### Changed
+- Project stage changed from Alpha to Beta
+- App is now ready for limited public testing
+
+---
+
 ## [0.2.0-alpha] — 2026-01-09
 
 ### Added

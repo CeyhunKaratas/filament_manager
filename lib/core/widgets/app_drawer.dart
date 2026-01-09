@@ -70,6 +70,16 @@ class AppDrawer extends StatelessWidget {
           ),
 
           // --------------------
+          // REPORTS
+          // --------------------
+          _DrawerItem(
+            icon: Icons.assessment,
+            label: strings.reports,
+            selected: current == 'reports',
+            onTap: () => _navigate(context, 'reports'),
+          ),
+
+          // --------------------
           // SETTINGS
           // --------------------
           const Divider(),

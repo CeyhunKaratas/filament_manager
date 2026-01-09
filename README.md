@@ -8,8 +8,8 @@ The app focuses on **clarity, speed and daily usability**, not cloud features or
 
 ## 🚧 Project Status
 
-- **Current version:** `0.2.0-alpha`
-- **Stage:** Alpha (internal / limited testing)
+- **Current version:** `0.3.0-beta`
+- **Stage:** Beta (limited public testing)
 - **Database:** Local SQLite (persistent)
 - **Platform:** Android (iOS not tested yet)
 
@@ -40,6 +40,12 @@ This project is actively used by its author and under continuous development.
   - Replace All: Delete existing data and restore from backup
   - Merge: Keep existing data and add items from backup
 - Backup files can be shared via any app
+
+### Reports
+- **Inventory Report** - Detailed view of all filaments
+  - Filter by status, brand, material
+  - Toggle to show/hide finished filaments
+  - Summary of total spools
 
 ### Onboarding
 - First-time user tutorial
@@ -101,7 +107,8 @@ lib/
 │  ├─ scan/
 │  ├─ definitions/
 │  ├─ settings/
-│  └─ onboarding/
+│  ├─ onboarding/
+│  └─ reports/
 ├─ l10n/
 └─ main.dart
 ```
@@ -131,9 +138,9 @@ All changes are documented in [`CHANGELOG.md`](./CHANGELOG.md).
 
 ---
 
-## 🧪 Alpha Usage Notes
+## 🧪 Beta Usage Notes
 
-- This version is intended for **personal and limited testing**
+- This version is intended for **limited public testing**
 - The database is persistent — uninstalling the app will remove data
 - Always export your data before updating to a new version
 
@@ -141,18 +148,15 @@ All changes are documented in [`CHANGELOG.md`](./CHANGELOG.md).
 
 ## 🛣️ Roadmap
 
-### Planned for 0.3.0-beta
-- Inventory Report (detailed view of all spools)
-  - Filterable by status, brand, material, location
-  - Sortable columns
-  - Show/hide finished filaments toggle
+### Planned for Future Versions
 - Statistics dashboard
 - UI polish and refinements
+- Advanced reporting features
 
 ### Future (post-beta)
 - Cloud sync (optional)
 - Multiple language support improvements
-- Advanced reporting
+- Cost analysis and usage trends
 
 ---
 

@@ -1080,4 +1080,85 @@ class AppStrings {
         return 'Get Started';
     }
   }
+
+  String get reports {
+    switch (locale.languageCode) {
+      case 'tr':
+        return 'Raporlar';
+      default:
+        return 'Reports';
+    }
+  }
+
+  String get inventoryReport {
+    switch (locale.languageCode) {
+      case 'tr':
+        return 'Envanter Raporu';
+      default:
+        return 'Inventory Report';
+    }
+  }
+
+  String get filterBy {
+    switch (locale.languageCode) {
+      case 'tr':
+        return 'Filtrele';
+      default:
+        return 'Filter By';
+    }
+  }
+
+  String get sortBy {
+    switch (locale.languageCode) {
+      case 'tr':
+        return 'Sırala';
+      default:
+        return 'Sort By';
+    }
+  }
+
+  String get showFinished {
+    switch (locale.languageCode) {
+      case 'tr':
+        return 'Bitenleri Göster';
+      default:
+        return 'Show Finished';
+    }
+  }
+
+  String get allStatuses {
+    switch (locale.languageCode) {
+      case 'tr':
+        return 'Tüm Durumlar';
+      default:
+        return 'All Statuses';
+    }
+  }
+
+  String get allBrands {
+    switch (locale.languageCode) {
+      case 'tr':
+        return 'Tüm Markalar';
+      default:
+        return 'All Brands';
+    }
+  }
+
+  String get allMaterials {
+    switch (locale.languageCode) {
+      case 'tr':
+        return 'Tüm Tipler';
+      default:
+        return 'All Materials';
+    }
+  }
+
+  String get totalSpools {
+    switch (locale.languageCode) {
+      case 'tr':
+        return 'Toplam Makara';
+      default:
+        return 'Total Spools';
+    }
+  }
 }
