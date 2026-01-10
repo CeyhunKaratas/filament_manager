@@ -1,0 +1,572 @@
+import 'package:flutter/material.dart';
+import 'package:camera/camera.dart';
+
+import '../../core/database/filament_repository.dart';
+import '../../core/models/filament.dart';
+import '../../l10n/app_strings.dart';
+import '../../core/database/location_repository.dart';
+import '../../core/models/location.dart';
+
+import '../definitions/colors/color_model.dart';
+import '../definitions/colors/color_repository.dart';
+import '../definitions/colors/color_select_popup.dart';
+
+import '../definitions/brands/brand_model.dart';
+import '../definitions/brands/brand_repository.dart';
+
+import '../definitions/materials/material_model.dart';
+import '../definitions/materials/material_repository.dart';
+
+import '../scan/camera_capture_page.dart';
+import '../../core/ocr/ocr_text_extractor.dart';
+import '../../core/ocr/ocr_analyzer.dart';
+
+class FilamentEditPage extends StatefulWidget {
+  final Filament filament;
+
+  const FilamentEditPage({super.key, required this.filament});
+
+  @override
+  State<FilamentEditPage> createState() => _FilamentEditPageState();
+}
+
+class _FilamentEditPageState extends State<FilamentEditPage> {
+  final _formKey = GlobalKey<FormState>();
+
+  final _brandController = TextEditingController();
+  final _materialController = TextEditingController();
+  final _colorController = TextEditingController();
+
+  TextEditingController? _brandFieldCtrl;
+  TextEditingController? _materialFieldCtrl;
+  TextEditingController? _colorFieldCtrl;
+
+  String get _brandText => (_brandFieldCtrl ?? _brandController).text;
+  String get _materialText => (_materialFieldCtrl ?? _materialController).text;
+  String get _colorText => (_colorFieldCtrl ?? _colorController).text;
+
+  set _brandTextSet(String v) => (_brandFieldCtrl ?? _brandController).text = v;
+  set _materialTextSet(String v) =>
+      (_materialFieldCtrl ?? _materialController).text = v;
+  set _colorTextSet(String v) => (_colorFieldCtrl ?? _colorController).text = v;
+
+  final FilamentRepository _repository = FilamentRepository();
+  final LocationRepository _locationRepository = LocationRepository();
+  final ColorRepository _colorRepository = ColorRepository();
+  final BrandRepository _brandRepository = BrandRepository();
+  final MaterialRepository _materialRepository = MaterialRepository();
+
+  bool _isSaving = false;
+
+  BrandModel? _selectedBrand;
+  List<BrandModel> _allBrands = [];
+
+  MaterialModel? _selectedMaterial;
+  List<MaterialModel> _allMaterials = [];
+
+  ColorModel? _selectedColor;
+  List<ColorModel> _allColors = [];
+
+  List<Location> _locations = [];
+  Location? _selectedLocation;
+
+  @override
+  void initState() {
+    super.initState();
+    _loadBrands();
+    _loadMaterials();
+    _loadColors();
+    _loadLocations();
+  }
+
+  @override
+  void dispose() {
+    _brandController.dispose();
+    _materialController.dispose();
+    _colorController.dispose();
+    super.dispose();
+  }
+
+  Future<void> _loadBrands() async {
+    try {
+      _allBrands = await _brandRepository.getAll();
+
+      // Set current brand
+      final currentBrand = _allBrands.firstWhere(
+        (b) => b.id == widget.filament.brandId,
+        orElse: () => _allBrands.first,
+      );
+      _selectedBrand = currentBrand;
+      _brandTextSet = currentBrand.name;
+
+      if (mounted) setState(() {});
+    } catch (e) {
+      debugPrint('Error loading brands: $e');
+    }
+  }
+
+  Future<void> _loadMaterials() async {
+    try {
+      _allMaterials = await _materialRepository.getAll();
+
+      // Set current material
+      final currentMaterial = _allMaterials.firstWhere(
+        (m) => m.id == widget.filament.materialId,
+        orElse: () => _allMaterials.first,
+      );
+      _selectedMaterial = currentMaterial;
+      _materialTextSet = currentMaterial.name;
+
+      if (mounted) setState(() {});
+    } catch (e) {
+      debugPrint('Error loading materials: $e');
+    }
+  }
+
+  Future<void> _loadColors() async {
+    try {
+      _allColors = await _colorRepository.getAll();
+
+      // Set current color
+      final currentColor = _allColors.firstWhere(
+        (c) => c.id == widget.filament.colorId,
+        orElse: () => _allColors.first,
+      );
+      _selectedColor = currentColor;
+      _colorTextSet = currentColor.name;
+
+      if (mounted) setState(() {});
+    } catch (e) {
+      debugPrint('Error loading colors: $e');
+    }
+  }
+
+  Future<void> _loadLocations() async {
+    try {
+      _locations = await _locationRepository.getAllLocations();
+
+      // Set current location
+      _selectedLocation = _locations.firstWhere(
+        (l) => l.id == widget.filament.locationId,
+        orElse: () => _locations.first,
+      );
+
+      if (mounted) setState(() {});
+    } catch (e) {
+      debugPrint('Error loading locations: $e');
+    }
+  }
+
+  // -----------------------
+  // OCR
+  // -----------------------
+  Future<void> _readFromCameraAndOcr() async {
+    try {
+      final photos = await Navigator.push<List<XFile>>(
+        context,
+        MaterialPageRoute(builder: (_) => const CameraCapturePage()),
+      );
+
+      if (!mounted || photos == null || photos.isEmpty) return;
+
+      final paths = photos.map((e) => e.path).toList();
+      final perImageTexts =
+          await OcrTextExtractor.extractNormalizedTextsPerImage(paths);
+      final merged = OcrTextExtractor.mergeNonEmpty(perImageTexts);
+      if (merged.isEmpty) return;
+
+      final lower = merged.toLowerCase();
+
+      final foundBrands = _allBrands
+          .where((b) => lower.contains(b.name))
+          .toList();
+      if (foundBrands.isNotEmpty) {
+        _brandTextSet = foundBrands.first.name;
+        await _handleBrandResolve(foundBrands.first.name);
+      }
+
+      final foundMaterials = _allMaterials
+          .where((m) => lower.contains(m.name))
+          .toList();
+      if (foundMaterials.isNotEmpty) {
+        _materialTextSet = foundMaterials.first.name;
+        await _handleMaterialResolve(foundMaterials.first.name);
+      }
+
+      final foundColors = OcrAnalyzer.matchKeywords(
+        mergedText: merged,
+        keywords: _allColors.map((c) => c.name).toList(),
+      );
+      if (foundColors.isNotEmpty) {
+        _colorTextSet = foundColors.first;
+        await _handleColorResolve(foundColors.first);
+      }
+
+      if (mounted) setState(() {});
+    } catch (e) {
+      debugPrint('Error in OCR: $e');
+    }
+  }
+
+  // -----------------------
+  // BRAND RESOLVE
+  // -----------------------
+  Future<void> _handleBrandResolve(String raw) async {
+    try {
+      final input = raw.trim().toLowerCase();
+      if (input.isEmpty) return;
+
+      final match = _allBrands.where((b) => b.name == input).toList();
+      if (match.isNotEmpty) {
+        setState(() {
+          _selectedBrand = match.first;
+          _brandTextSet = match.first.name;
+        });
+        return;
+      }
+
+      final created = await showDialog<BrandModel?>(
+        context: context,
+        builder: (dialogContext) => AlertDialog(
+          title: Text(AppStrings.of(Localizations.localeOf(context)).addBrand),
+          content: Text(input),
+          actions: [
+            TextButton(
+              onPressed: () => Navigator.pop(dialogContext),
+              child: Text(
+                AppStrings.of(Localizations.localeOf(context)).cancel,
+              ),
+            ),
+            ElevatedButton(
+              onPressed: () async {
+                await _brandRepository.add(input);
+                final all = await _brandRepository.getAll();
+                final b = all.firstWhere((e) => e.name == input);
+                Navigator.pop(dialogContext, b);
+              },
+              child: Text(AppStrings.of(Localizations.localeOf(context)).ok),
+            ),
+          ],
+        ),
+      );
+
+      if (created != null) {
+        setState(() {
+          _selectedBrand = created;
+          _brandTextSet = created.name;
+          _allBrands.add(created);
+        });
+      }
+    } catch (e) {
+      debugPrint('Error resolving brand: $e');
+    }
+  }
+
+  // -----------------------
+  // MATERIAL RESOLVE
+  // -----------------------
+  Future<void> _handleMaterialResolve(String raw) async {
+    try {
+      final input = raw.trim().toLowerCase();
+      if (input.isEmpty) return;
+
+      final match = _allMaterials.where((m) => m.name == input).toList();
+      if (match.isNotEmpty) {
+        setState(() {
+          _selectedMaterial = match.first;
+          _materialTextSet = match.first.name;
+        });
+        return;
+      }
+
+      final created = await showDialog<MaterialModel?>(
+        context: context,
+        builder: (dialogContext) => AlertDialog(
+          title: Text(
+            AppStrings.of(Localizations.localeOf(context)).addMaterial,
+          ),
+          content: Text(input),
+          actions: [
+            TextButton(
+              onPressed: () => Navigator.pop(dialogContext),
+              child: Text(
+                AppStrings.of(Localizations.localeOf(context)).cancel,
+              ),
+            ),
+            ElevatedButton(
+              onPressed: () async {
+                await _materialRepository.add(input);
+                final all = await _materialRepository.getAll();
+                final m = all.firstWhere((e) => e.name == input);
+                Navigator.pop(dialogContext, m);
+              },
+              child: Text(AppStrings.of(Localizations.localeOf(context)).ok),
+            ),
+          ],
+        ),
+      );
+
+      if (created != null) {
+        setState(() {
+          _selectedMaterial = created;
+          _materialTextSet = created.name;
+          _allMaterials.add(created);
+        });
+      }
+    } catch (e) {
+      debugPrint('Error resolving material: $e');
+    }
+  }
+
+  // -----------------------
+  // COLOR RESOLVE
+  // -----------------------
+  Future<void> _handleColorResolve(String raw) async {
+    try {
+      final input = raw.trim();
+      if (input.isEmpty) return;
+
+      final locale = Localizations.localeOf(context);
+      final match = await _colorRepository.findByNameOrTerm(
+        input,
+        lang: locale.languageCode,
+      );
+
+      if (match != null) {
+        setState(() {
+          _selectedColor = match;
+          _colorTextSet = match.name.toLowerCase();
+        });
+        return;
+      }
+
+      final created = await showDialog<ColorModel?>(
+        context: context,
+        builder: (_) => ColorSelectPopup(enteredText: input),
+      );
+
+      if (created != null) {
+        setState(() {
+          _selectedColor = created;
+          _colorTextSet = created.name.toLowerCase();
+        });
+      }
+    } catch (e) {
+      debugPrint('Error resolving color: $e');
+    }
+  }
+
+  // -----------------------
+  // UPDATE
+  // -----------------------
+  Future<void> _updateFilament() async {
+    if (!_formKey.currentState!.validate()) return;
+
+    setState(() {
+      _isSaving = true;
+    });
+
+    try {
+      if (_selectedBrand == null && _brandText.isNotEmpty) {
+        await _handleBrandResolve(_brandText);
+      }
+      if (_selectedMaterial == null && _materialText.isNotEmpty) {
+        await _handleMaterialResolve(_materialText);
+      }
+      if (_selectedColor == null && _colorText.isNotEmpty) {
+        await _handleColorResolve(_colorText);
+      }
+
+      if (_selectedBrand == null ||
+          _selectedMaterial == null ||
+          _selectedColor == null ||
+          _selectedLocation == null) {
+        return;
+      }
+
+      final updatedFilament = widget.filament.copyWith(
+        brandId: _selectedBrand!.id,
+        materialId: _selectedMaterial!.id,
+        colorId: _selectedColor!.id,
+        locationId: _selectedLocation!.id,
+      );
+
+      await _repository.updateFilament(updatedFilament);
+
+      if (mounted) Navigator.pop(context, true);
+    } catch (e) {
+      debugPrint('Error updating filament: $e');
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text('Failed to update filament: $e'),
+            backgroundColor: Colors.red,
+          ),
+        );
+      }
+    } finally {
+      if (mounted) {
+        setState(() {
+          _isSaving = false;
+        });
+      }
+    }
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    final strings = AppStrings.of(Localizations.localeOf(context));
+
+    return Scaffold(
+      appBar: AppBar(title: Text(strings.editSpool)),
+      body: Padding(
+        padding: const EdgeInsets.all(16),
+        child: SingleChildScrollView(
+          child: Form(
+            key: _formKey,
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.stretch,
+              children: [
+                ElevatedButton.icon(
+                  icon: const Icon(Icons.camera_alt),
+                  label: Text(strings.scanReadFromCamera),
+                  onPressed: _readFromCameraAndOcr,
+                ),
+                const SizedBox(height: 16),
+
+                Autocomplete<BrandModel>(
+                  displayStringForOption: (b) => b.name,
+                  optionsBuilder: (textEditingValue) {
+                    if (textEditingValue.text.isEmpty) return _allBrands;
+                    return _allBrands.where(
+                      (b) => b.name.toLowerCase().contains(
+                        textEditingValue.text.toLowerCase(),
+                      ),
+                    );
+                  },
+                  onSelected: (b) {
+                    _selectedBrand = b;
+                    _brandTextSet = b.name;
+                  },
+                  fieldViewBuilder: (_, ctrl, f, __) {
+                    _brandFieldCtrl = ctrl;
+                    return Focus(
+                      onFocusChange: (hasFocus) {
+                        if (!hasFocus) _handleBrandResolve(_brandText);
+                      },
+                      child: TextFormField(
+                        controller: ctrl,
+                        focusNode: f,
+                        decoration: InputDecoration(labelText: strings.brand),
+                        validator: (v) =>
+                            v == null || v.isEmpty ? strings.required : null,
+                      ),
+                    );
+                  },
+                ),
+
+                const SizedBox(height: 12),
+
+                Autocomplete<MaterialModel>(
+                  displayStringForOption: (m) => m.name,
+                  optionsBuilder: (textEditingValue) {
+                    if (textEditingValue.text.isEmpty) return _allMaterials;
+                    return _allMaterials.where(
+                      (m) => m.name.toLowerCase().contains(
+                        textEditingValue.text.toLowerCase(),
+                      ),
+                    );
+                  },
+                  onSelected: (m) {
+                    _selectedMaterial = m;
+                    _materialTextSet = m.name;
+                  },
+                  fieldViewBuilder: (_, ctrl, f, __) {
+                    _materialFieldCtrl = ctrl;
+                    return Focus(
+                      onFocusChange: (hasFocus) {
+                        if (!hasFocus) _handleMaterialResolve(_materialText);
+                      },
+                      child: TextFormField(
+                        controller: ctrl,
+                        focusNode: f,
+                        decoration: InputDecoration(
+                          labelText: strings.material,
+                        ),
+                        validator: (v) =>
+                            v == null || v.isEmpty ? strings.required : null,
+                      ),
+                    );
+                  },
+                ),
+
+                const SizedBox(height: 12),
+
+                Autocomplete<ColorModel>(
+                  displayStringForOption: (c) => c.name,
+                  optionsBuilder: (textEditingValue) {
+                    if (textEditingValue.text.isEmpty) return _allColors;
+                    return _allColors.where(
+                      (c) => c.name.toLowerCase().contains(
+                        textEditingValue.text.toLowerCase(),
+                      ),
+                    );
+                  },
+                  onSelected: (c) {
+                    _selectedColor = c;
+                    _colorTextSet = c.name;
+                  },
+                  fieldViewBuilder: (_, ctrl, f, __) {
+                    _colorFieldCtrl = ctrl;
+                    return Focus(
+                      onFocusChange: (hasFocus) {
+                        if (!hasFocus) _handleColorResolve(_colorText);
+                      },
+                      child: TextFormField(
+                        controller: ctrl,
+                        focusNode: f,
+                        decoration: InputDecoration(labelText: strings.color),
+                        validator: (v) =>
+                            v == null || v.isEmpty ? strings.required : null,
+                      ),
+                    );
+                  },
+                ),
+
+                const SizedBox(height: 12),
+
+                DropdownButtonFormField<Location>(
+                  value: _selectedLocation,
+                  decoration: InputDecoration(labelText: strings.location),
+                  items: _locations
+                      .map(
+                        (l) => DropdownMenuItem<Location>(
+                          value: l,
+                          child: Text(l.name),
+                        ),
+                      )
+                      .toList(),
+                  onChanged: (v) => setState(() => _selectedLocation = v),
+                  validator: (v) => v == null ? strings.required : null,
+                ),
+
+                const SizedBox(height: 24),
+
+                ElevatedButton(
+                  onPressed: _isSaving ? null : _updateFilament,
+                  child: _isSaving
+                      ? const SizedBox(
+                          width: 20,
+                          height: 20,
+                          child: CircularProgressIndicator(strokeWidth: 2),
+                        )
+                      : Text(strings.save),
+                ),
+              ],
+            ),
+          ),
+        ),
+      ),
+    );
+  }
+}

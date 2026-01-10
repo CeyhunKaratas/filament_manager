@@ -7,6 +7,24 @@ and this project follows [Semantic Versioning](https://semver.org/).
 
 ---
 
+## [0.3.1-beta] — 2026-01-10
+
+### Added
+- **Edit Filament** - Edit existing filament properties
+  - Change brand, material, color, location
+  - Filament automatically moves to correct group if brand/material/color changed
+  - OCR support for re-scanning labels
+- **Delete Filament** - Delete unwanted filaments
+  - Confirmation dialog before deletion
+  - Group automatically removed if all filaments deleted
+
+### Fixed
+- **Issue #1**: Cannot change filament color after creation (forces "Finished" workaround)
+  - Users can now edit filament properties after creation
+  - No need to mark as "Finished" for incorrect data
+
+---
+
 ## [0.3.0-beta] — 2026-01-09
 
 ### Added
@@ -24,13 +42,6 @@ and this project follows [Semantic Versioning](https://semver.org/).
 ### Changed
 - Project stage changed from Alpha to Beta
 - App is now ready for limited public testing
-
-### Notes
-- Database is persistent — uninstalling the app will remove data
-- Export your data before updating to a new version
-- Import mode guidance:
-  - Replace All = default / safest
-  - Merge = advanced / use carefully
 
 ---
 

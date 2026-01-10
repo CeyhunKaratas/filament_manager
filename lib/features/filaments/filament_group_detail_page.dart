@@ -15,6 +15,8 @@ import '../definitions/materials/material_repository.dart';
 import '../definitions/colors/color_repository.dart';
 import '../definitions/colors/color_model.dart';
 
+import 'filament_edit_page.dart';
+
 class FilamentGroupDetailPage extends StatefulWidget {
   final FilamentGroup group;
 
@@ -487,6 +489,16 @@ class _FilamentGroupDetailPageState extends State<FilamentGroupDetailPage> {
                     PopupMenuButton<String>(
                       onSelected: (value) async {
                         try {
+                          if (value == 'edit') {
+                            await _editFilament(filament);
+                            return;
+                          }
+
+                          if (value == 'delete') {
+                            await _deleteFilament(filament);
+                            return;
+                          }
+
                           if (value == 'assign') {
                             _assignSlot(filament);
                             return;
@@ -532,6 +544,18 @@ class _FilamentGroupDetailPageState extends State<FilamentGroupDetailPage> {
                         }
                       },
                       itemBuilder: (_) => [
+                        PopupMenuItem<String>(
+                          value: 'edit',
+                          child: Text(strings.edit),
+                        ),
+                        PopupMenuItem<String>(
+                          value: 'delete',
+                          child: Text(
+                            strings.delete,
+                            style: TextStyle(color: Colors.red),
+                          ),
+                        ),
+                        const PopupMenuDivider(),
                         PopupMenuItem<String>(
                           value: 'assign',
                           child: Text(
@@ -722,6 +746,18 @@ class _FilamentGroupDetailPageState extends State<FilamentGroupDetailPage> {
           ),
         );
       }
+    }
+  }
+
+  Future<void> _editFilament(Filament filament) async {
+    final result = await Navigator.push(
+      context,
+      MaterialPageRoute(builder: (_) => FilamentEditPage(filament: filament)),
+    );
+
+    if (result == true) {
+      _changed = true;
+      await _reloadFromDb();
     }
   }
 }

@@ -2161,4 +2161,38 @@ class AppStrings {
         return 'Total Spools';
     }
   }
+
+  String get edit {
+    switch (locale.languageCode) {
+      case 'tr':
+        return 'Düzenle';
+      case 'de':
+        return 'Bearbeiten';
+      case 'fr':
+        return 'Modifier';
+      case 'it':
+        return 'Modifica';
+      case 'es':
+        return 'Editar';
+      default:
+        return 'Edit';
+    }
+  }
+
+  String get editSpool {
+    switch (locale.languageCode) {
+      case 'tr':
+        return 'Bobini Düzenle';
+      case 'de':
+        return 'Spule bearbeiten';
+      case 'fr':
+        return 'Modifier la bobine';
+      case 'it':
+        return 'Modifica bobina';
+      case 'es':
+        return 'Editar bobina';
+      default:
+        return 'Edit Spool';
+    }
+  }
 }
