@@ -25,13 +25,77 @@ class _SettingsPageState extends State<SettingsPage> {
     });
 
     try {
-      final filePath = await _exportImportService.exportData();
+      final result = await _exportImportService.exportData();
 
-      if (mounted) {
+      if (!mounted) return;
+
+      if (result.success) {
+        // Show success dialog with stats
+        await showDialog(
+          context: context,
+          builder: (_) => AlertDialog(
+            title: Row(
+              children: [
+                const Icon(Icons.check_circle, color: Colors.green),
+                const SizedBox(width: 8),
+                Expanded(child: Text(strings.exportSuccess)),
+              ],
+            ),
+            content: SingleChildScrollView(
+              child: Column(
+                mainAxisSize: MainAxisSize.min,
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    '📁 ${strings.fileSavedTo}:',
+                    style: const TextStyle(fontWeight: FontWeight.bold),
+                  ),
+                  const SizedBox(height: 4),
+                  SelectableText(
+                    result.filePath ?? '',
+                    style: const TextStyle(fontSize: 12),
+                  ),
+                  const SizedBox(height: 16),
+                  Text(
+                    '📊 ${strings.exportedData}:',
+                    style: const TextStyle(fontWeight: FontWeight.bold),
+                  ),
+                  const SizedBox(height: 8),
+                  ...result.stats.entries.map(
+                    (e) => Padding(
+                      padding: const EdgeInsets.only(bottom: 4),
+                      child: Text('• ${_getTableName(e.key)}: ${e.value}'),
+                    ),
+                  ),
+                ],
+              ),
+            ),
+            actions: [
+              TextButton(
+                onPressed: () => Navigator.pop(context),
+                child: Text(strings.ok),
+              ),
+              ElevatedButton.icon(
+                icon: const Icon(Icons.share),
+                label: Text(strings.share),
+                onPressed: () async {
+                  Navigator.pop(context);
+                  if (result.filePath != null) {
+                    await _exportImportService.shareExportFile(
+                      result.filePath!,
+                    );
+                  }
+                },
+              ),
+            ],
+          ),
+        );
+      } else {
+        // Show error
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
-            content: Text('${strings.exportSuccess}\n$filePath'),
-            backgroundColor: Colors.green,
+            content: Text('${strings.exportFailed}: ${result.error}'),
+            backgroundColor: Colors.red,
             duration: const Duration(seconds: 4),
           ),
         );
@@ -106,17 +170,74 @@ class _SettingsPageState extends State<SettingsPage> {
     });
 
     try {
-      final success = await _exportImportService.importData(
+      final result = await _exportImportService.importData(
         replaceMode: replaceMode,
       );
 
-      if (mounted && success) {
-        setState(() {});
+      if (!mounted) return;
+
+      if (result.success) {
+        // Show success dialog with stats
+        await showDialog(
+          context: context,
+          builder: (_) => AlertDialog(
+            title: Row(
+              children: [
+                const Icon(Icons.check_circle, color: Colors.green),
+                const SizedBox(width: 8),
+                Expanded(child: Text(strings.importSuccess)),
+              ],
+            ),
+            content: SingleChildScrollView(
+              child: Column(
+                mainAxisSize: MainAxisSize.min,
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    '📊 ${strings.importedData}:',
+                    style: const TextStyle(fontWeight: FontWeight.bold),
+                  ),
+                  const SizedBox(height: 8),
+                  ...result.stats.entries.map(
+                    (e) => Padding(
+                      padding: const EdgeInsets.only(bottom: 4),
+                      child: Text('• ${_getTableName(e.key)}: ${e.value}'),
+                    ),
+                  ),
+                  const SizedBox(height: 16),
+                  Text(
+                    replaceMode
+                        ? '⚠️ ${strings.allDataReplaced}'
+                        : 'ℹ️ ${strings.dataMerged}',
+                    style: TextStyle(
+                      fontSize: 12,
+                      color: replaceMode ? Colors.orange : Colors.blue,
+                    ),
+                  ),
+                ],
+              ),
+            ),
+            actions: [
+              TextButton(
+                onPressed: () {
+                  Navigator.pop(context);
+                  // Reload the app or current screen
+                  setState(() {});
+                },
+                child: Text(strings.ok),
+              ),
+            ],
+          ),
+        );
+      } else {
+        // Show error
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
-            content: Text(strings.importSuccess),
-            backgroundColor: Colors.green,
-            duration: const Duration(seconds: 3),
+            content: Text(
+              '${strings.importFailed}: ${result.error ?? "Unknown error"}',
+            ),
+            backgroundColor: Colors.red,
+            duration: const Duration(seconds: 5),
           ),
         );
       }
@@ -140,6 +261,25 @@ class _SettingsPageState extends State<SettingsPage> {
     }
   }
 
+  String _getTableName(String key) {
+    switch (key) {
+      case 'brands':
+        return 'Brands';
+      case 'materials':
+        return 'Materials';
+      case 'colors':
+        return 'Colors';
+      case 'locations':
+        return 'Locations';
+      case 'printers':
+        return 'Printers';
+      case 'filaments':
+        return 'Filaments';
+      default:
+        return key;
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     final strings = AppStrings.of(Localizations.localeOf(context));
@@ -150,12 +290,19 @@ class _SettingsPageState extends State<SettingsPage> {
       body: ListView(
         padding: const EdgeInsets.all(16),
         children: [
+          // Export/Import Section
+          Text(
+            strings.dataManagement,
+            style: Theme.of(context).textTheme.titleLarge,
+          ),
+          const SizedBox(height: 8),
+
           // Export Data
           Card(
             child: ListTile(
-              leading: const Icon(Icons.upload_file),
+              leading: const Icon(Icons.upload_file, color: Colors.blue),
               title: Text(strings.exportData),
-              subtitle: const Text('Backup all data to a JSON file'),
+              subtitle: Text(strings.backupAllData),
               trailing: _isExporting
                   ? const SizedBox(
                       width: 24,
@@ -172,9 +319,9 @@ class _SettingsPageState extends State<SettingsPage> {
           // Import Data
           Card(
             child: ListTile(
-              leading: const Icon(Icons.download),
+              leading: const Icon(Icons.download, color: Colors.green),
               title: Text(strings.importData),
-              subtitle: const Text('Restore data from a JSON file'),
+              subtitle: Text(strings.restoreFromBackup),
               trailing: _isImporting
                   ? const SizedBox(
                       width: 24,
@@ -192,7 +339,7 @@ class _SettingsPageState extends State<SettingsPage> {
           const Divider(),
           ListTile(
             title: Text(strings.appTitle),
-            subtitle: const Text('Version 0.3.0-beta'),
+            subtitle: const Text('Version 0.3.2-beta'),
           ),
 
           const SizedBox(height: 12),

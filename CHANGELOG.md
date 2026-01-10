@@ -7,6 +7,31 @@ and this project follows [Semantic Versioning](https://semver.org/).
 
 ---
 
+## [0.3.2-beta] — 2026-01-11
+
+### Added
+- **Color and Location filters** in Inventory Report
+- **Sorting options** in Inventory Report
+  - Sort by: Spool ID, Brand, Material, Status, Location
+  - Ascending/Descending toggle
+- Only used definitions shown in filters and dropdowns
+  - Add/Edit filament screens show only brands/materials/colors that are in use
+  - Inventory Report filters show only used options
+
+### Fixed
+- Issue #3: Add filtering and sorting options to Reports screen
+- Issue #4: Hide unused brands, materials and colors from selection popups
+- Issue #5: Import fails silently - no error message shown to user
+- Improved export/import system with file picker and detailed statistics
+- Android APK signing configuration added for proper app updates
+
+### Changed
+- Export/Import now uses file picker for better UX
+- Export shows detailed statistics (counts of exported items)
+- Import shows detailed statistics (counts of imported items)
+
+---
+
 ## [0.3.1-beta] — 2026-01-10
 
 ### Added

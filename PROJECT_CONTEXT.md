@@ -23,7 +23,7 @@ The app is currently in **beta stage** and is actively used by the developer.
 
 ## 2. Current Version
 
-- Version: **0.3.1-beta**
+- Version: **0.3.2-beta**
 - Version source: `pubspec.yaml`
 - Changelog: `CHANGELOG.md`
 - Database: SQLite (local, persistent)

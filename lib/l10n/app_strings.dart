@@ -2195,4 +2195,210 @@ class AppStrings {
         return 'Edit Spool';
     }
   }
+
+  // Add these to your app_strings.dart file:
+
+  String get fileSavedTo {
+    switch (locale.languageCode) {
+      case 'tr':
+        return 'Dosya kaydedildi';
+      case 'de':
+        return 'Datei gespeichert unter';
+      case 'fr':
+        return 'Fichier enregistré dans';
+      case 'it':
+        return 'File salvato in';
+      case 'es':
+        return 'Archivo guardado en';
+      default:
+        return 'File saved to';
+    }
+  }
+
+  String get exportedData {
+    switch (locale.languageCode) {
+      case 'tr':
+        return 'Dışa aktarılan veri';
+      case 'de':
+        return 'Exportierte Daten';
+      case 'fr':
+        return 'Données exportées';
+      case 'it':
+        return 'Dati esportati';
+      case 'es':
+        return 'Datos exportados';
+      default:
+        return 'Exported data';
+    }
+  }
+
+  String get importedData {
+    switch (locale.languageCode) {
+      case 'tr':
+        return 'İçe aktarılan veri';
+      case 'de':
+        return 'Importierte Daten';
+      case 'fr':
+        return 'Données importées';
+      case 'it':
+        return 'Dati importati';
+      case 'es':
+        return 'Datos importados';
+      default:
+        return 'Imported data';
+    }
+  }
+
+  String get backupAllData {
+    switch (locale.languageCode) {
+      case 'tr':
+        return 'Tüm verileri yedekle';
+      case 'de':
+        return 'Alle Daten sichern';
+      case 'fr':
+        return 'Sauvegarder toutes les données';
+      case 'it':
+        return 'Esegui backup di tutti i dati';
+      case 'es':
+        return 'Respaldar todos los datos';
+      default:
+        return 'Backup all data to JSON file';
+    }
+  }
+
+  String get restoreFromBackup {
+    switch (locale.languageCode) {
+      case 'tr':
+        return 'Yedekten geri yükle';
+      case 'de':
+        return 'Aus Sicherung wiederherstellen';
+      case 'fr':
+        return 'Restaurer depuis la sauvegarde';
+      case 'it':
+        return 'Ripristina da backup';
+      case 'es':
+        return 'Restaurar desde respaldo';
+      default:
+        return 'Restore data from backup file';
+    }
+  }
+
+  String get dataManagement {
+    switch (locale.languageCode) {
+      case 'tr':
+        return 'Veri Yönetimi';
+      case 'de':
+        return 'Datenverwaltung';
+      case 'fr':
+        return 'Gestion des données';
+      case 'it':
+        return 'Gestione dati';
+      case 'es':
+        return 'Gestión de datos';
+      default:
+        return 'Data Management';
+    }
+  }
+
+  String get allDataReplaced {
+    switch (locale.languageCode) {
+      case 'tr':
+        return 'Tüm veriler değiştirildi';
+      case 'de':
+        return 'Alle Daten wurden ersetzt';
+      case 'fr':
+        return 'Toutes les données ont été remplacées';
+      case 'it':
+        return 'Tutti i dati sono stati sostituiti';
+      case 'es':
+        return 'Todos los datos fueron reemplazados';
+      default:
+        return 'All existing data has been replaced';
+    }
+  }
+
+  String get dataMerged {
+    switch (locale.languageCode) {
+      case 'tr':
+        return 'Veriler birleştirildi';
+      case 'de':
+        return 'Daten wurden zusammengeführt';
+      case 'fr':
+        return 'Les données ont été fusionnées';
+      case 'it':
+        return 'I dati sono stati uniti';
+      case 'es':
+        return 'Los datos se fusionaron';
+      default:
+        return 'Data has been merged with existing data';
+    }
+  }
+
+  String get share {
+    switch (locale.languageCode) {
+      case 'tr':
+        return 'Paylaş';
+      case 'de':
+        return 'Teilen';
+      case 'fr':
+        return 'Partager';
+      case 'it':
+        return 'Condividi';
+      case 'es':
+        return 'Compartir';
+      default:
+        return 'Share';
+    }
+  }
+
+  String get allColors {
+    switch (locale.languageCode) {
+      case 'tr':
+        return 'Tüm Renkler';
+      case 'de':
+        return 'Alle Farben';
+      case 'fr':
+        return 'Toutes les couleurs';
+      case 'it':
+        return 'Tutti i colori';
+      case 'es':
+        return 'Todos los colores';
+      default:
+        return 'All Colors';
+    }
+  }
+
+  String get allLocations {
+    switch (locale.languageCode) {
+      case 'tr':
+        return 'Tüm Konumlar';
+      case 'de':
+        return 'Alle Standorte';
+      case 'fr':
+        return 'Tous les emplacements';
+      case 'it':
+        return 'Tutte le posizioni';
+      case 'es':
+        return 'Todas las ubicaciones';
+      default:
+        return 'All Locations';
+    }
+  }
+
+  String get ascending {
+    switch (locale.languageCode) {
+      case 'tr':
+        return 'Artan';
+      case 'de':
+        return 'Aufsteigend';
+      case 'fr':
+        return 'Croissant';
+      case 'it':
+        return 'Crescente';
+      case 'es':
+        return 'Ascendente';
+      default:
+        return 'Ascending';
+    }
+  }
 }

@@ -189,7 +189,7 @@ class _ColorSelectPopupState extends State<ColorSelectPopup> {
             ] else ...[
               const SizedBox(height: 12),
               DropdownButtonFormField<ColorModel>(
-                value: _selectedExisting,
+                initialValue: _selectedExisting,
                 decoration: InputDecoration(labelText: strings.color),
                 items: _allColors
                     .map(

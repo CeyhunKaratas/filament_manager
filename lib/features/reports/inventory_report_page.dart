@@ -43,6 +43,10 @@ class _InventoryReportPageState extends State<InventoryReportPage> {
   FilamentStatus? _filterStatus;
   int? _filterBrand;
   int? _filterMaterial;
+  int? _filterColor;
+  int? _filterLocation;
+  String _sortBy = 'id'; // id, brand, material, status, location
+  bool _sortAscending = true;
 
   @override
   void initState() {
@@ -120,8 +124,20 @@ class _InventoryReportPageState extends State<InventoryReportPage> {
         return false;
       }
 
+      // Color filter
+      if (_filterColor != null && f.colorId != _filterColor) {
+        return false;
+      }
+
+      // Location filter
+      if (_filterLocation != null && f.locationId != _filterLocation) {
+        return false;
+      }
+
       return true;
     }).toList();
+
+    _applySorting();
   }
 
   void _toggleFinished(bool value) {
@@ -129,6 +145,120 @@ class _InventoryReportPageState extends State<InventoryReportPage> {
       _showFinished = value;
       _applyFilters();
     });
+  }
+
+  // Get only used brands/materials/colors/locations
+  List<int> get _usedBrandIds =>
+      _allFilaments.map((f) => f.brandId).toSet().toList();
+
+  List<int> get _usedMaterialIds =>
+      _allFilaments.map((f) => f.materialId).toSet().toList();
+
+  List<int> get _usedColorIds =>
+      _allFilaments.map((f) => f.colorId).toSet().toList();
+
+  List<int> get _usedLocationIds =>
+      _allFilaments.map((f) => f.locationId).toSet().toList();
+
+  void _applySorting() {
+    _filteredFilaments.sort((a, b) {
+      int comparison = 0;
+
+      switch (_sortBy) {
+        case 'id':
+          comparison = a.id.compareTo(b.id);
+          break;
+        case 'brand':
+          final brandA = _brandNames[a.brandId] ?? '';
+          final brandB = _brandNames[b.brandId] ?? '';
+          comparison = brandA.compareTo(brandB);
+          break;
+        case 'material':
+          final matA = _materialNames[a.materialId] ?? '';
+          final matB = _materialNames[b.materialId] ?? '';
+          comparison = matA.compareTo(matB);
+          break;
+        case 'status':
+          comparison = a.status.index.compareTo(b.status.index);
+          break;
+        case 'location':
+          final locA = _locations[a.locationId]?.name ?? '';
+          final locB = _locations[b.locationId]?.name ?? '';
+          comparison = locA.compareTo(locB);
+          break;
+      }
+
+      return _sortAscending ? comparison : -comparison;
+    });
+  }
+
+  void _showSortDialog() async {
+    final strings = AppStrings.of(Localizations.localeOf(context));
+
+    await showDialog(
+      context: context,
+      builder: (_) => AlertDialog(
+        title: Text(strings.sortBy),
+        content: StatefulBuilder(
+          builder: (context, setDialogState) => Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              RadioListTile<String>(
+                title: Text('Spool ID'),
+                value: 'id',
+                groupValue: _sortBy,
+                onChanged: (v) => setDialogState(() => _sortBy = v!),
+              ),
+              RadioListTile<String>(
+                title: Text(strings.brand),
+                value: 'brand',
+                groupValue: _sortBy,
+                onChanged: (v) => setDialogState(() => _sortBy = v!),
+              ),
+              RadioListTile<String>(
+                title: Text(strings.material),
+                value: 'material',
+                groupValue: _sortBy,
+                onChanged: (v) => setDialogState(() => _sortBy = v!),
+              ),
+              RadioListTile<String>(
+                title: Text(strings.status),
+                value: 'status',
+                groupValue: _sortBy,
+                onChanged: (v) => setDialogState(() => _sortBy = v!),
+              ),
+              RadioListTile<String>(
+                title: Text(strings.location),
+                value: 'location',
+                groupValue: _sortBy,
+                onChanged: (v) => setDialogState(() => _sortBy = v!),
+              ),
+              const Divider(),
+              SwitchListTile(
+                title: Text(strings.ascending),
+                value: _sortAscending,
+                onChanged: (v) => setDialogState(() => _sortAscending = v),
+              ),
+            ],
+          ),
+        ),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.pop(context),
+            child: Text(strings.cancel),
+          ),
+          ElevatedButton(
+            onPressed: () {
+              setState(() {
+                _applyFilters();
+              });
+              Navigator.pop(context);
+            },
+            child: Text(strings.ok),
+          ),
+        ],
+      ),
+    );
   }
 
   void _showFilterDialog() async {
@@ -184,10 +314,14 @@ class _InventoryReportPageState extends State<InventoryReportPage> {
                       value: null,
                       child: Text(strings.allBrands),
                     ),
-                    ..._brandNames.entries.map(
-                      (e) =>
-                          DropdownMenuItem(value: e.key, child: Text(e.value)),
-                    ),
+                    ..._brandNames.entries
+                        .where((e) => _usedBrandIds.contains(e.key))
+                        .map(
+                          (e) => DropdownMenuItem(
+                            value: e.key,
+                            child: Text(e.value),
+                          ),
+                        ),
                   ],
                   onChanged: (v) => setDialogState(() => _filterBrand = v),
                 ),
@@ -208,12 +342,72 @@ class _InventoryReportPageState extends State<InventoryReportPage> {
                       value: null,
                       child: Text(strings.allMaterials),
                     ),
-                    ..._materialNames.entries.map(
-                      (e) =>
-                          DropdownMenuItem(value: e.key, child: Text(e.value)),
-                    ),
+                    ..._materialNames.entries
+                        .where((e) => _usedMaterialIds.contains(e.key))
+                        .map(
+                          (e) => DropdownMenuItem(
+                            value: e.key,
+                            child: Text(e.value),
+                          ),
+                        ),
                   ],
                   onChanged: (v) => setDialogState(() => _filterMaterial = v),
+                ),
+
+                const SizedBox(height: 16),
+
+                // Color filter
+                Text(
+                  strings.color,
+                  style: const TextStyle(fontWeight: FontWeight.bold),
+                ),
+                const SizedBox(height: 8),
+                DropdownButton<int?>(
+                  isExpanded: true,
+                  value: _filterColor,
+                  items: [
+                    DropdownMenuItem(
+                      value: null,
+                      child: Text(strings.allColors),
+                    ),
+                    ..._colors.entries
+                        .where((e) => _usedColorIds.contains(e.key))
+                        .map(
+                          (e) => DropdownMenuItem(
+                            value: e.key,
+                            child: Text(e.value.name),
+                          ),
+                        ),
+                  ],
+                  onChanged: (v) => setDialogState(() => _filterColor = v),
+                ),
+
+                const SizedBox(height: 16),
+
+                // Location filter
+                Text(
+                  strings.location,
+                  style: const TextStyle(fontWeight: FontWeight.bold),
+                ),
+                const SizedBox(height: 8),
+                DropdownButton<int?>(
+                  isExpanded: true,
+                  value: _filterLocation,
+                  items: [
+                    DropdownMenuItem(
+                      value: null,
+                      child: Text(strings.allLocations),
+                    ),
+                    ..._locations.entries
+                        .where((e) => _usedLocationIds.contains(e.key))
+                        .map(
+                          (e) => DropdownMenuItem(
+                            value: e.key,
+                            child: Text(e.value.name),
+                          ),
+                        ),
+                  ],
+                  onChanged: (v) => setDialogState(() => _filterLocation = v),
                 ),
               ],
             ),
@@ -226,6 +420,8 @@ class _InventoryReportPageState extends State<InventoryReportPage> {
                 _filterStatus = null;
                 _filterBrand = null;
                 _filterMaterial = null;
+                _filterColor = null;
+                _filterLocation = null;
                 _applyFilters();
               });
               Navigator.pop(context);
@@ -255,6 +451,7 @@ class _InventoryReportPageState extends State<InventoryReportPage> {
       appBar: AppBar(
         title: Text(strings.inventoryReport),
         actions: [
+          IconButton(icon: const Icon(Icons.sort), onPressed: _showSortDialog),
           IconButton(
             icon: const Icon(Icons.filter_list),
             onPressed: _showFilterDialog,
@@ -286,7 +483,9 @@ class _InventoryReportPageState extends State<InventoryReportPage> {
                       ),
                       if (_filterStatus != null ||
                           _filterBrand != null ||
-                          _filterMaterial != null)
+                          _filterMaterial != null ||
+                          _filterColor != null ||
+                          _filterLocation != null)
                         const Padding(
                           padding: EdgeInsets.only(left: 8),
                           child: Icon(

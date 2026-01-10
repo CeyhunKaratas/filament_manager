@@ -68,6 +68,10 @@ class _FilamentAddPageState extends State<FilamentAddPage> {
   List<Location> _locations = [];
   Location? _selectedLocation;
 
+  List<int> _usedBrandIds = [];
+  List<int> _usedMaterialIds = [];
+  List<int> _usedColorIds = [];
+
   @override
   void initState() {
     super.initState();
@@ -75,6 +79,7 @@ class _FilamentAddPageState extends State<FilamentAddPage> {
     _loadMaterials();
     _loadColors();
     _loadLocations();
+    _loadUsedDefinitions();
   }
 
   @override
@@ -83,6 +88,18 @@ class _FilamentAddPageState extends State<FilamentAddPage> {
     _materialController.dispose();
     _colorController.dispose();
     super.dispose();
+  }
+
+  Future<void> _loadUsedDefinitions() async {
+    try {
+      final filaments = await _repository.getAllFilaments();
+      _usedBrandIds = filaments.map((f) => f.brandId).toSet().toList();
+      _usedMaterialIds = filaments.map((f) => f.materialId).toSet().toList();
+      _usedColorIds = filaments.map((f) => f.colorId).toSet().toList();
+      if (mounted) setState(() {});
+    } catch (e) {
+      debugPrint('Error loading used definitions: $e');
+    }
   }
 
   Future<void> _loadBrands() async {
@@ -398,8 +415,11 @@ class _FilamentAddPageState extends State<FilamentAddPage> {
                 Autocomplete<BrandModel>(
                   displayStringForOption: (b) => b.name,
                   optionsBuilder: (textEditingValue) {
-                    if (textEditingValue.text.isEmpty) return _allBrands;
-                    return _allBrands.where(
+                    final filtered = _allBrands.where(
+                      (b) => _usedBrandIds.contains(b.id),
+                    );
+                    if (textEditingValue.text.isEmpty) return filtered;
+                    return filtered.where(
                       (b) => b.name.toLowerCase().contains(
                         textEditingValue.text.toLowerCase(),
                       ),
@@ -431,8 +451,11 @@ class _FilamentAddPageState extends State<FilamentAddPage> {
                 Autocomplete<MaterialModel>(
                   displayStringForOption: (m) => m.name,
                   optionsBuilder: (textEditingValue) {
-                    if (textEditingValue.text.isEmpty) return _allMaterials;
-                    return _allMaterials.where(
+                    final filtered = _allMaterials.where(
+                      (m) => _usedMaterialIds.contains(m.id),
+                    );
+                    if (textEditingValue.text.isEmpty) return filtered;
+                    return filtered.where(
                       (m) => m.name.toLowerCase().contains(
                         textEditingValue.text.toLowerCase(),
                       ),
@@ -466,8 +489,11 @@ class _FilamentAddPageState extends State<FilamentAddPage> {
                 Autocomplete<ColorModel>(
                   displayStringForOption: (c) => c.name,
                   optionsBuilder: (textEditingValue) {
-                    if (textEditingValue.text.isEmpty) return _allColors;
-                    return _allColors.where(
+                    final filtered = _allColors.where(
+                      (c) => _usedColorIds.contains(c.id),
+                    );
+                    if (textEditingValue.text.isEmpty) return filtered;
+                    return filtered.where(
                       (c) => c.name.toLowerCase().contains(
                         textEditingValue.text.toLowerCase(),
                       ),
@@ -497,7 +523,7 @@ class _FilamentAddPageState extends State<FilamentAddPage> {
                 const SizedBox(height: 12),
 
                 DropdownButtonFormField<Location>(
-                  value: _selectedLocation,
+                  initialValue: _selectedLocation,
                   decoration: InputDecoration(labelText: strings.location),
                   items: _locations
                       .map(
