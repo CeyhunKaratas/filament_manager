@@ -51,6 +51,14 @@ android {
             signingConfig = signingConfigs.getByName("release")
         }
     }
+
+    android.applicationVariants.all {
+        val variant = this
+        variant.outputs.all {
+            val output = this as com.android.build.gradle.internal.api.BaseVariantOutputImpl
+            output.outputFileName = "3D-Farm-Manager_${variant.versionName}.apk"
+        }
+    }
 }
 
 flutter {

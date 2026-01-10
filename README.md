@@ -161,6 +161,25 @@ All changes are documented in [`CHANGELOG.md`](./CHANGELOG.md).
 
 ---
 
-## 📄 License
+## 📄 License & Copyright
 
-License will be defined later.
+**© 2026 Ceyhun Karataş. All Rights Reserved.**
+
+This software is provided free of charge for personal use. The source code is publicly available for transparency and security review purposes only.
+
+**You may NOT:**
+- Copy, modify, or redistribute this code
+- Create derivative works
+- Use this code in commercial projects
+- Relicense or sublicense this software
+
+**You may:**
+- Use the application for free
+- Review the code for security purposes
+- Report issues and contribute ideas
+
+For any other use, please contact the author.
+
+---
+
+**Contact:** [GitHub Issues](https://github.com/CeyhunKaratas/filament_manager/issues)
