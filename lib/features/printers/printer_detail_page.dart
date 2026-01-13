@@ -52,6 +52,22 @@ class _PrinterDetailPageState extends State<PrinterDetailPage> {
         widget.printer.id!,
       );
 
+      final allBrands = await _brandRepository.getAll();
+      final allMaterials = await _materialRepository.getAll();
+      final allColors = await _colorRepository.getAll();
+
+      for (final b in allBrands) {
+        _brands[b.id] = b;
+      }
+
+      for (final m in allMaterials) {
+        _materials[m.id] = m;
+      }
+
+      for (final c in allColors) {
+        _colors[c.id] = c;
+      }
+
       // Calculate status for each filament
       final historyRepo = FilamentHistoryRepository();
       final List<Filament> filamentsWithStatus = [];
@@ -74,29 +90,6 @@ class _PrinterDetailPageState extends State<PrinterDetailPage> {
       if (mounted) {
         setState(() {
           _filaments = filamentsWithStatus;
-          _isLoading = false;
-        });
-      }
-
-      final allBrands = await _brandRepository.getAll();
-      final allMaterials = await _materialRepository.getAll();
-      final allColors = await _colorRepository.getAll();
-
-      for (final b in allBrands) {
-        _brands[b.id] = b;
-      }
-
-      for (final m in allMaterials) {
-        _materials[m.id] = m;
-      }
-
-      for (final c in allColors) {
-        _colors[c.id] = c;
-      }
-
-      if (mounted) {
-        setState(() {
-          _filaments = result;
           _isLoading = false;
         });
       }
@@ -202,9 +195,31 @@ class _PrinterDetailPageState extends State<PrinterDetailPage> {
                           ),
                           title: filamentForSlot == null
                               ? Text(strings.empty)
-                              : Text(
-                                  '${_brands[filamentForSlot.brandId]?.name ?? ''} '
-                                  '${_materials[filamentForSlot.materialId]?.name ?? ''}',
+                              : Row(
+                                  children: [
+                                    Text(
+                                      '${_brands[filamentForSlot.brandId]?.name ?? ''} '
+                                      '${_materials[filamentForSlot.materialId]?.name ?? ''}',
+                                    ),
+                                    const SizedBox(width: 8),
+                                    Container(
+                                      padding: const EdgeInsets.symmetric(
+                                        horizontal: 6,
+                                        vertical: 2,
+                                      ),
+                                      decoration: BoxDecoration(
+                                        color: Colors.grey.shade200,
+                                        borderRadius: BorderRadius.circular(8),
+                                      ),
+                                      child: Text(
+                                        '#${filamentForSlot.id}',
+                                        style: const TextStyle(
+                                          fontSize: 11,
+                                          fontWeight: FontWeight.bold,
+                                        ),
+                                      ),
+                                    ),
+                                  ],
                                 ),
                           subtitle: filamentForSlot == null
                               ? null

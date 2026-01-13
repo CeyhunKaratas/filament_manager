@@ -1,9 +1,8 @@
 import 'package:flutter/material.dart';
-
 import '../../core/database/printer_repository.dart';
+import '../../core/database/filament_repository.dart';
 import '../../core/models/printer.dart';
 import '../../l10n/app_strings.dart';
-
 import 'printer_add_dialog.dart';
 import 'printer_detail_page.dart';
 import '../../core/widgets/app_drawer.dart';
@@ -21,6 +20,9 @@ class _PrinterListPageState extends State<PrinterListPage> {
   List<Printer> _printers = [];
   bool _isLoading = true;
 
+  // Cache for occupied slot counts
+  final Map<int, int> _occupiedSlots = {}; // printerId -> occupied count
+
   @override
   void initState() {
     super.initState();
@@ -34,6 +36,13 @@ class _PrinterListPageState extends State<PrinterListPage> {
       });
 
       _printers = await _repository.getAllPrinters();
+
+      // Load occupied slot counts
+      final filamentRepo = FilamentRepository();
+      for (final printer in _printers) {
+        final filaments = await filamentRepo.getFilamentsByPrinter(printer.id!);
+        _occupiedSlots[printer.id!] = filaments.length;
+      }
 
       if (mounted) {
         setState(() {
@@ -150,9 +159,30 @@ class _PrinterListPageState extends State<PrinterListPage> {
               separatorBuilder: (_, __) => const Divider(height: 1),
               itemBuilder: (context, index) {
                 final printer = _printers[index];
+                final occupiedCount = _occupiedSlots[printer.id!] ?? 0;
+                final emptyCount = printer.slotCount - occupiedCount;
+
                 return ListTile(
                   title: Text(printer.name),
-                  subtitle: Text('${strings.slot}: ${printer.slotCount}'),
+                  subtitle: Row(
+                    children: [
+                      Text('${strings.slots}: ${printer.slotCount}'),
+                      const SizedBox(width: 12),
+                      Icon(Icons.check_circle, size: 14, color: Colors.green),
+                      const SizedBox(width: 4),
+                      Text(
+                        '$occupiedCount',
+                        style: const TextStyle(color: Colors.green),
+                      ),
+                      const SizedBox(width: 8),
+                      Icon(Icons.circle_outlined, size: 14, color: Colors.grey),
+                      const SizedBox(width: 4),
+                      Text(
+                        '$emptyCount',
+                        style: const TextStyle(color: Colors.grey),
+                      ),
+                    ],
+                  ),
                   onTap: () {
                     Navigator.of(context).push(
                       MaterialPageRoute(

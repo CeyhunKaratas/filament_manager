@@ -2920,4 +2920,72 @@ class AppStrings {
         return 'Replace';
     }
   }
+
+  String get onPrinters {
+    switch (locale.languageCode) {
+      case 'tr':
+        return 'Printerlarda';
+      case 'de':
+        return 'Auf Druckern';
+      case 'fr':
+        return 'Sur les imprimantes';
+      case 'it':
+        return 'Sulle stampanti';
+      case 'es':
+        return 'En impresoras';
+      default:
+        return 'On Printers';
+    }
+  }
+
+  String get onPrintersHint {
+    switch (locale.languageCode) {
+      case 'tr':
+        return 'Sadece printerlara atanmış filamentleri göster';
+      case 'de':
+        return 'Nur Filamente anzeigen, die Druckern zugewiesen sind';
+      case 'fr':
+        return 'Afficher uniquement les filaments assignés aux imprimantes';
+      case 'it':
+        return 'Mostra solo i filamenti assegnati alle stampanti';
+      case 'es':
+        return 'Mostrar solo filamentos asignados a impresoras';
+      default:
+        return 'Show only filaments assigned to printers';
+    }
+  }
+
+  String get occupied {
+    switch (locale.languageCode) {
+      case 'tr':
+        return 'Dolu';
+      case 'de':
+        return 'Belegt';
+      case 'fr':
+        return 'Occupé';
+      case 'it':
+        return 'Occupato';
+      case 'es':
+        return 'Ocupado';
+      default:
+        return 'Occupied';
+    }
+  }
+
+  String get available {
+    switch (locale.languageCode) {
+      case 'tr':
+        return 'Boş';
+      case 'de':
+        return 'Verfügbar';
+      case 'fr':
+        return 'Disponible';
+      case 'it':
+        return 'Disponibile';
+      case 'es':
+        return 'Disponible';
+      default:
+        return 'Available';
+    }
+  }
 }

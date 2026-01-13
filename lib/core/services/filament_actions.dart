@@ -133,6 +133,13 @@ class FilamentActions {
       return false;
     }
 
+    // Load occupied slot counts for each printer
+    final Map<int, int> occupiedSlots = {};
+    for (final printer in printers) {
+      final filaments = await _repository.getFilamentsByPrinter(printer.id!);
+      occupiedSlots[printer.id!] = filaments.length;
+    }
+
     // Select printer
     final selectedPrinter = await showDialog<Printer>(
       context: context,
@@ -142,9 +149,30 @@ class FilamentActions {
           child: Column(
             mainAxisSize: MainAxisSize.min,
             children: printers.map((printer) {
+              final occupiedCount = occupiedSlots[printer.id!] ?? 0;
+              final emptyCount = printer.slotCount - occupiedCount;
+
               return ListTile(
                 title: Text(printer.name),
-                subtitle: Text('${strings.slots}: ${printer.slotCount}'),
+                subtitle: Row(
+                  children: [
+                    Text('${strings.slots}: ${printer.slotCount}'),
+                    const SizedBox(width: 12),
+                    Icon(Icons.check_circle, size: 14, color: Colors.green),
+                    const SizedBox(width: 4),
+                    Text(
+                      '$occupiedCount',
+                      style: const TextStyle(color: Colors.green, fontSize: 12),
+                    ),
+                    const SizedBox(width: 8),
+                    Icon(Icons.circle_outlined, size: 14, color: Colors.grey),
+                    const SizedBox(width: 4),
+                    Text(
+                      '$emptyCount',
+                      style: const TextStyle(color: Colors.grey, fontSize: 12),
+                    ),
+                  ],
+                ),
                 onTap: () => Navigator.pop(context, printer),
               );
             }).toList(),
@@ -161,6 +189,11 @@ class FilamentActions {
 
     if (selectedPrinter == null) return false;
 
+    // Get filaments already on this printer
+    final filamentsOnPrinter = await _repository.getFilamentsByPrinter(
+      selectedPrinter.id!,
+    );
+
     // Select slot
     final selectedSlot = await showDialog<int>(
       context: context,
@@ -171,8 +204,40 @@ class FilamentActions {
             mainAxisSize: MainAxisSize.min,
             children: List.generate(selectedPrinter.slotCount, (index) {
               final slotNumber = index + 1;
+
+              // Check if slot is occupied
+              final occupiedFilament = filamentsOnPrinter.firstWhere(
+                (f) => f.slot == slotNumber,
+                orElse: () => Filament(
+                  id: -1,
+                  brandId: -1,
+                  materialId: -1,
+                  colorId: -1,
+                  status: FilamentStatus.active,
+                  locationId: -1,
+                ),
+              );
+
+              final isOccupied = occupiedFilament.id != -1;
+
               return ListTile(
+                leading: Icon(
+                  isOccupied ? Icons.cancel : Icons.check_circle,
+                  color: isOccupied ? Colors.red : Colors.green,
+                ),
                 title: Text('${strings.slot} $slotNumber'),
+                subtitle: isOccupied
+                    ? Text(
+                        '${strings.occupied} - ${strings.spool} ${occupiedFilament.id}',
+                        style: const TextStyle(fontSize: 12, color: Colors.red),
+                      )
+                    : Text(
+                        strings.available,
+                        style: const TextStyle(
+                          fontSize: 12,
+                          color: Colors.green,
+                        ),
+                      ),
                 onTap: () => Navigator.pop(context, slotNumber),
               );
             }),

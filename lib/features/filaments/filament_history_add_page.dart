@@ -26,6 +26,7 @@ class FilamentHistoryAddPage extends StatefulWidget {
 class _FilamentHistoryAddPageState extends State<FilamentHistoryAddPage> {
   final _formKey = GlobalKey<FormState>();
   final _gramController = TextEditingController();
+  final _gramFocusNode = FocusNode();
   final _noteController = TextEditingController();
 
   final FilamentHistoryRepository _historyRepo = FilamentHistoryRepository();
@@ -37,12 +38,21 @@ class _FilamentHistoryAddPageState extends State<FilamentHistoryAddPage> {
   void initState() {
     super.initState();
     _gramController.text = (widget.lastGram ?? 1000).toString();
+    // Auto-select gram input after build
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      _gramFocusNode.requestFocus();
+      _gramController.selection = TextSelection(
+        baseOffset: 0,
+        extentOffset: _gramController.text.length,
+      );
+    });
   }
 
   @override
   void dispose() {
     _gramController.dispose();
     _noteController.dispose();
+    _gramFocusNode.dispose();
     super.dispose();
   }
 
@@ -171,6 +181,7 @@ class _FilamentHistoryAddPageState extends State<FilamentHistoryAddPage> {
 
                 TextFormField(
                   controller: _gramController,
+                  focusNode: _gramFocusNode,
                   decoration: InputDecoration(
                     labelText: '${strings.gram} (g)',
                     border: const OutlineInputBorder(),

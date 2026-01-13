@@ -13,6 +13,7 @@ import '../../core/models/location.dart';
 import '../../core/models/printer.dart';
 import '../../core/widgets/filament_popup_menu.dart';
 import '../../core/services/filament_actions.dart';
+import '../../core/database/filament_history_repository.dart';
 
 class InventoryReportPage extends StatefulWidget {
   const InventoryReportPage({super.key});
@@ -38,8 +39,14 @@ class _InventoryReportPageState extends State<InventoryReportPage> {
   final Map<int, Location> _locations = {};
   final Map<int, Printer> _printers = {};
 
+  // Gram data cache
+  final Map<int, int?> _latestGrams = {}; // filamentId -> gram
+
+  final FilamentHistoryRepository _historyRepo = FilamentHistoryRepository();
+
   bool _isLoading = true;
   bool _showFinished = false;
+  bool _filterOnPrinters = false; // NEW: "On Printers" filter
 
   FilamentStatus? _filterStatus;
   int? _filterBrand;
@@ -86,6 +93,12 @@ class _InventoryReportPageState extends State<InventoryReportPage> {
         _printers[p.id!] = p;
       }
 
+      // Load gram data for each filament
+      for (final f in filaments) {
+        final latestHistory = await _historyRepo.getLatestHistory(f.id);
+        _latestGrams[f.id] = latestHistory?.gram;
+      }
+
       if (mounted) {
         setState(() {
           _allFilaments = filaments;
@@ -110,6 +123,11 @@ class _InventoryReportPageState extends State<InventoryReportPage> {
         return false;
       }
 
+      // "On Printers" filter
+      if (_filterOnPrinters && f.printerId == null) {
+        return false;
+      }
+
       // Status filter
       if (_filterStatus != null && f.status != _filterStatus) {
         return false;
@@ -131,8 +149,14 @@ class _InventoryReportPageState extends State<InventoryReportPage> {
       }
 
       // Location filter
-      if (_filterLocation != null && f.locationId != _filterLocation) {
-        return false;
+      if (_filterLocation != null) {
+        // If filtering by location, exclude filaments on printers
+        if (f.printerId != null) {
+          return false;
+        }
+        if (f.locationId != _filterLocation) {
+          return false;
+        }
       }
 
       return true;
@@ -158,8 +182,11 @@ class _InventoryReportPageState extends State<InventoryReportPage> {
   List<int> get _usedColorIds =>
       _allFilaments.map((f) => f.colorId).toSet().toList();
 
-  List<int> get _usedLocationIds =>
-      _allFilaments.map((f) => f.locationId).toSet().toList();
+  List<int> get _usedLocationIds => _allFilaments
+      .where((f) => f.printerId == null) // Only filaments NOT on printers
+      .map((f) => f.locationId)
+      .toSet()
+      .toList();
 
   void _applySorting() {
     _filteredFilaments.sort((a, b) {
@@ -183,9 +210,28 @@ class _InventoryReportPageState extends State<InventoryReportPage> {
           comparison = a.status.index.compareTo(b.status.index);
           break;
         case 'location':
-          final locA = _locations[a.locationId]?.name ?? '';
-          final locB = _locations[b.locationId]?.name ?? '';
-          comparison = locA.compareTo(locB);
+          // Printers first, then locations
+          final isAPrinter = a.printerId != null;
+          final isBPrinter = b.printerId != null;
+
+          if (isAPrinter && !isBPrinter) {
+            comparison = -1; // A is printer, comes first
+          } else if (!isAPrinter && isBPrinter) {
+            comparison = 1; // B is printer, comes first
+          } else if (isAPrinter && isBPrinter) {
+            // Both on printers, sort by printer name then slot
+            final printerA = _printers[a.printerId!]?.name ?? '';
+            final printerB = _printers[b.printerId!]?.name ?? '';
+            comparison = printerA.compareTo(printerB);
+            if (comparison == 0) {
+              comparison = (a.slot ?? 0).compareTo(b.slot ?? 0);
+            }
+          } else {
+            // Both in locations, sort by location name
+            final locA = _locations[a.locationId]?.name ?? '';
+            final locB = _locations[b.locationId]?.name ?? '';
+            comparison = locA.compareTo(locB);
+          }
           break;
       }
 
@@ -383,6 +429,15 @@ class _InventoryReportPageState extends State<InventoryReportPage> {
                   onChanged: (v) => setDialogState(() => _filterColor = v),
                 ),
 
+                // On Printers filter
+                const SizedBox(height: 16),
+                SwitchListTile(
+                  title: Text(strings.onPrinters),
+                  subtitle: Text(strings.onPrintersHint),
+                  value: _filterOnPrinters,
+                  onChanged: (v) => setDialogState(() => _filterOnPrinters = v),
+                ),
+
                 const SizedBox(height: 16),
 
                 // Location filter
@@ -423,6 +478,7 @@ class _InventoryReportPageState extends State<InventoryReportPage> {
                 _filterMaterial = null;
                 _filterColor = null;
                 _filterLocation = null;
+                _filterOnPrinters = false;
                 _applyFilters();
               });
               Navigator.pop(context);
@@ -486,7 +542,8 @@ class _InventoryReportPageState extends State<InventoryReportPage> {
                           _filterBrand != null ||
                           _filterMaterial != null ||
                           _filterColor != null ||
-                          _filterLocation != null)
+                          _filterLocation != null ||
+                          _filterOnPrinters)
                         const Padding(
                           padding: EdgeInsets.only(left: 8),
                           child: Icon(
@@ -588,6 +645,7 @@ class _InventoryReportPageState extends State<InventoryReportPage> {
         children: [
           Column(
             mainAxisAlignment: MainAxisAlignment.center,
+            crossAxisAlignment: CrossAxisAlignment.end,
             children: [
               Text(
                 '#${filament.id}',
@@ -596,6 +654,26 @@ class _InventoryReportPageState extends State<InventoryReportPage> {
                   fontWeight: FontWeight.bold,
                 ),
               ),
+              const SizedBox(height: 2),
+              if (_latestGrams[filament.id] != null)
+                Container(
+                  padding: const EdgeInsets.symmetric(
+                    horizontal: 6,
+                    vertical: 2,
+                  ),
+                  decoration: BoxDecoration(
+                    color: Colors.blue.shade100,
+                    borderRadius: BorderRadius.circular(8),
+                  ),
+                  child: Text(
+                    '${_latestGrams[filament.id]}g',
+                    style: TextStyle(
+                      fontSize: 11,
+                      fontWeight: FontWeight.bold,
+                      color: Colors.blue.shade900,
+                    ),
+                  ),
+                ),
               const SizedBox(height: 4),
               Container(
                 width: 8,

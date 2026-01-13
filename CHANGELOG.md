@@ -7,6 +7,30 @@ and this project follows [Semantic Versioning](https://semver.org/).
 
 ---
 
+## [0.4.1-alpha] — 2026-01-14
+
+### Fixed
+- **Issue #7 - Bug 1**: Inventory Report location sorting now groups printers first, then sorts by printer name and slot
+- **Issue #7 - Bug 1**: Inventory Report location filter now correctly excludes filaments assigned to printers
+- **Issue #7 - Bug 1**: Location filter dropdown now only shows storage locations (excludes printer assignments)
+- Printer Detail page status calculation bug fixed (was showing incorrect status due to duplicate setState)
+
+### Added
+- **Issue #7 - Enhancement 1**: Assign dialog now shows slot availability status (occupied/empty with spool ID)
+- **Issue #7 - Enhancement 1**: Printer selection dialog shows occupied/empty slot counts
+- **Issue #7 - Enhancement 1**: Printer list page shows occupied/empty slot counts for each printer
+- **Issue #7 - Enhancement 2**: Save Status dialog auto-selects and highlights gram input for faster editing
+- **Issue #7 - Enhancement 3**: Inventory Report now displays current gram weight for each filament
+- **Issue #7 - Enhancement 4**: Filament Group Detail now displays current gram weight for each spool
+- **Issue #7 - Bug 1**: "On Printers" filter added to Inventory Report to show only assigned filaments
+- Printer Detail page now displays spool ID next to filament information
+
+### Changed
+- Improved location filtering logic to distinguish between storage locations and printer assignments
+- Printer list and assign dialogs now provide better visibility of slot occupancy
+
+---
+
 ## [0.4.0-alpha] — 2026-01-13
 
 ### Added

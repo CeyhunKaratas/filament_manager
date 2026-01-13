@@ -46,6 +46,9 @@ class _FilamentGroupDetailPageState extends State<FilamentGroupDetailPage> {
   List<Printer> _printers = [];
   List<Location> _locations = [];
 
+  // Gram data cache
+  final Map<int, int?> _latestGrams = {}; // filamentId -> gram
+
   bool _changed = false;
 
   @override
@@ -118,6 +121,14 @@ class _FilamentGroupDetailPageState extends State<FilamentGroupDetailPage> {
                 f.status != FilamentStatus.finished,
           )
           .toList();
+
+      // Load gram data for each filament
+      for (final item in _items) {
+        final latestHistory = await _historyRepository.getLatestHistory(
+          item.id,
+        );
+        _latestGrams[item.id] = latestHistory?.gram;
+      }
 
       if (mounted) {
         if (_items.isEmpty) {
@@ -248,7 +259,31 @@ class _FilamentGroupDetailPageState extends State<FilamentGroupDetailPage> {
                     ),
                   ],
                 ),
-                title: Text('${strings.spool} ${filament.id}'),
+                title: Row(
+                  children: [
+                    Text('${strings.spool} ${filament.id}'),
+                    const SizedBox(width: 8),
+                    if (_latestGrams[filament.id] != null)
+                      Container(
+                        padding: const EdgeInsets.symmetric(
+                          horizontal: 8,
+                          vertical: 2,
+                        ),
+                        decoration: BoxDecoration(
+                          color: Colors.blue.shade100,
+                          borderRadius: BorderRadius.circular(12),
+                        ),
+                        child: Text(
+                          '${_latestGrams[filament.id]}g',
+                          style: TextStyle(
+                            fontSize: 12,
+                            fontWeight: FontWeight.bold,
+                            color: Colors.blue.shade900,
+                          ),
+                        ),
+                      ),
+                  ],
+                ),
                 subtitle: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
