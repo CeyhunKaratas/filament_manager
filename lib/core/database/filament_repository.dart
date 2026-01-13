@@ -3,6 +3,9 @@ import 'package:sqflite/sqflite.dart';
 import '../models/filament.dart';
 import 'database_helper.dart';
 
+import 'filament_history_repository.dart';
+import '../utils/status_calculator.dart';
+
 class SlotOccupiedException implements Exception {
   final int printerId;
   final int slot;
@@ -52,6 +55,34 @@ class FilamentRepository {
         .toList();
   }
 
+  /// Get all filaments with calculated status from history
+  Future<List<Filament>> getAllFilamentsWithStatus() async {
+    final filaments = await getAllFilaments();
+    final historyRepo = FilamentHistoryRepository();
+
+    final List<Filament> result = [];
+
+    for (final filament in filaments) {
+      final initialHistory = await historyRepo.getInitialHistory(filament.id);
+      final latestHistory = await historyRepo.getLatestHistory(filament.id);
+
+      if (initialHistory == null || latestHistory == null) {
+        // No history, keep original status
+        result.add(filament);
+        continue;
+      }
+
+      final calculatedStatus = StatusCalculator.calculateStatus(
+        currentGram: latestHistory.gram,
+        initialGram: initialHistory.gram,
+      );
+
+      result.add(filament.copyWith(status: calculatedStatus));
+    }
+
+    return result;
+  }
+
   Future<List<Filament>> getFilamentsByPrinter(int printerId) async {
     final db = await _db;
 
@@ -78,10 +109,10 @@ class FilamentRepository {
     }).toList();
   }
 
-  Future<void> insertFilament(Filament filament) async {
+  Future<int> insertFilament(Filament filament) async {
     final db = await _db;
 
-    await db.insert('filaments', {
+    return await db.insert('filaments', {
       'brand_id': filament.brandId,
       'material_id': filament.materialId,
       'color_id': filament.colorId,

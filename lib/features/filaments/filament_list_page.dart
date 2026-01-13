@@ -63,7 +63,7 @@ class _FilamentListPageState extends State<FilamentListPage> {
   }
 
   void _loadFilaments() {
-    _filamentsFuture = _repository.getAllFilaments();
+    _filamentsFuture = _repository.getAllFilamentsWithStatus();
   }
 
   Future<void> _loadDefinitions() async {
@@ -151,6 +151,9 @@ class _FilamentListPageState extends State<FilamentListPage> {
               final activeCount = group.items
                   .where((f) => f.status == FilamentStatus.active)
                   .length;
+              final usedCount = group.items
+                  .where((f) => f.status == FilamentStatus.used)
+                  .length;
               final lowCount = group.items
                   .where((f) => f.status == FilamentStatus.low)
                   .length;
@@ -165,7 +168,7 @@ class _FilamentListPageState extends State<FilamentListPage> {
                 title: Text(
                   '$brandName • ${materialName.toUpperCase()} • '
                   '${colorModel?.name ?? '-'} '
-                  '(${activeCount + lowCount})',
+                  '(${activeCount + usedCount + lowCount})',
                   style: const TextStyle(fontWeight: FontWeight.w600),
                 ),
                 subtitle: Row(
@@ -175,6 +178,13 @@ class _FilamentListPageState extends State<FilamentListPage> {
                         '$activeCount ${strings.statusActive}',
                         style: const TextStyle(color: Colors.green),
                       ),
+                    if (usedCount > 0) ...[
+                      const SizedBox(width: 12),
+                      Text(
+                        '$usedCount ${strings.statusUsed}',
+                        style: const TextStyle(color: Colors.blue),
+                      ),
+                    ],
                     if (lowCount > 0) ...[
                       const SizedBox(width: 12),
                       Text(
@@ -197,7 +207,8 @@ class _FilamentListPageState extends State<FilamentListPage> {
 
                   if (changed == true) {
                     setState(() {
-                      _filamentsFuture = _repository.getAllFilaments();
+                      _filamentsFuture = _repository
+                          .getAllFilamentsWithStatus();
                     });
                   }
                 },
@@ -216,7 +227,7 @@ class _FilamentListPageState extends State<FilamentListPage> {
           if (changed == true) {
             await _loadDefinitions(); // ← Definitions'ı yeniden yükle
             setState(() {
-              _filamentsFuture = _repository.getAllFilaments();
+              _filamentsFuture = _repository.getAllFilamentsWithStatus();
             });
           }
         },

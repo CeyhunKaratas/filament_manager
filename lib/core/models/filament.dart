@@ -49,8 +49,8 @@ class Filament {
       colorId: colorId ?? this.colorId,
       status: status ?? this.status,
       locationId: locationId ?? this.locationId,
-      printerId: printerId,
-      slot: slot,
+      printerId: printerId ?? this.printerId,
+      slot: slot ?? this.slot,
       mainPhotoPath: mainPhotoPath ?? this.mainPhotoPath,
     );
   }

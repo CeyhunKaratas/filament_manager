@@ -3,7 +3,6 @@ import '../../core/database/filament_repository.dart';
 import '../../core/models/filament.dart';
 import '../../core/widgets/app_drawer.dart';
 import '../../l10n/app_strings.dart';
-
 import '../definitions/brands/brand_repository.dart';
 import '../definitions/materials/material_repository.dart';
 import '../definitions/colors/color_repository.dart';
@@ -12,6 +11,8 @@ import '../../core/database/location_repository.dart';
 import '../../core/database/printer_repository.dart';
 import '../../core/models/location.dart';
 import '../../core/models/printer.dart';
+import '../../core/widgets/filament_popup_menu.dart';
+import '../../core/services/filament_actions.dart';
 
 class InventoryReportPage extends StatefulWidget {
   const InventoryReportPage({super.key});
@@ -61,7 +62,7 @@ class _InventoryReportPageState extends State<InventoryReportPage> {
       });
 
       // Load all data
-      final filaments = await _repository.getAllFilaments();
+      final filaments = await _repository.getAllFilamentsWithStatus();
       final brands = await _brandRepo.getAll();
       final materials = await _materialRepo.getAll();
       final colors = await _colorRepo.getAll();
@@ -582,21 +583,64 @@ class _InventoryReportPageState extends State<InventoryReportPage> {
           ),
         ],
       ),
-      trailing: Column(
-        mainAxisAlignment: MainAxisAlignment.center,
+      trailing: Row(
+        mainAxisSize: MainAxisSize.min,
         children: [
-          Text(
-            '#${filament.id}',
-            style: const TextStyle(fontSize: 12, fontWeight: FontWeight.bold),
+          Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              Text(
+                '#${filament.id}',
+                style: const TextStyle(
+                  fontSize: 12,
+                  fontWeight: FontWeight.bold,
+                ),
+              ),
+              const SizedBox(height: 4),
+              Container(
+                width: 8,
+                height: 8,
+                decoration: BoxDecoration(
+                  color: statusColor,
+                  shape: BoxShape.circle,
+                ),
+              ),
+            ],
           ),
-          const SizedBox(height: 4),
-          Container(
-            width: 8,
-            height: 8,
-            decoration: BoxDecoration(
-              color: statusColor,
-              shape: BoxShape.circle,
-            ),
+          FilamentPopupMenu(
+            filament: filament,
+            showLocationOptions: false, // Report'ta location işlemleri yok
+            onAction: (action, fil) async {
+              bool changed = false;
+
+              switch (action) {
+                case 'save_status':
+                  changed = await FilamentActions.saveStatus(context, fil);
+                  break;
+                case 'view_history':
+                  await FilamentActions.viewHistory(context, fil);
+                  break;
+                case 'edit':
+                  changed = await FilamentActions.edit(context, fil);
+                  break;
+                case 'delete':
+                  changed = await FilamentActions.delete(context, fil);
+                  break;
+                case 'assign':
+                  // Load printers first
+                  final printers = await _printerRepo.getAllPrinters();
+                  changed = await FilamentActions.assignToPrinter(
+                    context,
+                    fil,
+                    printers,
+                  );
+                  break;
+              }
+
+              if (changed) {
+                await _loadData();
+              }
+            },
           ),
         ],
       ),

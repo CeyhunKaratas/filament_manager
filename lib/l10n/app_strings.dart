@@ -2419,4 +2419,505 @@ class AppStrings {
         return 'Ascending';
     }
   }
+
+  // Add these to app_strings.dart
+
+  String get saveStatus {
+    switch (locale.languageCode) {
+      case 'tr':
+        return 'Durum Kaydet';
+      case 'de':
+        return 'Status speichern';
+      case 'fr':
+        return 'Enregistrer le statut';
+      case 'it':
+        return 'Salva stato';
+      case 'es':
+        return 'Guardar estado';
+      default:
+        return 'Save Status';
+    }
+  }
+
+  String get confirmFinished {
+    switch (locale.languageCode) {
+      case 'tr':
+        return 'Filament Bitti mi?';
+      case 'de':
+        return 'Filament aufgebraucht?';
+      case 'fr':
+        return 'Filament terminé?';
+      case 'it':
+        return 'Filamento finito?';
+      case 'es':
+        return '¿Filamento terminado?';
+      default:
+        return 'Filament Finished?';
+    }
+  }
+
+  String get confirmFinishedMessage {
+    switch (locale.languageCode) {
+      case 'tr':
+        return 'Bu işlem filamenti BİTMİŞ olarak işaretler ve arşivler. Emin misiniz?';
+      case 'de':
+        return 'Dies markiert das Filament als AUFGEBRAUCHT und archiviert es. Sind Sie sicher?';
+      case 'fr':
+        return 'Cela marquera le filament comme TERMINÉ et l\'archivera. Êtes-vous sûr?';
+      case 'it':
+        return 'Questo segnerà il filamento come FINITO e lo archivierà. Sei sicuro?';
+      case 'es':
+        return 'Esto marcará el filamento como TERMINADO y lo archivará. ¿Estás seguro?';
+      default:
+        return 'This will mark the filament as FINISHED and archive it. Are you sure?';
+    }
+  }
+
+  String get markAsFinished {
+    switch (locale.languageCode) {
+      case 'tr':
+        return 'Bitmiş Olarak İşaretle';
+      case 'de':
+        return 'Als aufgebraucht markieren';
+      case 'fr':
+        return 'Marquer comme terminé';
+      case 'it':
+        return 'Segna come finito';
+      case 'es':
+        return 'Marcar como terminado';
+      default:
+        return 'Mark as Finished';
+    }
+  }
+
+  String get currentStatus {
+    switch (locale.languageCode) {
+      case 'tr':
+        return 'Mevcut Durum';
+      case 'de':
+        return 'Aktueller Status';
+      case 'fr':
+        return 'Statut actuel';
+      case 'it':
+        return 'Stato attuale';
+      case 'es':
+        return 'Estado actual';
+      default:
+        return 'Current Status';
+    }
+  }
+
+  String get lastRecordedGram {
+    switch (locale.languageCode) {
+      case 'tr':
+        return 'Son Kayıtlı Gram';
+      case 'de':
+        return 'Zuletzt erfasstes Gramm';
+      case 'fr':
+        return 'Dernier gramme enregistré';
+      case 'it':
+        return 'Ultimo grammo registrato';
+      case 'es':
+        return 'Último gramo registrado';
+      default:
+        return 'Last Recorded Gram';
+    }
+  }
+
+  String get gram {
+    switch (locale.languageCode) {
+      case 'tr':
+        return 'Gram';
+      case 'de':
+        return 'Gramm';
+      case 'fr':
+        return 'Gramme';
+      case 'it':
+        return 'Grammo';
+      case 'es':
+        return 'Gramo';
+      default:
+        return 'Gram';
+    }
+  }
+
+  String get enterCurrentGram {
+    switch (locale.languageCode) {
+      case 'tr':
+        return 'Mevcut gram ağırlığını girin';
+      case 'de':
+        return 'Aktuelles Gewicht in Gramm eingeben';
+      case 'fr':
+        return 'Entrez le poids actuel en grammes';
+      case 'it':
+        return 'Inserisci il peso attuale in grammi';
+      case 'es':
+        return 'Ingrese el peso actual en gramos';
+      default:
+        return 'Enter current gram weight';
+    }
+  }
+
+  String get invalidGram {
+    switch (locale.languageCode) {
+      case 'tr':
+        return 'Geçersiz gram değeri';
+      case 'de':
+        return 'Ungültiger Grammwert';
+      case 'fr':
+        return 'Valeur de gramme invalide';
+      case 'it':
+        return 'Valore grammo non valido';
+      case 'es':
+        return 'Valor de gramo inválido';
+      default:
+        return 'Invalid gram value';
+    }
+  }
+
+  String get note {
+    switch (locale.languageCode) {
+      case 'tr':
+        return 'Not';
+      case 'de':
+        return 'Notiz';
+      case 'fr':
+        return 'Note';
+      case 'it':
+        return 'Nota';
+      case 'es':
+        return 'Nota';
+      default:
+        return 'Note';
+    }
+  }
+
+  String get optional {
+    switch (locale.languageCode) {
+      case 'tr':
+        return 'Opsiyonel';
+      case 'de':
+        return 'Optional';
+      case 'fr':
+        return 'Optionnel';
+      case 'it':
+        return 'Opzionale';
+      case 'es':
+        return 'Opcional';
+      default:
+        return 'Optional';
+    }
+  }
+
+  String get addNoteHint {
+    switch (locale.languageCode) {
+      case 'tr':
+        return 'Not ekleyin (opsiyonel)';
+      case 'de':
+        return 'Notiz hinzufügen (optional)';
+      case 'fr':
+        return 'Ajouter une note (optionnel)';
+      case 'it':
+        return 'Aggiungi una nota (opzionale)';
+      case 'es':
+        return 'Agregar una nota (opcional)';
+      default:
+        return 'Add a note (optional)';
+    }
+  }
+  // Add these to app_strings.dart
+
+  String get takePhoto {
+    switch (locale.languageCode) {
+      case 'tr':
+        return 'Fotoğraf Çek';
+      case 'de':
+        return 'Foto aufnehmen';
+      case 'fr':
+        return 'Prendre une photo';
+      case 'it':
+        return 'Scatta una foto';
+      case 'es':
+        return 'Tomar foto';
+      default:
+        return 'Take Photo';
+    }
+  }
+
+  String get removePhoto {
+    switch (locale.languageCode) {
+      case 'tr':
+        return 'Fotoğrafı Kaldır';
+      case 'de':
+        return 'Foto entfernen';
+      case 'fr':
+        return 'Supprimer la photo';
+      case 'it':
+        return 'Rimuovi foto';
+      case 'es':
+        return 'Eliminar foto';
+      default:
+        return 'Remove Photo';
+    }
+  }
+
+  String get retakePhoto {
+    switch (locale.languageCode) {
+      case 'tr':
+        return 'Yeniden Çek';
+      case 'de':
+        return 'Foto erneut aufnehmen';
+      case 'fr':
+        return 'Reprendre la photo';
+      case 'it':
+        return 'Riscatta foto';
+      case 'es':
+        return 'Volver a tomar';
+      default:
+        return 'Retake Photo';
+    }
+  }
+  // Add these to app_strings.dart
+
+  String get history {
+    switch (locale.languageCode) {
+      case 'tr':
+        return 'Geçmiş';
+      case 'de':
+        return 'Verlauf';
+      case 'fr':
+        return 'Historique';
+      case 'it':
+        return 'Cronologia';
+      case 'es':
+        return 'Historial';
+      default:
+        return 'History';
+    }
+  }
+
+  String get noHistory {
+    switch (locale.languageCode) {
+      case 'tr':
+        return 'Geçmiş kaydı yok';
+      case 'de':
+        return 'Kein Verlauf';
+      case 'fr':
+        return 'Aucun historique';
+      case 'it':
+        return 'Nessuna cronologia';
+      case 'es':
+        return 'Sin historial';
+      default:
+        return 'No history';
+    }
+  }
+
+  String get initialRecord {
+    switch (locale.languageCode) {
+      case 'tr':
+        return 'İlk Kayıt';
+      case 'de':
+        return 'Erster Eintrag';
+      case 'fr':
+        return 'Premier enregistrement';
+      case 'it':
+        return 'Primo record';
+      case 'es':
+        return 'Primer registro';
+      default:
+        return 'Initial Record';
+    }
+  }
+  // Add this to app_strings.dart
+
+  String get takeFilamentPhoto {
+    switch (locale.languageCode) {
+      case 'tr':
+        return 'Filament Resmi Çek';
+      case 'de':
+        return 'Filament-Foto aufnehmen';
+      case 'fr':
+        return 'Prendre une photo du filament';
+      case 'it':
+        return 'Scatta foto filamento';
+      case 'es':
+        return 'Tomar foto del filamento';
+      default:
+        return 'Take Filament Photo';
+    }
+  }
+
+  String get takePhotoInstruction {
+    switch (locale.languageCode) {
+      case 'tr':
+        return 'Fotoğraf çekmek için butona basın';
+      case 'de':
+        return 'Drücken Sie die Taste, um ein Foto aufzunehmen';
+      case 'fr':
+        return 'Appuyez sur le bouton pour prendre une photo';
+      case 'it':
+        return 'Premi il pulsante per scattare una foto';
+      case 'es':
+        return 'Presione el botón para tomar una foto';
+      default:
+        return 'Tap the button to take a photo';
+    }
+  }
+  // Add these to app_strings.dart
+
+  String get confirmDelete {
+    switch (locale.languageCode) {
+      case 'tr':
+        return 'Silmek istediğinize emin misiniz?';
+      case 'de':
+        return 'Möchten Sie wirklich löschen?';
+      case 'fr':
+        return 'Êtes-vous sûr de vouloir supprimer?';
+      case 'it':
+        return 'Sei sicuro di voler eliminare?';
+      case 'es':
+        return '¿Estás seguro de que quieres eliminar?';
+      default:
+        return 'Are you sure you want to delete?';
+    }
+  }
+
+  String get deleted {
+    switch (locale.languageCode) {
+      case 'tr':
+        return 'Silindi';
+      case 'de':
+        return 'Gelöscht';
+      case 'fr':
+        return 'Supprimé';
+      case 'it':
+        return 'Eliminato';
+      case 'es':
+        return 'Eliminado';
+      default:
+        return 'Deleted';
+    }
+  }
+  // Add these to app_strings.dart
+
+  String get noPrintersAvailable {
+    switch (locale.languageCode) {
+      case 'tr':
+        return 'Kullanılabilir printer yok';
+      case 'de':
+        return 'Keine Drucker verfügbar';
+      case 'fr':
+        return 'Aucune imprimante disponible';
+      case 'it':
+        return 'Nessuna stampante disponibile';
+      case 'es':
+        return 'No hay impresoras disponibles';
+      default:
+        return 'No printers available';
+    }
+  }
+
+  String get selectPrinter {
+    switch (locale.languageCode) {
+      case 'tr':
+        return 'Printer Seç';
+      case 'de':
+        return 'Drucker auswählen';
+      case 'fr':
+        return 'Sélectionner l\'imprimante';
+      case 'it':
+        return 'Seleziona stampante';
+      case 'es':
+        return 'Seleccionar impresora';
+      default:
+        return 'Select Printer';
+    }
+  }
+
+  String get selectSlot {
+    switch (locale.languageCode) {
+      case 'tr':
+        return 'Slot Seç';
+      case 'de':
+        return 'Slot auswählen';
+      case 'fr':
+        return 'Sélectionner le slot';
+      case 'it':
+        return 'Seleziona slot';
+      case 'es':
+        return 'Seleccionar ranura';
+      default:
+        return 'Select Slot';
+    }
+  }
+
+  String get slots {
+    switch (locale.languageCode) {
+      case 'tr':
+        return 'Slotlar';
+      case 'de':
+        return 'Slots';
+      case 'fr':
+        return 'Emplacements';
+      case 'it':
+        return 'Slot';
+      case 'es':
+        return 'Ranuras';
+      default:
+        return 'Slots';
+    }
+  }
+
+  String get assigned {
+    switch (locale.languageCode) {
+      case 'tr':
+        return 'Atandı';
+      case 'de':
+        return 'Zugewiesen';
+      case 'fr':
+        return 'Assigné';
+      case 'it':
+        return 'Assegnato';
+      case 'es':
+        return 'Asignado';
+      default:
+        return 'Assigned';
+    }
+  }
+  // Add these to app_strings.dart
+
+  String get slotOccupied {
+    switch (locale.languageCode) {
+      case 'tr':
+        return 'Slot Dolu';
+      case 'de':
+        return 'Slot belegt';
+      case 'fr':
+        return 'Emplacement occupé';
+      case 'it':
+        return 'Slot occupato';
+      case 'es':
+        return 'Ranura ocupada';
+      default:
+        return 'Slot Occupied';
+    }
+  }
+
+  String get replace {
+    switch (locale.languageCode) {
+      case 'tr':
+        return 'Değiştir';
+      case 'de':
+        return 'Ersetzen';
+      case 'fr':
+        return 'Remplacer';
+      case 'it':
+        return 'Sostituisci';
+      case 'es':
+        return 'Reemplazar';
+      default:
+        return 'Replace';
+    }
+  }
 }

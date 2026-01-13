@@ -10,6 +10,8 @@ import 'package:filament_manager/features/definitions/colors/color_repository.da
 import 'package:filament_manager/features/definitions/brands/brand_model.dart';
 import 'package:filament_manager/features/definitions/materials/material_model.dart';
 import 'package:filament_manager/features/definitions/colors/color_model.dart';
+import '../../core/database/filament_history_repository.dart';
+import '../../core/utils/status_calculator.dart';
 
 class PrinterDetailPage extends StatefulWidget {
   final Printer printer;
@@ -49,6 +51,32 @@ class _PrinterDetailPageState extends State<PrinterDetailPage> {
       final result = await _filamentRepository.getFilamentsByPrinter(
         widget.printer.id!,
       );
+
+      // Calculate status for each filament
+      final historyRepo = FilamentHistoryRepository();
+      final List<Filament> filamentsWithStatus = [];
+
+      for (final filament in result) {
+        final initialHistory = await historyRepo.getInitialHistory(filament.id);
+        final latestHistory = await historyRepo.getLatestHistory(filament.id);
+
+        if (initialHistory != null && latestHistory != null) {
+          final calculatedStatus = StatusCalculator.calculateStatus(
+            currentGram: latestHistory.gram,
+            initialGram: initialHistory.gram,
+          );
+          filamentsWithStatus.add(filament.copyWith(status: calculatedStatus));
+        } else {
+          filamentsWithStatus.add(filament);
+        }
+      }
+
+      if (mounted) {
+        setState(() {
+          _filaments = filamentsWithStatus;
+          _isLoading = false;
+        });
+      }
 
       final allBrands = await _brandRepository.getAll();
       final allMaterials = await _materialRepository.getAll();

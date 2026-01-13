@@ -1,25 +1,25 @@
 import 'package:flutter/material.dart';
+import 'dart:io';
 import 'package:camera/camera.dart';
-
 import '../../core/database/filament_repository.dart';
 import '../../core/models/filament.dart';
 import '../../l10n/app_strings.dart';
 import '../../core/database/location_repository.dart';
 import '../../core/models/location.dart';
-
 import '../definitions/colors/color_model.dart';
 import '../definitions/colors/color_repository.dart';
 import '../definitions/colors/color_select_popup.dart';
-
 import '../definitions/brands/brand_model.dart';
 import '../definitions/brands/brand_repository.dart';
-
 import '../definitions/materials/material_model.dart';
 import '../definitions/materials/material_repository.dart';
-
 import '../scan/camera_capture_page.dart';
 import '../../core/ocr/ocr_text_extractor.dart';
 import '../../core/ocr/ocr_analyzer.dart';
+import '../../core/database/filament_history_repository.dart';
+import '../../core/models/filament_history.dart';
+import 'package:cross_file/cross_file.dart';
+import '../scan/single_photo_capture_page.dart';
 
 class FilamentAddPage extends StatefulWidget {
   const FilamentAddPage({super.key});
@@ -50,6 +50,8 @@ class _FilamentAddPageState extends State<FilamentAddPage> {
 
   final FilamentRepository _repository = FilamentRepository();
   final LocationRepository _locationRepository = LocationRepository();
+  final FilamentHistoryRepository _historyRepository =
+      FilamentHistoryRepository();
   final ColorRepository _colorRepository = ColorRepository();
   final BrandRepository _brandRepository = BrandRepository();
   final MaterialRepository _materialRepository = MaterialRepository();
@@ -71,6 +73,8 @@ class _FilamentAddPageState extends State<FilamentAddPage> {
   List<int> _usedBrandIds = [];
   List<int> _usedMaterialIds = [];
   List<int> _usedColorIds = [];
+
+  String? _filamentPhotoPath;
 
   @override
   void initState() {
@@ -340,6 +344,77 @@ class _FilamentAddPageState extends State<FilamentAddPage> {
     }
   }
 
+  List<String> _scannedImagePaths = [];
+
+  Future<void> _scanOCR() async {
+    try {
+      final photos = await Navigator.push<List<XFile>>(
+        context,
+        MaterialPageRoute(builder: (_) => const CameraCapturePage()),
+      );
+
+      if (photos == null || photos.isEmpty) return;
+
+      final imagePaths = photos.map((p) => p.path).toList();
+
+      setState(() {
+        _scannedImagePaths = imagePaths;
+      });
+
+      // Extract text
+      final normalizedTexts =
+          await OcrTextExtractor.extractNormalizedTextsPerImage(imagePaths);
+      final mergedText = OcrTextExtractor.mergeNonEmpty(normalizedTexts);
+
+      if (mergedText.isEmpty) return;
+
+      // Get all keywords
+      final allBrandNames = _allBrands.map((b) => b.name).toList();
+      final allMaterialNames = _allMaterials.map((m) => m.name).toList();
+      final allColorNames = _allColors.map((c) => c.name).toList();
+
+      // Match keywords
+      final foundBrands = OcrAnalyzer.matchKeywords(
+        mergedText: mergedText,
+        keywords: allBrandNames,
+      );
+      final foundMaterials = OcrAnalyzer.matchKeywords(
+        mergedText: mergedText,
+        keywords: allMaterialNames,
+      );
+      final foundColors = OcrAnalyzer.matchKeywords(
+        mergedText: mergedText,
+        keywords: allColorNames,
+      );
+
+      // Auto-fill
+      setState(() {
+        if (foundBrands.isNotEmpty) _brandTextSet = foundBrands.first;
+        if (foundMaterials.isNotEmpty) _materialTextSet = foundMaterials.first;
+        if (foundColors.isNotEmpty) _colorTextSet = foundColors.first;
+      });
+    } catch (e) {
+      debugPrint('OCR error: $e');
+    }
+  }
+
+  Future<void> _takeFilamentPhoto() async {
+    try {
+      final photoPath = await Navigator.push<String>(
+        context,
+        MaterialPageRoute(builder: (_) => const SinglePhotoCaptureRage()),
+      );
+
+      if (photoPath != null) {
+        setState(() {
+          _filamentPhotoPath = photoPath;
+        });
+      }
+    } catch (e) {
+      debugPrint('Error taking photo: $e');
+    }
+  }
+
   // -----------------------
   // SAVE
   // -----------------------
@@ -375,9 +450,20 @@ class _FilamentAddPageState extends State<FilamentAddPage> {
         colorId: _selectedColor!.id,
         status: FilamentStatus.active,
         locationId: _selectedLocation!.id,
+        mainPhotoPath: _filamentPhotoPath,
       );
 
-      await _repository.insertFilament(filament);
+      final filamentId = await _repository.insertFilament(filament);
+
+      // Create initial history record
+      final initialHistory = FilamentHistory(
+        filamentId: filamentId,
+        gram: 1000, // Default initial gram
+        photo: _filamentPhotoPath, // Use main photo if available
+        note: 'Initial record',
+        createdAt: DateTime.now(),
+      );
+      await _historyRepository.addHistory(initialHistory);
 
       if (mounted) Navigator.pop(context, true);
     } catch (e) {
@@ -408,8 +494,33 @@ class _FilamentAddPageState extends State<FilamentAddPage> {
                 ElevatedButton.icon(
                   icon: const Icon(Icons.camera_alt),
                   label: Text(strings.scanReadFromCamera),
-                  onPressed: _readFromCameraAndOcr,
+                  onPressed: _scanOCR,
                 ),
+
+                const SizedBox(height: 8),
+
+                // Filament Photo
+                if (_filamentPhotoPath != null) ...[
+                  ClipRRect(
+                    borderRadius: BorderRadius.circular(8),
+                    child: Image.file(
+                      File(_filamentPhotoPath!),
+                      height: 150,
+                      fit: BoxFit.cover,
+                    ),
+                  ),
+                  TextButton.icon(
+                    icon: const Icon(Icons.delete),
+                    label: Text(strings.removePhoto),
+                    onPressed: () => setState(() => _filamentPhotoPath = null),
+                  ),
+                ] else
+                  OutlinedButton.icon(
+                    icon: const Icon(Icons.photo_camera),
+                    label: Text(strings.takeFilamentPhoto),
+                    onPressed: _takeFilamentPhoto,
+                  ),
+
                 const SizedBox(height: 16),
 
                 Autocomplete<BrandModel>(

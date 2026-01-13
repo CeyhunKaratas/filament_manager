@@ -1,21 +1,22 @@
 import 'package:flutter/material.dart';
-
 import '../../core/database/filament_repository.dart';
 import '../../core/database/printer_repository.dart';
 import '../../core/models/filament.dart';
 import '../../core/models/printer.dart';
 import '../../l10n/app_strings.dart';
 import '../../core/models/filamentgroup.dart';
-
 import '../../core/database/location_repository.dart';
 import '../../core/models/location.dart';
-
 import '../definitions/brands/brand_repository.dart';
 import '../definitions/materials/material_repository.dart';
 import '../definitions/colors/color_repository.dart';
 import '../definitions/colors/color_model.dart';
-
 import 'filament_edit_page.dart';
+import '../filaments/filament_history_add_page.dart';
+import '../../core/database/filament_history_repository.dart';
+import '../filaments/filament_history_list_page.dart';
+import '../../core/widgets/filament_popup_menu.dart';
+import '../../core/services/filament_actions.dart';
 
 class FilamentGroupDetailPage extends StatefulWidget {
   final FilamentGroup group;
@@ -29,6 +30,8 @@ class FilamentGroupDetailPage extends StatefulWidget {
 
 class _FilamentGroupDetailPageState extends State<FilamentGroupDetailPage> {
   final FilamentRepository _repository = FilamentRepository();
+  final FilamentHistoryRepository _historyRepository =
+      FilamentHistoryRepository();
   final PrinterRepository _printerRepo = PrinterRepository();
   final LocationRepository _locationRepo = LocationRepository();
   final BrandRepository _brandRepo = BrandRepository();
@@ -104,7 +107,7 @@ class _FilamentGroupDetailPageState extends State<FilamentGroupDetailPage> {
       }
 
       final first = widget.group.items.first;
-      final all = await _repository.getAllFilaments();
+      final all = await _repository.getAllFilamentsWithStatus();
 
       _items = all
           .where(
@@ -171,234 +174,6 @@ class _FilamentGroupDetailPageState extends State<FilamentGroupDetailPage> {
     }
   }
 
-  Future<void> _deleteFilament(Filament filament) async {
-    final strings = AppStrings.of(Localizations.localeOf(context));
-
-    final confirm = await showDialog<bool>(
-      context: context,
-      builder: (_) => AlertDialog(
-        title: Text(strings.deleteSpoolTitle),
-        content: Text(strings.deleteSpoolConfirm),
-        actions: [
-          TextButton(
-            onPressed: () => Navigator.pop(context, false),
-            child: Text(strings.cancel),
-          ),
-          TextButton(
-            onPressed: () => Navigator.pop(context, true),
-            child: Text(
-              strings.delete,
-              style: const TextStyle(color: Colors.red),
-            ),
-          ),
-        ],
-      ),
-    );
-
-    if (confirm != true) return;
-
-    try {
-      await _repository.deleteFilament(filament.id);
-      _changed = true;
-
-      // Reload and check if list is now empty
-      await _reloadFromDb();
-
-      // _reloadFromDb handles navigation if list is empty
-    } catch (e) {
-      debugPrint('Error deleting filament: $e');
-      if (mounted) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(
-            content: Text('Failed to delete filament: $e'),
-            backgroundColor: Colors.red,
-          ),
-        );
-      }
-    }
-  }
-
-  /// SLOT ATAMA
-  void _assignSlot(Filament filament) {
-    final strings = AppStrings.of(Localizations.localeOf(context));
-
-    if (_printers.isEmpty) {
-      showDialog(
-        context: context,
-        builder: (_) => AlertDialog(
-          title: Text(strings.printer),
-          content: Text(strings.noPrinters),
-          actions: [
-            TextButton(
-              onPressed: () => Navigator.pop(context),
-              child: Text(strings.ok),
-            ),
-          ],
-        ),
-      );
-      return;
-    }
-
-    Printer selectedPrinter = _printers.first;
-    int selectedSlot = 1;
-
-    if (filament.printerId != null) {
-      final found = _printers.where((p) => p.id == filament.printerId).toList();
-      if (found.isNotEmpty) selectedPrinter = found.first;
-    }
-
-    if (filament.slot != null) selectedSlot = filament.slot!;
-
-    List<int> slotsFor(Printer p) => List.generate(p.slotCount, (i) => i + 1);
-
-    showDialog(
-      context: context,
-      builder: (_) => StatefulBuilder(
-        builder: (context, setDialogState) => AlertDialog(
-          title: Text(strings.assignSpool),
-          content: Column(
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              DropdownButtonFormField<Printer>(
-                initialValue: selectedPrinter,
-                items: _printers
-                    .map((p) => DropdownMenuItem(value: p, child: Text(p.name)))
-                    .toList(),
-                onChanged: (v) {
-                  setDialogState(() {
-                    selectedPrinter = v!;
-                    selectedSlot = 1;
-                  });
-                },
-                decoration: InputDecoration(labelText: strings.printer),
-              ),
-              const SizedBox(height: 12),
-              DropdownButtonFormField<int>(
-                key: ValueKey(selectedPrinter.id),
-                initialValue: selectedSlot,
-                items: slotsFor(selectedPrinter)
-                    .map(
-                      (s) => DropdownMenuItem(
-                        value: s,
-                        child: Text('${strings.slot} $s'),
-                      ),
-                    )
-                    .toList(),
-                onChanged: (v) {
-                  setDialogState(() {
-                    selectedSlot = v!;
-                  });
-                },
-                decoration: InputDecoration(labelText: strings.slot),
-              ),
-            ],
-          ),
-          actions: [
-            TextButton(
-              onPressed: () => Navigator.pop(context),
-              child: Text(strings.cancel),
-            ),
-            ElevatedButton(
-              onPressed: () async {
-                try {
-                  await _repository.assignFilament(
-                    filament.id,
-                    selectedPrinter.id!,
-                    selectedSlot,
-                  );
-                } on SlotOccupiedException {
-                  final confirmed = await showDialog<bool>(
-                    context: context,
-                    builder: (_) => AlertDialog(
-                      title: Text(strings.slotOccupiedTitle),
-                      content: Text(strings.slotOccupiedMessage),
-                      actions: [
-                        TextButton(
-                          onPressed: () => Navigator.pop(context, false),
-                          child: Text(strings.cancel),
-                        ),
-                        ElevatedButton(
-                          onPressed: () => Navigator.pop(context, true),
-                          child: Text(strings.continueLabel),
-                        ),
-                      ],
-                    ),
-                  );
-
-                  if (confirmed == true) {
-                    await _repository.assignFilament(
-                      filament.id,
-                      selectedPrinter.id!,
-                      selectedSlot,
-                      force: true,
-                    );
-                  } else {
-                    return;
-                  }
-                } catch (e) {
-                  debugPrint('Error assigning filament: $e');
-                  if (mounted) {
-                    ScaffoldMessenger.of(context).showSnackBar(
-                      SnackBar(
-                        content: Text('Failed to assign filament: $e'),
-                        backgroundColor: Colors.red,
-                      ),
-                    );
-                  }
-                  return;
-                }
-
-                if (!mounted) return;
-                Navigator.pop(context);
-                await _reloadFromDb();
-              },
-              child: Text(strings.assign),
-            ),
-          ],
-        ),
-      ),
-    );
-  }
-
-  /// STATUS DEĞİŞTİR
-  Future<void> _changeStatus(Filament filament) async {
-    final strings = AppStrings.of(Localizations.localeOf(context));
-
-    final selected = await showModalBottomSheet<FilamentStatus>(
-      context: context,
-      builder: (_) => SafeArea(
-        child: Column(
-          mainAxisSize: MainAxisSize.min,
-          children: FilamentStatus.values.map((status) {
-            return ListTile(
-              title: Text(strings.statusLabel(status)),
-              leading: Icon(_statusIcon(status)),
-              onTap: () => Navigator.pop(context, status),
-            );
-          }).toList(),
-        ),
-      ),
-    );
-
-    if (selected == null || selected == filament.status) return;
-
-    try {
-      await _repository.updateFilament(filament.copyWith(status: selected));
-      _changed = true;
-      await _reloadFromDb();
-    } catch (e) {
-      debugPrint('Error changing status: $e');
-      if (mounted) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(
-            content: Text('Failed to change status: $e'),
-            backgroundColor: Colors.red,
-          ),
-        );
-      }
-    }
-  }
-
   @override
   Widget build(BuildContext context) {
     final strings = AppStrings.of(Localizations.localeOf(context));
@@ -432,12 +207,25 @@ class _FilamentGroupDetailPageState extends State<FilamentGroupDetailPage> {
                 child: const Icon(Icons.delete, color: Colors.white),
               ),
               confirmDismiss: (_) async {
-                await _deleteFilament(filament);
+                final deleted = await FilamentActions.delete(context, filament);
+                if (deleted) {
+                  _changed = true;
+                  await _reloadFromDb();
+                }
                 return false;
               },
               child: ListTile(
-                onTap: () => _assignSlot(filament),
-                onLongPress: () => _changeStatus(filament),
+                onTap: () async {
+                  final changed = await FilamentActions.assignToPrinter(
+                    context,
+                    filament,
+                    _printers,
+                  );
+                  if (changed) {
+                    _changed = true;
+                    await _reloadFromDb();
+                  }
+                },
                 leading: Column(
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
@@ -486,109 +274,60 @@ class _FilamentGroupDetailPageState extends State<FilamentGroupDetailPage> {
                   mainAxisSize: MainAxisSize.min,
                   children: [
                     _statusChip(filament.status, strings),
-                    PopupMenuButton<String>(
-                      onSelected: (value) async {
-                        try {
-                          if (value == 'edit') {
-                            await _editFilament(filament);
-                            return;
-                          }
+                    FilamentPopupMenu(
+                      filament: filament,
+                      showLocationOptions: _locations.length > 1,
+                      onAction: (action, fil) async {
+                        bool changed = false;
 
-                          if (value == 'delete') {
-                            await _deleteFilament(filament);
-                            return;
-                          }
-
-                          if (value == 'assign') {
-                            _assignSlot(filament);
-                            return;
-                          }
-
-                          if (value.startsWith('status_')) {
-                            final statusName = value.replaceFirst(
-                              'status_',
-                              '',
+                        switch (action) {
+                          case 'save_status':
+                            changed = await FilamentActions.saveStatus(
+                              context,
+                              fil,
                             );
-                            final newStatus = FilamentStatus.values.firstWhere(
-                              (e) => e.name == statusName,
+                            break;
+                          case 'view_history':
+                            await FilamentActions.viewHistory(context, fil);
+                            break;
+                          case 'edit':
+                            changed = await FilamentActions.edit(context, fil);
+                            break;
+                          case 'delete':
+                            changed = await FilamentActions.delete(
+                              context,
+                              fil,
                             );
-                            if (newStatus != filament.status) {
-                              await _repository.updateFilament(
-                                filament.copyWith(status: newStatus),
-                              );
-                              _changed = true;
-                              await _reloadFromDb();
-                            }
-                            return;
-                          }
-
-                          if (value == 'unassign') {
-                            await _handleUnassignWithLocation(filament);
-                            return;
-                          }
-
-                          if (value == 'move_location') {
-                            await _handleMoveToLocation(filament);
-                            return;
-                          }
-                        } catch (e) {
-                          debugPrint('Error in menu action: $e');
-                          if (mounted) {
-                            ScaffoldMessenger.of(context).showSnackBar(
-                              SnackBar(
-                                content: Text('Operation failed: $e'),
-                                backgroundColor: Colors.red,
-                              ),
+                            break;
+                          case 'assign':
+                            changed = await FilamentActions.assignToPrinter(
+                              context,
+                              fil,
+                              _printers,
                             );
-                          }
+                            break;
+                          case 'unassign':
+                            changed =
+                                await FilamentActions.unassignWithLocation(
+                                  context,
+                                  fil,
+                                  _locations,
+                                );
+                            break;
+                          case 'move_location':
+                            changed = await FilamentActions.moveToLocation(
+                              context,
+                              fil,
+                              _locations,
+                            );
+                            break;
+                        }
+
+                        if (changed) {
+                          _changed = true;
+                          await _reloadFromDb();
                         }
                       },
-                      itemBuilder: (_) => [
-                        PopupMenuItem<String>(
-                          value: 'edit',
-                          child: Text(strings.edit),
-                        ),
-                        PopupMenuItem<String>(
-                          value: 'delete',
-                          child: Text(
-                            strings.delete,
-                            style: TextStyle(color: Colors.red),
-                          ),
-                        ),
-                        const PopupMenuDivider(),
-                        PopupMenuItem<String>(
-                          value: 'assign',
-                          child: Text(
-                            filament.printerId == null
-                                ? strings.assign
-                                : strings.changeSlot,
-                          ),
-                        ),
-                        const PopupMenuDivider(),
-                        PopupMenuItem<String>(
-                          value: 'status_active',
-                          child: Text(strings.statusActive),
-                        ),
-                        PopupMenuItem<String>(
-                          value: 'status_low',
-                          child: Text(strings.statusLow),
-                        ),
-                        PopupMenuItem<String>(
-                          value: 'status_finished',
-                          child: Text(strings.statusFinished),
-                        ),
-                        const PopupMenuDivider(),
-                        if (filament.printerId == null && _locations.length > 1)
-                          PopupMenuItem<String>(
-                            value: 'move_location',
-                            child: Text(strings.moveToLocation),
-                          ),
-                        if (filament.printerId != null)
-                          PopupMenuItem<String>(
-                            value: 'unassign',
-                            child: Text(strings.unassign),
-                          ),
-                      ],
                     ),
                   ],
                 ),
@@ -663,111 +402,6 @@ class _FilamentGroupDetailPageState extends State<FilamentGroupDetailPage> {
           ),
           backgroundColor: Colors.red,
         );
-    }
-  }
-
-  Future<void> _handleUnassignWithLocation(Filament filament) async {
-    final strings = AppStrings.of(Localizations.localeOf(context));
-
-    if (_locations.isEmpty) return;
-
-    Location targetLocation;
-
-    if (_locations.length == 1) {
-      targetLocation = _locations.first;
-    } else {
-      final selected = await showDialog<Location>(
-        context: context,
-        builder: (_) => SimpleDialog(
-          title: Text(strings.selectLocation),
-          children: _locations
-              .map(
-                (l) => SimpleDialogOption(
-                  onPressed: () => Navigator.pop(context, l),
-                  child: Text(l.name),
-                ),
-              )
-              .toList(),
-        ),
-      );
-
-      if (selected == null) return;
-      targetLocation = selected;
-    }
-
-    try {
-      await _repository.unassignFilamentToLocation(
-        filamentId: filament.id,
-        locationId: targetLocation.id,
-      );
-
-      _changed = true;
-      await _reloadFromDb();
-    } catch (e) {
-      debugPrint('Error unassigning filament: $e');
-      if (mounted) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(
-            content: Text('Failed to unassign filament: $e'),
-            backgroundColor: Colors.red,
-          ),
-        );
-      }
-    }
-  }
-
-  Future<void> _handleMoveToLocation(Filament filament) async {
-    final strings = AppStrings.of(Localizations.localeOf(context));
-
-    if (_locations.length <= 1) return;
-
-    final selected = await showDialog<Location>(
-      context: context,
-      builder: (_) => SimpleDialog(
-        title: Text(strings.selectLocation),
-        children: _locations
-            .where((l) => l.id != filament.locationId)
-            .map(
-              (l) => SimpleDialogOption(
-                onPressed: () => Navigator.pop(context, l),
-                child: Text(l.name),
-              ),
-            )
-            .toList(),
-      ),
-    );
-
-    if (selected == null) return;
-
-    try {
-      await _repository.updateFilament(
-        filament.copyWith(locationId: selected.id),
-      );
-
-      _changed = true;
-      await _reloadFromDb();
-    } catch (e) {
-      debugPrint('Error moving to location: $e');
-      if (mounted) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(
-            content: Text('Failed to move to location: $e'),
-            backgroundColor: Colors.red,
-          ),
-        );
-      }
-    }
-  }
-
-  Future<void> _editFilament(Filament filament) async {
-    final result = await Navigator.push(
-      context,
-      MaterialPageRoute(builder: (_) => FilamentEditPage(filament: filament)),
-    );
-
-    if (result == true) {
-      _changed = true;
-      await _reloadFromDb();
     }
   }
 }
