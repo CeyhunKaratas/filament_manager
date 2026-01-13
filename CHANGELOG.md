@@ -8,14 +8,27 @@ and this project follows [Semantic Versioning](https://semver.org/).
 ---
 ## [0.4.2-beta] — 2026-01-14
 
+### Added
+- **Dashboard** - New home screen with inventory overview
+  - Total filaments and grams display
+  - Status distribution (Active/Used/Low/Finished)
+  - Printer occupancy summary
+  - Low stock alerts
+  - Recent filaments list
+- **Help System** - In-app user guide with full documentation
+  - Comprehensive HELP.md file
+  - In-app markdown viewer
+  - Help menu in drawer
+
 ### Changed
 - Project stage changed from Alpha to Beta
+- Dashboard is now the default landing page
+- Reports renamed to Inventory in menu
 - Ready for public testing
 
-### Notes
-- No code changes from 0.4.1-alpha
-- All features from 0.4.1-alpha tested and stable
-- Version bump for public beta release
+### Technical
+- Added flutter_markdown dependency
+- HELP.md added to assets
 
 ---
 
