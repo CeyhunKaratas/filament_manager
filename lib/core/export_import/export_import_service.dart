@@ -5,6 +5,9 @@ import 'package:share_plus/share_plus.dart';
 import 'package:file_picker/file_picker.dart';
 
 import '../database/database_helper.dart';
+import '../database/filament_history_repository.dart';
+import '../database/filament_repository.dart';
+import '../models/filament_history.dart';
 import 'backup_data_model.dart';
 import 'package:package_info_plus/package_info_plus.dart';
 
@@ -43,6 +46,7 @@ class ExportImportService {
       // Get app version dynamically
       final packageInfo = await PackageInfo.fromPlatform();
       final appVersion = packageInfo.version;
+
       // Fetch all data
       final brands = await db.query('brands');
       final materials = await db.query('materials');
@@ -51,6 +55,7 @@ class ExportImportService {
       final locations = await db.query('locations');
       final printers = await db.query('printers');
       final filaments = await db.query('filaments');
+      final filamentHistory = await db.query('filament_history');
 
       // Stats
       final stats = {
@@ -60,6 +65,7 @@ class ExportImportService {
         'locations': locations.length,
         'printers': printers.length,
         'filaments': filaments.length,
+        'history': filamentHistory.length,
       };
 
       // Create backup
@@ -76,6 +82,7 @@ class ExportImportService {
           'locations': locations,
           'printers': printers,
           'filaments': filaments,
+          'filament_history': filamentHistory,
         },
       );
 
@@ -191,6 +198,46 @@ class ExportImportService {
         backup.data['filaments'] as List,
       );
 
+      // Import history if available
+      if (backup.data.containsKey('filament_history')) {
+        stats['history'] = await _importTable(
+          db,
+          'filament_history',
+          backup.data['filament_history'] as List,
+        );
+      }
+
+      // MIGRATION: Create initial history for filaments without history
+      final filamentHistoryRepo = FilamentHistoryRepository();
+      final filamentRepo = FilamentRepository();
+
+      final allFilaments = await filamentRepo.getAllFilamentsWithStatus();
+      int historyCreated = 0;
+
+      for (final filament in allFilaments) {
+        final existingHistory = await filamentHistoryRepo.getInitialHistory(
+          filament.id,
+        );
+
+        if (existingHistory == null) {
+          // No history exists, create initial record
+          await filamentHistoryRepo.addHistory(
+            FilamentHistory(
+              filamentId: filament.id,
+              gram: 1000, // Default initial weight
+              photo: null,
+              note: 'Initial record (auto-created during import)',
+              createdAt: DateTime.now(),
+            ),
+          );
+          historyCreated++;
+        }
+      }
+
+      if (historyCreated > 0) {
+        stats['history_created'] = historyCreated;
+      }
+
       return ImportResult(success: true, stats: stats);
     } catch (e) {
       return ImportResult(success: false, error: e.toString());
@@ -198,6 +245,7 @@ class ExportImportService {
   }
 
   Future<void> _clearAllData(db) async {
+    await db.delete('filament_history'); // History first (foreign key)
     await db.delete('filaments');
     await db.delete('printers');
     await db.delete('locations', where: 'is_default = 0');

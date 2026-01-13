@@ -6,6 +6,24 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project follows [Semantic Versioning](https://semver.org/).
 
 ---
+
+## [0.4.3-beta] — 2026-01-14
+
+### Fixed
+- **Issue #19**: History records now included in Export/Import
+  - Export now saves all history records
+  - Import now restores history records
+  - Migration: Auto-create initial history (1000g) for filaments without history records
+  - Fixes data loss when backing up/restoring
+
+### Technical
+- Added filament_history to export data model
+- Added filament_history import logic
+- Added migration for legacy data (v0.3.2 imports)
+- Fixed clear data order (history deleted before filaments)
+
+---
+
 ## [0.4.2-beta] — 2026-01-14
 
 ### Added
