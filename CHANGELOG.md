@@ -7,6 +7,20 @@ and this project follows [Semantic Versioning](https://semver.org/).
 
 ---
 
+## [0.4.0-alpha] — 2026-01-13
+
+### Added
+- **Gram-based history system** (Work in Progress)
+  - FilamentHistory table for tracking gram changes
+  - Automatic status calculation based on gram
+  - Photo and note support in history
+
+### Changed
+- Status is now calculated automatically, not manually set
+- Breaking change: Status system redesigned
+
+---
+
 ## [0.3.2-beta] — 2026-01-11
 
 ### Added

@@ -1,12 +1,12 @@
 import 'dart:convert';
 import 'dart:io';
-import 'package:flutter/foundation.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:share_plus/share_plus.dart';
 import 'package:file_picker/file_picker.dart';
 
 import '../database/database_helper.dart';
 import 'backup_data_model.dart';
+import 'package:package_info_plus/package_info_plus.dart';
 
 class ExportResult {
   final bool success;
@@ -34,13 +34,15 @@ class ImportResult {
 
 class ExportImportService {
   static const String _backupVersion = '1';
-  static const String _appVersion = '0.3.2-beta';
 
   /// Export all data to JSON file
   Future<ExportResult> exportData() async {
     try {
       final db = await DatabaseHelper.instance.database;
 
+      // Get app version dynamically
+      final packageInfo = await PackageInfo.fromPlatform();
+      final appVersion = packageInfo.version;
       // Fetch all data
       final brands = await db.query('brands');
       final materials = await db.query('materials');
@@ -63,7 +65,7 @@ class ExportImportService {
       // Create backup
       final backup = BackupData(
         version: _backupVersion,
-        appVersion: _appVersion,
+        appVersion: appVersion,
         exportDate: DateTime.now().toIso8601String(),
         databaseVersion: 1,
         data: {

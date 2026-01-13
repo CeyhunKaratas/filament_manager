@@ -538,6 +538,9 @@ class _InventoryReportPageState extends State<InventoryReportPage> {
       case FilamentStatus.active:
         statusColor = Colors.green;
         break;
+      case FilamentStatus.used:
+        statusColor = Colors.blue; // EKLE
+        break;
       case FilamentStatus.low:
         statusColor = Colors.orange;
         break;

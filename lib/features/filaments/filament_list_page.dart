@@ -20,6 +20,8 @@ Icon statusIcon(FilamentStatus status) {
   switch (status) {
     case FilamentStatus.active:
       return const Icon(Icons.play_circle, color: Colors.green);
+    case FilamentStatus.used:
+      return const Icon(Icons.inventory, color: Colors.blue);
     case FilamentStatus.low:
       return const Icon(Icons.warning, color: Colors.orange);
     case FilamentStatus.finished:

@@ -620,6 +620,8 @@ class _FilamentGroupDetailPageState extends State<FilamentGroupDetailPage> {
     switch (status) {
       case FilamentStatus.active:
         return Icons.check_circle;
+      case FilamentStatus.used:
+        return Icons.inventory;
       case FilamentStatus.low:
         return Icons.warning;
       case FilamentStatus.finished:
@@ -636,6 +638,14 @@ class _FilamentGroupDetailPageState extends State<FilamentGroupDetailPage> {
             style: const TextStyle(color: Colors.white),
           ),
           backgroundColor: Colors.green,
+        );
+      case FilamentStatus.used:
+        return Chip(
+          label: Text(
+            strings.statusUsed,
+            style: const TextStyle(color: Colors.white),
+          ),
+          backgroundColor: Colors.blue,
         );
       case FilamentStatus.low:
         return Chip(

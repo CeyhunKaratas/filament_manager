@@ -3,6 +3,7 @@ import '../../l10n/app_strings.dart';
 import '../../core/widgets/app_drawer.dart';
 import '../../core/export_import/export_import_service.dart';
 import 'package:url_launcher/url_launcher.dart';
+import 'package:package_info_plus/package_info_plus.dart';
 
 class SettingsPage extends StatefulWidget {
   const SettingsPage({super.key});
@@ -337,9 +338,14 @@ class _SettingsPageState extends State<SettingsPage> {
 
           // App Info
           const Divider(),
-          ListTile(
-            title: Text(strings.appTitle),
-            subtitle: const Text('Version 0.3.2-beta'),
+          FutureBuilder<String>(
+            future: _getVersion(),
+            builder: (context, snapshot) {
+              return ListTile(
+                title: Text(strings.appTitle),
+                subtitle: Text('Version ${snapshot.data ?? "..."}'),
+              );
+            },
           ),
 
           const SizedBox(height: 12),
@@ -405,5 +411,10 @@ class _SettingsPageState extends State<SettingsPage> {
         ],
       ),
     );
+  }
+
+  Future<String> _getVersion() async {
+    final packageInfo = await PackageInfo.fromPlatform();
+    return packageInfo.version;
   }
 }

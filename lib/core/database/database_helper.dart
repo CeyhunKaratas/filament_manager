@@ -7,7 +7,8 @@ class DatabaseHelper {
   static final DatabaseHelper instance = DatabaseHelper._();
 
   static Database? _database;
-  static const int _dbVersion = 1; // Fresh start for v0.1.1-alpha
+  //static const int _dbVersion = 1; // Fresh start for v0.1.1-alpha
+  static const int _dbVersion = 2; // v0.4.0-alpha: FilamentHistory table added
 
   Future<Database> get database async {
     if (_database != null) return _database!;
@@ -31,6 +32,7 @@ class DatabaseHelper {
     await db.execute(LocationTable.createTable);
     await db.execute(PrinterTable.createTable);
     await db.execute(FilamentTable.createTable);
+    await db.execute(FilamentHistoryTable.createTable);
 
     await _seedDefaultLocation(db);
     await _seedDefaultColors(db);
@@ -40,9 +42,24 @@ class DatabaseHelper {
   }
 
   Future<void> _onUpgrade(Database db, int oldVersion, int newVersion) async {
-    // v1 → v2 migration (future)
+    // v1 → v2 migration: Add FilamentHistory table
     if (oldVersion < 2) {
-      // Example: await db.execute('ALTER TABLE filaments ADD COLUMN weight REAL');
+      await db.execute(FilamentHistoryTable.createTable);
+
+      // Create initial history records for existing filaments
+      final filaments = await db.query(FilamentTable.tableName);
+      for (final filament in filaments) {
+        await db.insert(FilamentHistoryTable.tableName, {
+          FilamentHistoryTable.columnFilamentId:
+              filament[FilamentTable.columnId],
+          FilamentHistoryTable.columnGram: 1000, // Default initial gram
+          FilamentHistoryTable.columnPhoto:
+              filament[FilamentTable.columnMainPhotoPath],
+          FilamentHistoryTable.columnNote: 'Initial record (migration from v1)',
+          FilamentHistoryTable.columnCreatedAt: DateTime.now()
+              .toIso8601String(),
+        });
+      }
     }
 
     // v2 → v3 migration (future)

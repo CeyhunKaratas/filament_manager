@@ -139,3 +139,27 @@ class PrinterTable {
   )
   ''';
 }
+
+class FilamentHistoryTable {
+  static const tableName = 'filament_history';
+
+  static const columnId = 'id';
+  static const columnFilamentId = 'filament_id';
+  static const columnGram = 'gram';
+  static const columnPhoto = 'photo';
+  static const columnNote = 'note';
+  static const columnCreatedAt = 'created_at';
+
+  static const createTable =
+      '''
+  CREATE TABLE $tableName (
+    $columnId INTEGER PRIMARY KEY AUTOINCREMENT,
+    $columnFilamentId INTEGER NOT NULL,
+    $columnGram INTEGER NOT NULL,
+    $columnPhoto TEXT,
+    $columnNote TEXT,
+    $columnCreatedAt TEXT NOT NULL,
+    FOREIGN KEY ($columnFilamentId) REFERENCES ${FilamentTable.tableName}(${FilamentTable.columnId}) ON DELETE CASCADE
+  )
+  ''';
+}

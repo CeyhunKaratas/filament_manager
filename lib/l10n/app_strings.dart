@@ -359,16 +359,34 @@ class AppStrings {
     }
   }
 
+  String get statusUsed {
+    switch (locale.languageCode) {
+      case 'tr':
+        return 'Kullanılmış';
+      case 'de':
+        return 'Benutzt';
+      case 'fr':
+        return 'Utilisé';
+      case 'it':
+        return 'Usato';
+      case 'es':
+        return 'Usado';
+      default:
+        return 'Used';
+    }
+  }
+
   String statusLabel(FilamentStatus status) {
     switch (status) {
       case FilamentStatus.active:
         return statusActive;
+      case FilamentStatus.used:
+        return statusUsed;
       case FilamentStatus.low:
         return statusLow;
       case FilamentStatus.finished:
         return statusFinished;
     }
-    return '';
   }
 
   String get assignTitle {

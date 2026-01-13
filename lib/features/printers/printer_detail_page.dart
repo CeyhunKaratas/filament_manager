@@ -92,6 +92,8 @@ class _PrinterDetailPageState extends State<PrinterDetailPage> {
     switch (status) {
       case FilamentStatus.active:
         return Colors.green;
+      case FilamentStatus.used:
+        return Colors.blue;
       case FilamentStatus.low:
         return Colors.orange;
       case FilamentStatus.finished:
@@ -209,6 +211,11 @@ class _PrinterDetailPageState extends State<PrinterDetailPage> {
                       _LegendItem(
                         color: Colors.green,
                         label: strings.statusActive,
+                      ),
+                      const SizedBox(width: 12),
+                      _LegendItem(
+                        color: Colors.blue,
+                        label: strings.statusUsed,
                       ),
                       const SizedBox(width: 12),
                       _LegendItem(

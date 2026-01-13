@@ -1,4 +1,4 @@
-enum FilamentStatus { active, low, finished }
+enum FilamentStatus { active, used, low, finished }
 
 class Filament {
   final int id;
