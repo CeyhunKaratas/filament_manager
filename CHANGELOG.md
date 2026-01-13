@@ -6,8 +6,20 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project follows [Semantic Versioning](https://semver.org/).
 
 ---
+## [0.4.2-beta] — 2026-01-14
 
-## [0.4.1-alpha] — 2026-01-14
+### Changed
+- Project stage changed from Alpha to Beta
+- Ready for public testing
+
+### Notes
+- No code changes from 0.4.1-alpha
+- All features from 0.4.1-alpha tested and stable
+- Version bump for public beta release
+
+---
+
+## [0.4.1-alpha] — 2026-01-13
 
 ### Fixed
 - **Issue #7 - Bug 1**: Inventory Report location sorting now groups printers first, then sorts by printer name and slot
@@ -31,7 +43,7 @@ and this project follows [Semantic Versioning](https://semver.org/).
 
 ---
 
-## [0.4.0-alpha] — 2026-01-13
+## [0.4.0-alpha] — 2026-01-12
 
 ### Added
 - **Gram-based history system** (Work in Progress)
