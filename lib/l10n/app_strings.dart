@@ -2988,4 +2988,208 @@ class AppStrings {
         return 'Available';
     }
   }
+
+  String get dashboard {
+    switch (locale.languageCode) {
+      case 'tr':
+        return 'Ana Sayfa';
+      case 'de':
+        return 'Dashboard';
+      case 'fr':
+        return 'Tableau de bord';
+      case 'it':
+        return 'Dashboard';
+      case 'es':
+        return 'Panel';
+      default:
+        return 'Dashboard';
+    }
+  }
+
+  String get totalFilaments {
+    switch (locale.languageCode) {
+      case 'tr':
+        return 'Toplam Filament';
+      case 'de':
+        return 'Gesamt Filamente';
+      case 'fr':
+        return 'Total Filaments';
+      case 'it':
+        return 'Filamenti Totali';
+      case 'es':
+        return 'Filamentos Totales';
+      default:
+        return 'Total Filaments';
+    }
+  }
+
+  String get totalGrams {
+    switch (locale.languageCode) {
+      case 'tr':
+        return 'Toplam Gram';
+      case 'de':
+        return 'Gesamt Gramm';
+      case 'fr':
+        return 'Grammes Totaux';
+      case 'it':
+        return 'Grammi Totali';
+      case 'es':
+        return 'Gramos Totales';
+      default:
+        return 'Total Grams';
+    }
+  }
+
+  String get statusDistribution {
+    switch (locale.languageCode) {
+      case 'tr':
+        return 'Durum Dağılımı';
+      case 'de':
+        return 'Statusverteilung';
+      case 'fr':
+        return 'Distribution des statuts';
+      case 'it':
+        return 'Distribuzione dello stato';
+      case 'es':
+        return 'Distribución de estado';
+      default:
+        return 'Status Distribution';
+    }
+  }
+
+  String get recentFilaments {
+    switch (locale.languageCode) {
+      case 'tr':
+        return 'Son Eklenenler';
+      case 'de':
+        return 'Kürzlich hinzugefügt';
+      case 'fr':
+        return 'Récemment ajoutés';
+      case 'it':
+        return 'Aggiunti di recente';
+      case 'es':
+        return 'Añadidos recientemente';
+      default:
+        return 'Recently Added';
+    }
+  }
+
+  String get lowStockAlert {
+    switch (locale.languageCode) {
+      case 'tr':
+        return 'Düşük Stok Uyarısı';
+      case 'de':
+        return 'Niedriger Lagerbestand';
+      case 'fr':
+        return 'Alerte stock faible';
+      case 'it':
+        return 'Avviso scorte basse';
+      case 'es':
+        return 'Alerta de stock bajo';
+      default:
+        return 'Low Stock Alert';
+    }
+  }
+
+  String get printerOccupancy {
+    switch (locale.languageCode) {
+      case 'tr':
+        return 'Printer Doluluk';
+      case 'de':
+        return 'Druckerbelegung';
+      case 'fr':
+        return 'Occupation imprimante';
+      case 'it':
+        return 'Occupazione stampante';
+      case 'es':
+        return 'Ocupación de impresora';
+      default:
+        return 'Printer Occupancy';
+    }
+  }
+
+  String get emptySlots {
+    switch (locale.languageCode) {
+      case 'tr':
+        return 'Boş Slot';
+      case 'de':
+        return 'Leere Slots';
+      case 'fr':
+        return 'Emplacements vides';
+      case 'it':
+        return 'Slot vuoti';
+      case 'es':
+        return 'Ranuras vacías';
+      default:
+        return 'Empty Slots';
+    }
+  }
+
+  String get occupiedSlots {
+    switch (locale.languageCode) {
+      case 'tr':
+        return 'Dolu Slot';
+      case 'de':
+        return 'Belegte Slots';
+      case 'fr':
+        return 'Emplacements occupés';
+      case 'it':
+        return 'Slot occupati';
+      case 'es':
+        return 'Ranuras ocupadas';
+      default:
+        return 'Occupied Slots';
+    }
+  }
+
+  String get overview {
+    switch (locale.languageCode) {
+      case 'tr':
+        return 'Genel Bakış';
+      case 'de':
+        return 'Übersicht';
+      case 'fr':
+        return 'Aperçu';
+      case 'it':
+        return 'Panoramica';
+      case 'es':
+        return 'Resumen';
+      default:
+        return 'Overview';
+    }
+  }
+
+  String get inventory {
+    switch (locale.languageCode) {
+      case 'tr':
+        return 'Envanter';
+      case 'de':
+        return 'Inventar';
+      case 'fr':
+        return 'Inventory';
+      case 'it':
+        return 'Inventory';
+      case 'es':
+        return 'Inventory';
+      default:
+        return 'Inventory';
+    }
+  }
+
+  String get help {
+    switch (locale.languageCode) {
+      case 'tr':
+        return 'Yardım';
+      case 'de':
+        return 'Hilfe';
+      case 'fr':
+        return 'Aide';
+      case 'it':
+        return 'Aiuto';
+      case 'es':
+        return 'Ayuda';
+      default:
+        return 'Help';
+    }
+  }
 }

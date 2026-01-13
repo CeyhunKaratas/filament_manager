@@ -12,6 +12,8 @@ import 'features/definitions/definitions_home_screen.dart';
 import 'features/settings/settings_page.dart';
 import 'features/onboarding/onboarding_page.dart';
 import 'features/reports/inventory_report_page.dart';
+import 'features/dashboard/dashboard_page.dart';
+import 'features/help/help_page.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -41,8 +43,9 @@ class MyApp extends StatelessWidget {
         GlobalCupertinoLocalizations.delegate,
       ],
 
-      initialRoute: showOnboarding ? '/onboarding' : '/filaments',
+      initialRoute: showOnboarding ? '/onboarding' : '/dashboard',
       routes: {
+        '/dashboard': (_) => const DashboardPage(),
         '/onboarding': (_) => const OnboardingPage(),
         '/filaments': (_) => const FilamentListPage(),
         '/printers': (_) => const PrinterListPage(),
@@ -51,6 +54,7 @@ class MyApp extends StatelessWidget {
         '/definitions': (_) => const DefinitionsHomeScreen(),
         '/reports': (_) => const InventoryReportPage(),
         '/settings': (_) => const SettingsPage(),
+        '/help': (_) => const HelpPage(),
       },
     );
   }

@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 import '../../l10n/app_strings.dart';
+import '../../features/dashboard/dashboard_page.dart';
+import '../../features/help/help_page.dart';
 
 class AppDrawer extends StatelessWidget {
   final String current;
@@ -28,6 +30,25 @@ class AppDrawer extends StatelessWidget {
           DrawerHeader(
             child: Text(strings.appTitle, style: const TextStyle(fontSize: 20)),
           ),
+
+          _DrawerItem(
+            icon: Icons.dashboard,
+            label: strings.dashboard,
+            selected: current == 'dashboard',
+            onTap: () => _navigate(context, 'dashboard'),
+          ),
+
+          // --------------------
+          // REPORTS
+          // --------------------
+          _DrawerItem(
+            icon: Icons.assessment,
+            label: strings.inventory,
+            selected: current == 'reports',
+            onTap: () => _navigate(context, 'reports'),
+          ),
+
+          const Divider(),
 
           _DrawerItem(
             icon: Icons.layers,
@@ -70,18 +91,19 @@ class AppDrawer extends StatelessWidget {
           ),
 
           // --------------------
-          // REPORTS
-          // --------------------
-          _DrawerItem(
-            icon: Icons.assessment,
-            label: strings.reports,
-            selected: current == 'reports',
-            onTap: () => _navigate(context, 'reports'),
-          ),
-
-          // --------------------
           // SETTINGS
           // --------------------
+          const Divider(),
+          // --------------------
+          // HELP
+          // --------------------
+          _DrawerItem(
+            icon: Icons.help_outline,
+            label: strings.help,
+            selected: current == 'help',
+            onTap: () => _navigate(context, 'help'),
+          ),
+
           const Divider(),
 
           _DrawerItem(
