@@ -10,6 +10,8 @@ import '../database/filament_repository.dart';
 import '../models/filament_history.dart';
 import 'backup_data_model.dart';
 import 'package:package_info_plus/package_info_plus.dart';
+import '../services/beta_tracker_service.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 class ExportResult {
   final bool success;
@@ -56,6 +58,7 @@ class ExportImportService {
       final printers = await db.query('printers');
       final filaments = await db.query('filaments');
       final filamentHistory = await db.query('filament_history');
+      final betaTrackerInfo = await BetaTrackerService.getInstallationInfo();
 
       // Stats
       final stats = {
@@ -75,6 +78,7 @@ class ExportImportService {
         exportDate: DateTime.now().toIso8601String(),
         databaseVersion: 1,
         data: {
+          'beta_tracker': betaTrackerInfo,
           'brands': brands,
           'materials': materials,
           'colors': colors,
@@ -204,6 +208,18 @@ class ExportImportService {
           db,
           'filament_history',
           backup.data['filament_history'] as List,
+        );
+      }
+
+      // Restore beta tracker info if present
+      if (backup.data.containsKey('beta_tracker') &&
+          backup.data['beta_tracker'] != null) {
+        final trackerData = backup.data['beta_tracker'] as Map<String, dynamic>;
+        final prefs = await SharedPreferences.getInstance();
+        await prefs.setString('first_install_version', trackerData['version']);
+        await prefs.setString(
+          'first_install_timestamp',
+          trackerData['installed_at'],
         );
       }
 

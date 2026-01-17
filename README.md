@@ -17,15 +17,34 @@ This project is actively used by its author and under continuous development.
 
 ---
 
+## 🎁 Beta Tester Program
+
+**Install v0.5.0-beta before March 1, 2026 and get LIFETIME FREE ACCESS!**
+
+Anyone who installs this beta version will receive permanent free access to all features, even if the app becomes paid in the future. Your beta tester status is preserved through Export/Import.
+
+---
+
 ## ✨ Features
+
+### Dashboard
+- Quick overview of your filament inventory
+- Total filaments and grams at a glance
+- Status distribution (Active/Used/Low/Finished)
+- Printer occupancy summary
+- Low stock alerts
+- Quick navigation buttons to key features
 
 ### Filament Management
 - Add filaments by **brand, material and color**
+- **Gram-based history tracking** with photos and notes
 - Store filaments by **location** or assign them to **printers and slots**
+- Automatic status calculation based on remaining grams
 - Track filament status:
-  - Active
-  - Low
-  - Finished
+  - Active (>500g)
+  - Used (100-500g)
+  - Low (<100g)
+  - Finished (0g)
 
 ### Grouping Logic
 - Filaments are grouped by: brand + material + color
@@ -35,17 +54,25 @@ This project is actively used by its author and under continuous development.
 - Group detail screens hide finished filaments
 
 ### Data Management
-- **Export Data** - Backup all your data to a JSON file
+- **Export Data** - Backup all your data to a JSON file (includes history records)
 - **Import Data** - Restore from backup with two modes:
   - Replace All: Delete existing data and restore from backup
   - Merge: Keep existing data and add items from backup
 - Backup files can be shared via any app
+- Beta tester status preserved in backups
 
 ### Reports
 - **Inventory Report** - Detailed view of all filaments
-  - Filter by status, brand, material
+  - Filter by status, brand, material, location
+  - "On Printers" filter to show only assigned filaments
   - Toggle to show/hide finished filaments
+  - Displays current gram weight for each spool
   - Summary of total spools
+
+### Help System
+- Comprehensive in-app documentation
+- HELP.md with full feature guide
+- Accessible from navigation menu
 
 ### Onboarding
 - First-time user tutorial
@@ -66,6 +93,7 @@ This project is actively used by its author and under continuous development.
 - Fast, list-based navigation
 - Autocomplete fields for all definitions
 - Inline creation of new brands, materials and colors
+- Quick action buttons on dashboard cards
 
 ---
 
@@ -93,27 +121,32 @@ This project is actively used by its author and under continuous development.
 ---
 
 ## 📦 Project Structure (Simplified)
+```
 lib/
-├─ core/
-│ ├─ database/
-│ ├─ models/
-│ ├─ ocr/
-│ ├─ export_import/
-│ └─ widgets/
-├─ features/
-│ ├─ filaments/
-│ ├─ printers/
-│ ├─ scan/
-│ ├─ definitions/
-│ ├─ settings/
-│ ├─ onboarding/
-│ └─ reports/
-├─ l10n/
-└─ main.dart
+├── core/
+│   ├── database/
+│   ├── models/
+│   ├── ocr/
+│   ├── export_import/
+│   ├── services/
+│   └── widgets/
+├── features/
+│   ├── dashboard/
+│   ├── filaments/
+│   ├── printers/
+│   ├── scan/
+│   ├── definitions/
+│   ├── settings/
+│   ├── onboarding/
+│   ├── help/
+│   └── reports/
+├── l10n/
+└── main.dart
+```
 
 ---
 
-## 🔖 Versioning
+## 📖 Versioning
 
 This project follows **Semantic Versioning**: MAJOR.MINOR.PATCH[-stage]
 
@@ -130,9 +163,9 @@ All changes are documented in [`CHANGELOG.md`](./CHANGELOG.md).
 ## ⚠️ Known Limitations
 
 - OCR accuracy depends on lighting and label quality
+- OCR cannot read digital scale displays (7-segment LEDs)
 - No cloud sync
 - UI polish is still in progress
-- Import requires backup file to be in Downloads folder
 
 ---
 
@@ -149,15 +182,17 @@ All changes are documented in [`CHANGELOG.md`](./CHANGELOG.md).
 
 ## 🛣️ Roadmap
 
-### Planned for Future Versions
-- Statistics dashboard
-- UI polish and refinements
-- Advanced reporting features
+### Planned for v0.6.0
+- Statistics & Reports dashboard
+- Monthly/yearly consumption charts
+- Brand and material usage statistics
+- CSV/PDF export
 
 ### Future (post-beta)
 - Cloud sync (optional)
 - Multiple language support improvements
 - Cost analysis and usage trends
+- Advanced filtering and search
 
 ---
 

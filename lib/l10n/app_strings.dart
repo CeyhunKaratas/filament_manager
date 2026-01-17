@@ -3192,4 +3192,327 @@ class AppStrings {
         return 'Help';
     }
   }
+
+  String get betaTracking {
+    switch (locale.languageCode) {
+      case 'tr':
+        return 'Beta İzleme';
+      case 'de':
+        return 'Beta-Tracking';
+      case 'fr':
+        return 'Suivi Bêta';
+      case 'it':
+        return 'Tracciamento Beta';
+      case 'es':
+        return 'Seguimiento Beta';
+      default:
+        return 'Beta Tracking';
+    }
+  }
+
+  String get betaTestingInfo {
+    switch (locale.languageCode) {
+      case 'tr':
+        return 'Bu beta sürümünde kullanım istatistikleriniz yerel olarak kaydedilir ve uygulamayı geliştirmemize yardımcı olur.';
+      case 'de':
+        return 'In dieser Beta-Version werden Ihre Nutzungsstatistiken lokal gespeichert und helfen uns, die App zu verbessern.';
+      case 'fr':
+        return 'Dans cette version bêta, vos statistiques d\'utilisation sont enregistrées localement et nous aident à améliorer l\'application.';
+      case 'it':
+        return 'In questa versione beta, le tue statistiche di utilizzo vengono salvate localmente e ci aiutano a migliorare l\'app.';
+      case 'es':
+        return 'En esta versión beta, tus estadísticas de uso se guardan localmente y nos ayudan a mejorar la aplicación.';
+      default:
+        return 'In this beta version, your usage statistics are saved locally and help us improve the app.';
+    }
+  }
+
+  String get totalSessions {
+    switch (locale.languageCode) {
+      case 'tr':
+        return 'Toplam Oturum';
+      case 'de':
+        return 'Gesamte Sitzungen';
+      case 'fr':
+        return 'Total des Sessions';
+      case 'it':
+        return 'Sessioni Totali';
+      case 'es':
+        return 'Sesiones Totales';
+      default:
+        return 'Total Sessions';
+    }
+  }
+
+  String get totalActions {
+    switch (locale.languageCode) {
+      case 'tr':
+        return 'Toplam İşlem';
+      case 'de':
+        return 'Gesamte Aktionen';
+      case 'fr':
+        return 'Total des Actions';
+      case 'it':
+        return 'Azioni Totali';
+      case 'es':
+        return 'Acciones Totales';
+      default:
+        return 'Total Actions';
+    }
+  }
+
+  String get firstLaunch {
+    switch (locale.languageCode) {
+      case 'tr':
+        return 'İlk Açılış';
+      case 'de':
+        return 'Erster Start';
+      case 'fr':
+        return 'Premier Lancement';
+      case 'it':
+        return 'Primo Avvio';
+      case 'es':
+        return 'Primer Inicio';
+      default:
+        return 'First Launch';
+    }
+  }
+
+  String get lastLaunch {
+    switch (locale.languageCode) {
+      case 'tr':
+        return 'Son Açılış';
+      case 'de':
+        return 'Letzter Start';
+      case 'fr':
+        return 'Dernier Lancement';
+      case 'it':
+        return 'Ultimo Avvio';
+      case 'es':
+        return 'Último Inicio';
+      default:
+        return 'Last Launch';
+    }
+  }
+
+  String get betaDataNote {
+    switch (locale.languageCode) {
+      case 'tr':
+        return 'Not: Bu veriler yalnızca cihazınızda saklanır ve export/import işlemlerine dahil edilir.';
+      case 'de':
+        return 'Hinweis: Diese Daten werden nur auf Ihrem Gerät gespeichert und in Export-/Importvorgänge einbezogen.';
+      case 'fr':
+        return 'Note : Ces données sont uniquement stockées sur votre appareil et incluses dans les opérations d\'export/import.';
+      case 'it':
+        return 'Nota: Questi dati sono archiviati solo sul tuo dispositivo e inclusi nelle operazioni di esportazione/importazione.';
+      case 'es':
+        return 'Nota: Estos datos solo se almacenan en tu dispositivo y se incluyen en las operaciones de exportación/importación.';
+      default:
+        return 'Note: This data is only stored on your device and included in export/import operations.';
+    }
+  }
+
+  String get installVersion {
+    switch (locale.languageCode) {
+      case 'tr':
+        return 'Kurulum Sürümü';
+      case 'de':
+        return 'Installationsversion';
+      case 'fr':
+        return 'Version d\'Installation';
+      case 'it':
+        return 'Versione Installazione';
+      case 'es':
+        return 'Versión de Instalación';
+      default:
+        return 'Install Version';
+    }
+  }
+
+  String get installDate {
+    switch (locale.languageCode) {
+      case 'tr':
+        return 'Kurulum Tarihi';
+      case 'de':
+        return 'Installationsdatum';
+      case 'fr':
+        return 'Date d\'Installation';
+      case 'it':
+        return 'Data di Installazione';
+      case 'es':
+        return 'Fecha de Instalación';
+      default:
+        return 'Install Date';
+    }
+  }
+
+  String get betaTesterStatus {
+    switch (locale.languageCode) {
+      case 'tr':
+        return 'Beta Tester Durumu';
+      case 'de':
+        return 'Beta-Tester-Status';
+      case 'fr':
+        return 'Statut Bêta Testeur';
+      case 'it':
+        return 'Stato Beta Tester';
+      case 'es':
+        return 'Estado Beta Tester';
+      default:
+        return 'Beta Tester Status';
+    }
+  }
+
+  String get eligible {
+    switch (locale.languageCode) {
+      case 'tr':
+        return 'Uygun ✓';
+      case 'de':
+        return 'Berechtigt ✓';
+      case 'fr':
+        return 'Éligible ✓';
+      case 'it':
+        return 'Idoneo ✓';
+      case 'es':
+        return 'Elegible ✓';
+      default:
+        return 'Eligible ✓';
+    }
+  }
+
+  String get notEligible {
+    switch (locale.languageCode) {
+      case 'tr':
+        return 'Uygun Değil';
+      case 'de':
+        return 'Nicht Berechtigt';
+      case 'fr':
+        return 'Non Éligible';
+      case 'it':
+        return 'Non Idoneo';
+      case 'es':
+        return 'No Elegible';
+      default:
+        return 'Not Eligible';
+    }
+  }
+
+  String get verifiedBadge {
+    switch (locale.languageCode) {
+      case 'tr':
+        return 'Onaylanmış Rozet';
+      case 'de':
+        return 'Verifiziertes Abzeichen';
+      case 'fr':
+        return 'Badge Vérifié';
+      case 'it':
+        return 'Badge Verificato';
+      case 'es':
+        return 'Insignia Verificada';
+      default:
+        return 'Verified Badge';
+    }
+  }
+
+  String get granted {
+    switch (locale.languageCode) {
+      case 'tr':
+        return 'Verildi 🏆';
+      case 'de':
+        return 'Erhalten 🏆';
+      case 'fr':
+        return 'Accordé 🏆';
+      case 'it':
+        return 'Concesso 🏆';
+      case 'es':
+        return 'Otorgado 🏆';
+      default:
+        return 'Granted 🏆';
+    }
+  }
+
+  String get viewAll {
+    switch (locale.languageCode) {
+      case 'tr':
+        return 'Tümünü Gör';
+      case 'de':
+        return 'Alle Anzeigen';
+      case 'fr':
+        return 'Voir Tout';
+      case 'it':
+        return 'Vedi Tutto';
+      case 'es':
+        return 'Ver Todo';
+      default:
+        return 'View All';
+    }
+  }
+
+  String get viewReport {
+    switch (locale.languageCode) {
+      case 'tr':
+        return 'Rapor Gör';
+      case 'de':
+        return 'Bericht Anzeigen';
+      case 'fr':
+        return 'Voir Rapport';
+      case 'it':
+        return 'Vedi Rapporto';
+      case 'es':
+        return 'Ver Informe';
+      default:
+        return 'View Report';
+    }
+  }
+
+  String get manage {
+    switch (locale.languageCode) {
+      case 'tr':
+        return 'Yönet';
+      case 'de':
+        return 'Verwalten';
+      case 'fr':
+        return 'Gérer';
+      case 'it':
+        return 'Gestisci';
+      case 'es':
+        return 'Gestionar';
+      default:
+        return 'Manage';
+    }
+  }
+
+  String get detectedGram {
+    switch (locale.languageCode) {
+      case 'tr':
+        return 'Algılanan Gram';
+      case 'de':
+        return 'Erkanntes Gramm';
+      case 'fr':
+        return 'Grammes Détectés';
+      case 'it':
+        return 'Grammi Rilevati';
+      case 'es':
+        return 'Gramos Detectados';
+      default:
+        return 'Detected Gram';
+    }
+  }
+
+  String get gramNotDetected {
+    switch (locale.languageCode) {
+      case 'tr':
+        return 'Gram Algılanamadı';
+      case 'de':
+        return 'Gramm Nicht Erkannt';
+      case 'fr':
+        return 'Grammes Non Détectés';
+      case 'it':
+        return 'Grammi Non Rilevati';
+      case 'es':
+        return 'Gramos No Detectados';
+      default:
+        return 'Gram Not Detected';
+    }
+  }
 }

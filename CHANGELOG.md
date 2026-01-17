@@ -10,50 +10,51 @@ and this project follows [Semantic Versioning](https://semver.org/).
 ## [0.5.0-beta] — 2026-01-17
 
 ### Added
-- **Issue #20**: Dashboard quick navigation buttons
-  - "Add New" button on Total Filaments card → Add Filament page
-  - "All Filaments" button on Total Grams card → Filament Groups list
-  - "Inventory" button on Status Distribution → Inventory Report
-  - "Printers" button on Printer Occupancy → Printers list
-- **Issue #21**: OCR gram detection from photos in Save Status
-  - Photo button moved above gram input field
-  - Automatic gram extraction from photos (1-5 digit numbers)
-  - Supports decimal values (e.g., 850.5g)
-  - Auto-fills gram input field for verification
-- **Issue #22**: Beta Tester Lifetime Free Access program
+- **Issue #19**: Dashboard quick navigation buttons
+  - "Add" button on Total Filaments card → Opens Add Filament page
+  - "View All" button on Total Grams card → Opens Filament list
+  - "View Report" button on Status Distribution card → Opens Inventory Report
+  - "Manage" button on Printer Occupancy card → Opens Printers list
+  - Improved dashboard usability with direct access to key features
+- **Issue #21**: Beta Tester Lifetime Free Access program
   - Installation tracking for v0.5.0-beta users
-  - Lifetime free access guarantee for beta testers
-  - Installation info displayed in Settings
-  - Export/Import preserves beta tester status
-  - Deadline: March 1, 2026
+  - Lifetime free access guarantee for beta testers (installed before March 1, 2026)
+  - Installation info displayed in Settings page (version, date, eligibility status)
+  - Export/Import preserves beta tester status across devices
+  - Verified badge system prepared for v1.0+ release
 
 ### Changed
-- Save Status workflow improved with photo-first approach
 - Dashboard now provides direct navigation to key features
+- Settings page shows beta tester information and eligibility
+
+### Removed
+- **Issue #20**: OCR gram detection (closed - not feasible)
+  - Attempted automatic gram extraction from scale photos
+  - OCR cannot reliably read 7-segment LCD displays
+  - Manual input remains the best approach for gram values
 
 ### Technical
-- Added BetaTrackerService for installation tracking
-- Enhanced OCR to extract numeric values from photos
-- Improved dashboard navigation UX
+- Added `BetaTrackerService` for installation tracking
+- Enhanced Settings page with beta tracking display
+- Improved dashboard navigation UX with action buttons
 
 ---
 
 🎁 **Special Thank You to Beta Testers!**
 
-Anyone who installs v0.5.0-beta receives **LIFETIME FREE ACCESS** 
-to all features, even if the app becomes paid in the future.
+Anyone who installs v0.5.0-beta before **March 1, 2026** receives 
+**LIFETIME FREE ACCESS** to all features, even if the app becomes 
+paid in the future.
 
 **Important:** Export your data to preserve this record across 
 devices and future installations!
-
-**Installation deadline:** March 1, 2026
 
 ---
 
 ## [0.4.3-beta] — 2026-01-14
 
 ### Fixed
-- **Issue #19**: History records now included in Export/Import
+- **Issue #18**: History records now included in Export/Import
   - Export now saves all history records
   - Import now restores history records
   - Migration: Auto-create initial history (1000g) for filaments without history records

@@ -4,6 +4,7 @@ import '../../core/widgets/app_drawer.dart';
 import '../../core/export_import/export_import_service.dart';
 import 'package:url_launcher/url_launcher.dart';
 import 'package:package_info_plus/package_info_plus.dart';
+import '../../core/services/beta_tracker_service.dart';
 
 class SettingsPage extends StatefulWidget {
   const SettingsPage({super.key});
@@ -17,6 +18,37 @@ class _SettingsPageState extends State<SettingsPage> {
 
   bool _isExporting = false;
   bool _isImporting = false;
+
+  @override
+  void initState() {
+    super.initState();
+    _loadBetaStats();
+  }
+
+  Future<void> _loadBetaStats() async {
+    final info = await BetaTrackerService.getInstallationInfo();
+    final eligible = await BetaTrackerService.isEligibleBetaTester();
+    final badge = await BetaTrackerService.hasVerifiedBadge();
+
+    if (mounted) {
+      setState(() {
+        if (info != null) {
+          _installVersion = info['version'];
+          _installDate = DateTime.parse(info['installed_at']!);
+        }
+        _isEligibleTester = eligible;
+        _hasVerifiedBadge = badge;
+        _isLoadingBetaStats = false;
+      });
+    }
+  }
+
+  // Beta tracking
+  String? _installVersion;
+  DateTime? _installDate;
+  bool _isEligibleTester = false;
+  bool _hasVerifiedBadge = false;
+  bool _isLoadingBetaStats = true;
 
   Future<void> _handleExport() async {
     final strings = AppStrings.of(Localizations.localeOf(context));
@@ -336,6 +368,85 @@ class _SettingsPageState extends State<SettingsPage> {
 
           const SizedBox(height: 32),
 
+          // Beta Tracking Section
+          Text(
+            strings.betaTracking,
+            style: Theme.of(context).textTheme.titleLarge,
+          ),
+          const SizedBox(height: 8),
+          Card(
+            child: Padding(
+              padding: const EdgeInsets.all(16),
+              child: _isLoadingBetaStats
+                  ? const Center(
+                      child: Padding(
+                        padding: EdgeInsets.all(16),
+                        child: CircularProgressIndicator(),
+                      ),
+                    )
+                  : Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Text(
+                          strings.betaTestingInfo,
+                          style: const TextStyle(fontSize: 14),
+                        ),
+                        const SizedBox(height: 16),
+                        _buildBetaStat(
+                          context,
+                          Icons.download,
+                          strings.installVersion,
+                          _installVersion ?? '-',
+                          Colors.blue,
+                        ),
+                        const SizedBox(height: 8),
+                        _buildBetaStat(
+                          context,
+                          Icons.event,
+                          strings.installDate,
+                          _installDate != null
+                              ? _formatDate(_installDate!)
+                              : '-',
+                          Colors.orange,
+                        ),
+                        const SizedBox(height: 8),
+                        _buildBetaStat(
+                          context,
+                          _isEligibleTester ? Icons.check_circle : Icons.info,
+                          strings.betaTesterStatus,
+                          _isEligibleTester
+                              ? strings.eligible
+                              : strings.notEligible,
+                          _isEligibleTester ? Colors.green : Colors.grey,
+                        ),
+                        if (_hasVerifiedBadge) ...[
+                          const SizedBox(height: 8),
+                          _buildBetaStat(
+                            context,
+                            Icons.verified,
+                            strings.verifiedBadge,
+                            strings.granted,
+                            Colors.purple,
+                          ),
+                        ],
+                        const SizedBox(height: 12),
+                        const Divider(),
+                        const SizedBox(height: 8),
+                        Text(
+                          strings.betaDataNote,
+                          style: TextStyle(
+                            fontSize: 11,
+                            color: Colors.grey[600],
+                            fontStyle: FontStyle.italic,
+                          ),
+                        ),
+                      ],
+                    ),
+            ),
+          ),
+
+          const SizedBox(height: 32),
+
           // App Info
           const Divider(),
           FutureBuilder<String>(
@@ -416,5 +527,29 @@ class _SettingsPageState extends State<SettingsPage> {
   Future<String> _getVersion() async {
     final packageInfo = await PackageInfo.fromPlatform();
     return packageInfo.version;
+  }
+
+  Widget _buildBetaStat(
+    BuildContext context,
+    IconData icon,
+    String label,
+    String value,
+    Color color,
+  ) {
+    return Row(
+      children: [
+        Icon(icon, size: 20, color: color),
+        const SizedBox(width: 12),
+        Expanded(child: Text(label, style: const TextStyle(fontSize: 14))),
+        Text(
+          value,
+          style: const TextStyle(fontSize: 14, fontWeight: FontWeight.bold),
+        ),
+      ],
+    );
+  }
+
+  String _formatDate(DateTime date) {
+    return '${date.day}.${date.month}.${date.year}';
   }
 }

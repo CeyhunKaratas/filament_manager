@@ -14,9 +14,15 @@ import 'features/onboarding/onboarding_page.dart';
 import 'features/reports/inventory_report_page.dart';
 import 'features/dashboard/dashboard_page.dart';
 import 'features/help/help_page.dart';
+import 'package:package_info_plus/package_info_plus.dart';
+import 'core/services/beta_tracker_service.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
+
+  // Record first installation for beta tracking
+  final packageInfo = await PackageInfo.fromPlatform();
+  await BetaTrackerService.recordInstallation(packageInfo.version);
 
   // Check if onboarding has been completed
   final prefs = await SharedPreferences.getInstance();

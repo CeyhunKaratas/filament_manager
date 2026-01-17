@@ -248,7 +248,7 @@ class _ScanOcrPageState extends State<ScanOcrPage> {
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
                           Text(
-                            'foto ${i + 1} — ${_qualityLabel(_ocrQualityPerImage[i])}',
+                            'foto ${i + 1} – ${_qualityLabel(_ocrQualityPerImage[i])}',
                             style: Theme.of(context).textTheme.labelLarge,
                           ),
                           const SizedBox(height: 4),

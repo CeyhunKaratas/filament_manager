@@ -10,6 +10,7 @@ import '../definitions/brands/brand_repository.dart';
 import '../definitions/materials/material_repository.dart';
 import '../definitions/colors/color_repository.dart';
 import '../definitions/colors/color_model.dart';
+import '../filaments/filament_add_page.dart';
 
 class DashboardPage extends StatefulWidget {
   const DashboardPage({super.key});
@@ -185,6 +186,15 @@ class _DashboardPageState extends State<DashboardPage> {
                             value: _totalFilaments.toString(),
                             icon: Icons.inventory_2,
                             color: Colors.blue,
+                            actionLabel: '+ ${strings.add}',
+                            onActionTap: () {
+                              Navigator.push(
+                                context,
+                                MaterialPageRoute(
+                                  builder: (_) => const FilamentAddPage(),
+                                ),
+                              ).then((_) => _loadData());
+                            },
                           ),
                         ),
                         const SizedBox(width: 16),
@@ -194,6 +204,10 @@ class _DashboardPageState extends State<DashboardPage> {
                             value: '${_totalGrams}g',
                             icon: Icons.scale,
                             color: Colors.green,
+                            actionLabel: strings.viewAll,
+                            onActionTap: () {
+                              Navigator.pushNamed(context, '/filaments');
+                            },
                           ),
                         ),
                       ],
@@ -202,17 +216,40 @@ class _DashboardPageState extends State<DashboardPage> {
                     const SizedBox(height: 16),
 
                     // Status Distribution
-                    Text(
-                      strings.statusDistribution,
-                      style: Theme.of(context).textTheme.titleMedium,
-                    ),
-                    const SizedBox(height: 12),
-
                     Card(
                       child: Padding(
                         padding: const EdgeInsets.all(16),
                         child: Column(
                           children: [
+                            Row(
+                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                              children: [
+                                Text(
+                                  strings.statusDistribution,
+                                  style: const TextStyle(
+                                    fontSize: 14,
+                                    fontWeight: FontWeight.bold,
+                                  ),
+                                ),
+                                TextButton.icon(
+                                  onPressed: () {
+                                    Navigator.pushNamed(context, '/reports');
+                                  },
+                                  icon: const Icon(Icons.assessment, size: 16),
+                                  label: Text(
+                                    strings.viewReport,
+                                    style: const TextStyle(fontSize: 12),
+                                  ),
+                                  style: TextButton.styleFrom(
+                                    padding: EdgeInsets.zero,
+                                    minimumSize: Size.zero,
+                                    tapTargetSize:
+                                        MaterialTapTargetSize.shrinkWrap,
+                                  ),
+                                ),
+                              ],
+                            ),
+                            const SizedBox(height: 12),
                             _StatusRow(
                               label: strings.statusActive,
                               count: _activeCount,
@@ -241,62 +278,89 @@ class _DashboardPageState extends State<DashboardPage> {
                       ),
                     ),
 
-                    const SizedBox(height: 24),
+                    const SizedBox(height: 16),
 
                     // Printer Occupancy
-                    Text(
-                      strings.printerOccupancy,
-                      style: Theme.of(context).textTheme.titleMedium,
-                    ),
-                    const SizedBox(height: 12),
-
                     Card(
                       child: Padding(
                         padding: const EdgeInsets.all(16),
-                        child: Row(
-                          mainAxisAlignment: MainAxisAlignment.spaceAround,
+                        child: Column(
                           children: [
-                            Column(
+                            Row(
+                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
                               children: [
-                                const Icon(
-                                  Icons.check_circle,
-                                  color: Colors.green,
-                                  size: 32,
-                                ),
-                                const SizedBox(height: 8),
                                 Text(
-                                  strings.occupiedSlots,
-                                  style: const TextStyle(fontSize: 12),
-                                ),
-                                Text(
-                                  _occupiedSlots.toString(),
+                                  strings.printerOccupancy,
                                   style: const TextStyle(
-                                    fontSize: 24,
+                                    fontSize: 14,
                                     fontWeight: FontWeight.bold,
-                                    color: Colors.green,
+                                  ),
+                                ),
+                                TextButton.icon(
+                                  onPressed: () {
+                                    Navigator.pushNamed(context, '/printers');
+                                  },
+                                  icon: const Icon(Icons.print, size: 16),
+                                  label: Text(
+                                    strings.manage,
+                                    style: const TextStyle(fontSize: 12),
+                                  ),
+                                  style: TextButton.styleFrom(
+                                    padding: EdgeInsets.zero,
+                                    minimumSize: Size.zero,
+                                    tapTargetSize:
+                                        MaterialTapTargetSize.shrinkWrap,
                                   ),
                                 ),
                               ],
                             ),
-                            Column(
+                            const SizedBox(height: 12),
+                            Row(
+                              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                               children: [
-                                const Icon(
-                                  Icons.circle_outlined,
-                                  color: Colors.grey,
-                                  size: 32,
+                                Column(
+                                  children: [
+                                    const Icon(
+                                      Icons.check_circle,
+                                      color: Colors.green,
+                                      size: 32,
+                                    ),
+                                    const SizedBox(height: 8),
+                                    Text(
+                                      strings.occupiedSlots,
+                                      style: const TextStyle(fontSize: 12),
+                                    ),
+                                    Text(
+                                      _occupiedSlots.toString(),
+                                      style: const TextStyle(
+                                        fontSize: 24,
+                                        fontWeight: FontWeight.bold,
+                                        color: Colors.green,
+                                      ),
+                                    ),
+                                  ],
                                 ),
-                                const SizedBox(height: 8),
-                                Text(
-                                  strings.emptySlots,
-                                  style: const TextStyle(fontSize: 12),
-                                ),
-                                Text(
-                                  (_totalSlots - _occupiedSlots).toString(),
-                                  style: const TextStyle(
-                                    fontSize: 24,
-                                    fontWeight: FontWeight.bold,
-                                    color: Colors.grey,
-                                  ),
+                                Column(
+                                  children: [
+                                    const Icon(
+                                      Icons.circle_outlined,
+                                      color: Colors.grey,
+                                      size: 32,
+                                    ),
+                                    const SizedBox(height: 8),
+                                    Text(
+                                      strings.emptySlots,
+                                      style: const TextStyle(fontSize: 12),
+                                    ),
+                                    Text(
+                                      (_totalSlots - _occupiedSlots).toString(),
+                                      style: const TextStyle(
+                                        fontSize: 24,
+                                        fontWeight: FontWeight.bold,
+                                        color: Colors.grey,
+                                      ),
+                                    ),
+                                  ],
                                 ),
                               ],
                             ),
@@ -387,12 +451,16 @@ class _StatCard extends StatelessWidget {
   final String value;
   final IconData icon;
   final Color color;
+  final String? actionLabel;
+  final VoidCallback? onActionTap;
 
   const _StatCard({
     required this.title,
     required this.value,
     required this.icon,
     required this.color,
+    this.actionLabel,
+    this.onActionTap,
   });
 
   @override
@@ -418,6 +486,24 @@ class _StatCard extends StatelessWidget {
                 color: color,
               ),
             ),
+            if (actionLabel != null && onActionTap != null) ...[
+              const SizedBox(height: 8),
+              SizedBox(
+                height: 28,
+                child: OutlinedButton(
+                  onPressed: onActionTap,
+                  style: OutlinedButton.styleFrom(
+                    padding: const EdgeInsets.symmetric(horizontal: 12),
+                    minimumSize: Size.zero,
+                    tapTargetSize: MaterialTapTargetSize.shrinkWrap,
+                  ),
+                  child: Text(
+                    actionLabel!,
+                    style: const TextStyle(fontSize: 11),
+                  ),
+                ),
+              ),
+            ],
           ],
         ),
       ),
