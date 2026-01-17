@@ -1,6 +1,6 @@
-# Filament Manager
+# 3D Farm Manager
 
-Filament Manager is a mobile application built with **Flutter + SQLite** to help 3D printer users track, organize and manage their filament inventory.
+3D Farm Manager is a mobile application built with **Flutter + SQLite** to help 3D printer users track, organize and manage their filament inventory.
 
 The app focuses on **clarity, speed and daily usability**, not cloud features or accounts.
 
