@@ -7,6 +7,49 @@ and this project follows [Semantic Versioning](https://semver.org/).
 
 ---
 
+## [0.5.0-beta] — 2026-01-17
+
+### Added
+- **Issue #20**: Dashboard quick navigation buttons
+  - "Add New" button on Total Filaments card → Add Filament page
+  - "All Filaments" button on Total Grams card → Filament Groups list
+  - "Inventory" button on Status Distribution → Inventory Report
+  - "Printers" button on Printer Occupancy → Printers list
+- **Issue #21**: OCR gram detection from photos in Save Status
+  - Photo button moved above gram input field
+  - Automatic gram extraction from photos (1-5 digit numbers)
+  - Supports decimal values (e.g., 850.5g)
+  - Auto-fills gram input field for verification
+- **Issue #22**: Beta Tester Lifetime Free Access program
+  - Installation tracking for v0.5.0-beta users
+  - Lifetime free access guarantee for beta testers
+  - Installation info displayed in Settings
+  - Export/Import preserves beta tester status
+  - Deadline: March 1, 2026
+
+### Changed
+- Save Status workflow improved with photo-first approach
+- Dashboard now provides direct navigation to key features
+
+### Technical
+- Added BetaTrackerService for installation tracking
+- Enhanced OCR to extract numeric values from photos
+- Improved dashboard navigation UX
+
+---
+
+🎁 **Special Thank You to Beta Testers!**
+
+Anyone who installs v0.5.0-beta receives **LIFETIME FREE ACCESS** 
+to all features, even if the app becomes paid in the future.
+
+**Important:** Export your data to preserve this record across 
+devices and future installations!
+
+**Installation deadline:** March 1, 2026
+
+---
+
 ## [0.4.3-beta] — 2026-01-14
 
 ### Fixed

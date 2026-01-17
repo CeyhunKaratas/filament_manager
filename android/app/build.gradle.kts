@@ -52,11 +52,12 @@ android {
         }
     }
 
-    android.applicationVariants.all {
+android.applicationVariants.all {
         val variant = this
         variant.outputs.all {
             val output = this as com.android.build.gradle.internal.api.BaseVariantOutputImpl
-            output.outputFileName = "3D-Farm-Manager_${variant.versionName}.apk"
+            val versionName = variant.versionName
+            output.outputFileName = "3D-Farm-Manager_${versionName}.apk"
         }
     }
 }
