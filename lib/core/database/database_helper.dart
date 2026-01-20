@@ -7,8 +7,7 @@ class DatabaseHelper {
   static final DatabaseHelper instance = DatabaseHelper._();
 
   static Database? _database;
-  //static const int _dbVersion = 1; // Fresh start for v0.1.1-alpha
-  static const int _dbVersion = 2; // v0.4.0-alpha: FilamentHistory table added
+  static const int _dbVersion = 3; // v0.5.1-beta: Movement tracking added
 
   Future<Database> get database async {
     if (_database != null) return _database!;
@@ -62,9 +61,47 @@ class DatabaseHelper {
       }
     }
 
-    // v2 → v3 migration (future)
+    // v2 → v3 migration: Add movement tracking columns
     if (oldVersion < 3) {
-      // Future migrations will be added here
+      // Add new columns to existing table
+      await db.execute(
+        'ALTER TABLE ${FilamentHistoryTable.tableName} '
+        'ADD COLUMN ${FilamentHistoryTable.columnType} TEXT NOT NULL DEFAULT "gramUpdate"',
+      );
+
+      await db.execute(
+        'ALTER TABLE ${FilamentHistoryTable.tableName} '
+        'ADD COLUMN ${FilamentHistoryTable.columnOldLocationId} INTEGER',
+      );
+
+      await db.execute(
+        'ALTER TABLE ${FilamentHistoryTable.tableName} '
+        'ADD COLUMN ${FilamentHistoryTable.columnNewLocationId} INTEGER',
+      );
+
+      await db.execute(
+        'ALTER TABLE ${FilamentHistoryTable.tableName} '
+        'ADD COLUMN ${FilamentHistoryTable.columnOldPrinterId} INTEGER',
+      );
+
+      await db.execute(
+        'ALTER TABLE ${FilamentHistoryTable.tableName} '
+        'ADD COLUMN ${FilamentHistoryTable.columnNewPrinterId} INTEGER',
+      );
+
+      await db.execute(
+        'ALTER TABLE ${FilamentHistoryTable.tableName} '
+        'ADD COLUMN ${FilamentHistoryTable.columnOldSlot} INTEGER',
+      );
+
+      await db.execute(
+        'ALTER TABLE ${FilamentHistoryTable.tableName} '
+        'ADD COLUMN ${FilamentHistoryTable.columnNewSlot} INTEGER',
+      );
+
+      // Make gram column nullable for movement-only records
+      // Note: SQLite doesn't support ALTER COLUMN, but NULL is default
+      // Existing records already have gram values, new movement records will use NULL
     }
   }
 

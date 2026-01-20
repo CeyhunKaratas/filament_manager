@@ -3515,4 +3515,38 @@ class AppStrings {
         return 'Gram Not Detected';
     }
   }
+
+  String get selectLocationForOldFilament {
+    switch (locale.languageCode) {
+      case 'tr':
+        return 'Eski Makara İçin Lokasyon Seçin';
+      case 'de':
+        return 'Standort für alte Spule wählen';
+      case 'fr':
+        return 'Sélectionner l\'emplacement pour l\'ancienne bobine';
+      case 'it':
+        return 'Seleziona posizione per la vecchia bobina';
+      case 'es':
+        return 'Seleccionar ubicación para el carrete antiguo';
+      default:
+        return 'Select Location for Old Filament';
+    }
+  }
+
+  String get noLocationsAvailable {
+    switch (locale.languageCode) {
+      case 'tr':
+        return 'Kullanılabilir Lokasyon Yok';
+      case 'de':
+        return 'Keine Standorte verfügbar';
+      case 'fr':
+        return 'Aucun emplacement disponible';
+      case 'it':
+        return 'Nessuna posizione disponibile';
+      case 'es':
+        return 'No hay ubicaciones disponibles';
+      default:
+        return 'No Locations Available';
+    }
+  }
 }

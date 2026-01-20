@@ -1,7 +1,7 @@
 name: filament_manager
 description: "Filament Manager"
 publish_to: 'none'
-version: 0.5.0-beta+8
+version: 0.5.1-beta+9
 
 environment:
   sdk: ^3.10.4
@@ -36,6 +36,7 @@ dependencies:
   file_picker: ^10.3.8
   package_info_plus: ^9.0.0
   flutter_markdown: ^0.7.7+1
+  photo_view: ^0.15.0
 
 dev_dependencies:
   flutter_test:

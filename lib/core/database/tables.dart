@@ -143,22 +143,41 @@ class PrinterTable {
 class FilamentHistoryTable {
   static const tableName = 'filament_history';
 
+  // Primary fields
   static const columnId = 'id';
   static const columnFilamentId = 'filament_id';
+  static const columnCreatedAt = 'created_at';
+  static const columnType = 'type';
+
+  // Gram tracking (optional for movement-only records)
   static const columnGram = 'gram';
   static const columnPhoto = 'photo';
   static const columnNote = 'note';
-  static const columnCreatedAt = 'created_at';
+
+  // Movement tracking (optional for gram-only records)
+  static const columnOldLocationId = 'old_location_id';
+  static const columnNewLocationId = 'new_location_id';
+  static const columnOldPrinterId = 'old_printer_id';
+  static const columnNewPrinterId = 'new_printer_id';
+  static const columnOldSlot = 'old_slot';
+  static const columnNewSlot = 'new_slot';
 
   static const createTable =
       '''
   CREATE TABLE $tableName (
     $columnId INTEGER PRIMARY KEY AUTOINCREMENT,
     $columnFilamentId INTEGER NOT NULL,
-    $columnGram INTEGER NOT NULL,
+    $columnCreatedAt TEXT NOT NULL,
+    $columnType TEXT NOT NULL DEFAULT 'gramUpdate',
+    $columnGram INTEGER,
     $columnPhoto TEXT,
     $columnNote TEXT,
-    $columnCreatedAt TEXT NOT NULL,
+    $columnOldLocationId INTEGER,
+    $columnNewLocationId INTEGER,
+    $columnOldPrinterId INTEGER,
+    $columnNewPrinterId INTEGER,
+    $columnOldSlot INTEGER,
+    $columnNewSlot INTEGER,
     FOREIGN KEY ($columnFilamentId) REFERENCES ${FilamentTable.tableName}(${FilamentTable.columnId}) ON DELETE CASCADE
   )
   ''';

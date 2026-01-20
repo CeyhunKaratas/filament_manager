@@ -3,6 +3,7 @@ import '../models/filament.dart';
 import '../models/printer.dart';
 import '../database/filament_repository.dart';
 import '../database/filament_history_repository.dart';
+import '../database/location_repository.dart';
 import '../../features/filaments/filament_edit_page.dart';
 import '../../features/filaments/filament_history_add_page.dart';
 import '../../features/filaments/filament_history_list_page.dart';
@@ -12,6 +13,7 @@ class FilamentActions {
   static final FilamentRepository _repository = FilamentRepository();
   static final FilamentHistoryRepository _historyRepository =
       FilamentHistoryRepository();
+  static final LocationRepository _locationRepository = LocationRepository();
 
   /// Save status (open history add page)
   /// Returns true if data changed
@@ -271,40 +273,89 @@ class FilamentActions {
 
       return true;
     } on SlotOccupiedException catch (e) {
-      // Slot is occupied, ask for confirmation
+      // Slot is occupied, ask where to move the old filament
       if (!context.mounted) return false;
 
-      final confirm = await showDialog<bool>(
+      // Get the occupied filament details
+      final occupiedFilament = filamentsOnPrinter.firstWhere(
+        (f) => f.slot == selectedSlot,
+      );
+
+      // Get all storage locations (not "On Printer")
+      final allLocations = await _locationRepository.getAllLocations();
+      final storageLocations = allLocations
+          .where((loc) => loc.name.toLowerCase() != 'on printer')
+          .toList();
+
+      if (storageLocations.isEmpty) {
+        if (context.mounted) {
+          ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(
+              content: Text(strings.noLocationsAvailable),
+              backgroundColor: Colors.red,
+            ),
+          );
+        }
+        return false;
+      }
+
+      // Ask user where to move the old filament
+      final selectedLocation = await showDialog<dynamic>(
         context: context,
         builder: (_) => AlertDialog(
-          title: Text(strings.slotOccupied),
-          content: Text(strings.slotOccupiedMessage),
+          title: Text(strings.selectLocationForOldFilament),
+          content: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              Padding(
+                padding: const EdgeInsets.only(bottom: 16),
+                child: Text(
+                  '${strings.spool} #${occupiedFilament.id}',
+                  style: const TextStyle(
+                    fontWeight: FontWeight.bold,
+                    fontSize: 16,
+                  ),
+                ),
+              ),
+              Flexible(
+                child: SingleChildScrollView(
+                  child: Column(
+                    mainAxisSize: MainAxisSize.min,
+                    children: storageLocations.map((loc) {
+                      return ListTile(
+                        title: Text(loc.name),
+                        onTap: () => Navigator.pop(context, loc),
+                      );
+                    }).toList(),
+                  ),
+                ),
+              ),
+            ],
+          ),
           actions: [
             TextButton(
-              onPressed: () => Navigator.pop(context, false),
+              onPressed: () => Navigator.pop(context),
               child: Text(strings.cancel),
-            ),
-            ElevatedButton(
-              onPressed: () => Navigator.pop(context, true),
-              style: ElevatedButton.styleFrom(
-                backgroundColor: Colors.orange,
-                foregroundColor: Colors.white,
-              ),
-              child: Text(strings.replace),
             ),
           ],
         ),
       );
 
-      if (confirm != true) return false;
+      if (selectedLocation == null) return false;
 
-      // Retry with force=true
+      // Move old filament to selected location
       try {
+        await _repository.unassignFilamentToLocation(
+          filamentId: occupiedFilament.id,
+          locationId: selectedLocation.id,
+        );
+
+        // Now assign new filament to the slot
         await _repository.assignFilament(
           filament.id,
           selectedPrinter.id!,
           selectedSlot,
-          force: true,
+          force: false, // Slot is now empty
         );
 
         if (context.mounted) {
@@ -315,7 +366,7 @@ class FilamentActions {
 
         return true;
       } catch (e) {
-        debugPrint('Error force assigning: $e');
+        debugPrint('Error during slot replacement: $e');
         if (context.mounted) {
           ScaffoldMessenger.of(context).showSnackBar(
             SnackBar(content: Text('Error: $e'), backgroundColor: Colors.red),

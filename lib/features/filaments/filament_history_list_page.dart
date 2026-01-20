@@ -5,6 +5,7 @@ import '../../core/models/filament_history.dart';
 import '../../core/models/filament.dart';
 import '../../l10n/app_strings.dart';
 import 'package:intl/intl.dart';
+import 'package:photo_view/photo_view.dart';
 
 class FilamentHistoryListPage extends StatefulWidget {
   final Filament filament;
@@ -46,6 +47,27 @@ class _FilamentHistoryListPageState extends State<FilamentHistoryListPage> {
         });
       }
     }
+  }
+
+  void _showFullScreenPhoto(String photoPath) {
+    Navigator.push(
+      context,
+      MaterialPageRoute(
+        builder: (_) => Scaffold(
+          backgroundColor: Colors.black,
+          appBar: AppBar(
+            backgroundColor: Colors.black,
+            iconTheme: const IconThemeData(color: Colors.white),
+          ),
+          body: PhotoView(
+            imageProvider: FileImage(File(photoPath)),
+            minScale: PhotoViewComputedScale.contained,
+            maxScale: PhotoViewComputedScale.covered * 2,
+            backgroundDecoration: const BoxDecoration(color: Colors.black),
+          ),
+        ),
+      ),
+    );
   }
 
   @override
@@ -130,13 +152,16 @@ class _FilamentHistoryListPageState extends State<FilamentHistoryListPage> {
                         // Photo
                         if (record.photo != null) ...[
                           const SizedBox(height: 12),
-                          ClipRRect(
-                            borderRadius: BorderRadius.circular(8),
-                            child: Image.file(
-                              File(record.photo!),
-                              height: 200,
-                              width: double.infinity,
-                              fit: BoxFit.cover,
+                          GestureDetector(
+                            onTap: () => _showFullScreenPhoto(record.photo!),
+                            child: ClipRRect(
+                              borderRadius: BorderRadius.circular(8),
+                              child: Image.file(
+                                File(record.photo!),
+                                height: 200,
+                                width: double.infinity,
+                                fit: BoxFit.cover,
+                              ),
                             ),
                           ),
                         ],
