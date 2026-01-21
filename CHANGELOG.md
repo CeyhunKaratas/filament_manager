@@ -7,6 +7,24 @@ and this project follows [Semantic Versioning](https://semver.org/).
 
 ---
 
+## [0.5.2-beta+10] - 2025-01-22
+
+### Added
+- ZIP export/import support for photos (#26)
+- Photos now included in data export
+- Photo mapping system for backup restoration
+
+### Changed
+- Export format: JSON → ZIP (with backward compatibility)
+- Backup version: 1 → 2
+- Import supports both old JSON and new ZIP format
+
+### Fixed
+- Photos not restored after data import (#26)
+- Photo paths updated correctly during import
+
+---
+
 ## [0.5.1-beta] — 2026-01-21
 
 ### Added
