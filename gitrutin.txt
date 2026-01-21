@@ -1,0 +1,5 @@
+Çıkarken
+git add .; git commit -m "WIP"; git push
+
+Diğer PC’ye geçince
+cd C:\Cey\flutter\filament_manager; git pull

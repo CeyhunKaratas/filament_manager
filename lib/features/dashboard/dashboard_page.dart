@@ -101,8 +101,8 @@ class _DashboardPageState extends State<DashboardPage> {
           final latestHistory = await _historyRepo.getLatestHistory(
             filament.id,
           );
-          if (latestHistory != null) {
-            totalGrams += latestHistory.gram;
+          if (latestHistory != null && latestHistory.gram != null) {
+            totalGrams += latestHistory.gram!;
           }
         }
       }

@@ -72,9 +72,15 @@ class FilamentRepository {
         continue;
       }
 
+      // Skip if no gram data available
+      if (latestHistory.gram == null || initialHistory.gram == null) {
+        result.add(filament);
+        continue;
+      }
+
       final calculatedStatus = StatusCalculator.calculateStatus(
-        currentGram: latestHistory.gram,
-        initialGram: initialHistory.gram,
+        currentGram: latestHistory.gram!,
+        initialGram: initialHistory.gram!,
       );
 
       result.add(filament.copyWith(status: calculatedStatus));

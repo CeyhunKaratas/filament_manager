@@ -95,7 +95,7 @@ class _InventoryReportPageState extends State<InventoryReportPage> {
 
       // Load gram data for each filament
       for (final f in filaments) {
-        final latestHistory = await _historyRepo.getLatestHistory(f.id);
+        final latestHistory = await _historyRepo.getLatestGramUpdate(f.id);
         _latestGrams[f.id] = latestHistory?.gram;
       }
 
@@ -687,7 +687,7 @@ class _InventoryReportPageState extends State<InventoryReportPage> {
           ),
           FilamentPopupMenu(
             filament: filament,
-            showLocationOptions: false, // Report'ta location işlemleri yok
+            showLocationOptions: true, // Enable location change
             onAction: (action, fil) async {
               bool changed = false;
 
@@ -711,6 +711,15 @@ class _InventoryReportPageState extends State<InventoryReportPage> {
                     context,
                     fil,
                     printers,
+                  );
+                  break;
+                case 'move_location':
+                  // Load locations first
+                  final locations = await _locationRepo.getAllLocations();
+                  changed = await FilamentActions.moveToLocation(
+                    context,
+                    fil,
+                    locations,
                   );
                   break;
               }

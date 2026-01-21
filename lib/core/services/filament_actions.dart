@@ -21,7 +21,7 @@ class FilamentActions {
     BuildContext context,
     Filament filament,
   ) async {
-    final latestHistory = await _historyRepository.getLatestHistory(
+    final latestHistory = await _historyRepository.getLatestGramUpdate(
       filament.id,
     );
 
@@ -257,12 +257,23 @@ class FilamentActions {
     if (selectedSlot == null) return false;
 
     try {
+      // Store old location before assignment
+      final oldLocationId = filament.locationId;
+
       // First try without force
       await _repository.assignFilament(
         filament.id,
         selectedPrinter.id!,
         selectedSlot,
         force: false,
+      );
+
+      // Record assignment in history
+      await _historyRepository.recordAssignedToPrinter(
+        filamentId: filament.id,
+        oldLocationId: oldLocationId,
+        newPrinterId: selectedPrinter.id!,
+        newSlot: selectedSlot,
       );
 
       if (context.mounted) {
@@ -345,10 +356,21 @@ class FilamentActions {
 
       // Move old filament to selected location
       try {
+        // Unassign old filament and record history
         await _repository.unassignFilamentToLocation(
           filamentId: occupiedFilament.id,
           locationId: selectedLocation.id,
         );
+
+        await _historyRepository.recordUnassignedFromPrinter(
+          filamentId: occupiedFilament.id,
+          oldPrinterId: selectedPrinter.id!,
+          oldSlot: selectedSlot,
+          newLocationId: selectedLocation.id,
+        );
+
+        // Store old location of new filament before assignment
+        final oldLocationId = filament.locationId;
 
         // Now assign new filament to the slot
         await _repository.assignFilament(
@@ -356,6 +378,14 @@ class FilamentActions {
           selectedPrinter.id!,
           selectedSlot,
           force: false, // Slot is now empty
+        );
+
+        // Record assignment in history
+        await _historyRepository.recordAssignedToPrinter(
+          filamentId: filament.id,
+          oldLocationId: oldLocationId,
+          newPrinterId: selectedPrinter.id!,
+          newSlot: selectedSlot,
         );
 
         if (context.mounted) {
@@ -421,10 +451,25 @@ class FilamentActions {
     if (selectedLocation == null) return false;
 
     try {
+      // Store old printer info before unassignment
+      final oldPrinterId = filament.printerId;
+      final oldSlot = filament.slot;
+
       await _repository.unassignFilamentToLocation(
         filamentId: filament.id,
         locationId: selectedLocation.id,
       );
+
+      // Record unassignment in history
+      if (oldPrinterId != null && oldSlot != null) {
+        await _historyRepository.recordUnassignedFromPrinter(
+          filamentId: filament.id,
+          oldPrinterId: oldPrinterId,
+          oldSlot: oldSlot,
+          newLocationId: selectedLocation.id,
+        );
+      }
+
       return true;
     } catch (e) {
       debugPrint('Error unassigning: $e');
@@ -474,9 +519,20 @@ class FilamentActions {
     if (selectedLocation == null) return false;
 
     try {
+      // Store old location before move
+      final oldLocationId = filament.locationId;
+
       await _repository.updateFilament(
         filament.copyWith(locationId: selectedLocation.id),
       );
+
+      // Record location change in history
+      await _historyRepository.recordLocationChanged(
+        filamentId: filament.id,
+        oldLocationId: oldLocationId,
+        newLocationId: selectedLocation.id,
+      );
+
       return true;
     } catch (e) {
       debugPrint('Error moving: $e');

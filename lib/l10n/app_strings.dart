@@ -3549,4 +3549,106 @@ class AppStrings {
         return 'No Locations Available';
     }
   }
+
+  String get assignedToPrinter {
+    switch (locale.languageCode) {
+      case 'tr':
+        return 'Yazıcıya Atandı';
+      case 'de':
+        return 'Dem Drucker zugewiesen';
+      case 'fr':
+        return 'Assigné à l\'imprimante';
+      case 'it':
+        return 'Assegnato alla stampante';
+      case 'es':
+        return 'Asignado a la impresora';
+      default:
+        return 'Assigned to Printer';
+    }
+  }
+
+  String get unassignedFromPrinter {
+    switch (locale.languageCode) {
+      case 'tr':
+        return 'Yazıcıdan Çıkarıldı';
+      case 'de':
+        return 'Vom Drucker entfernt';
+      case 'fr':
+        return 'Retiré de l\'imprimante';
+      case 'it':
+        return 'Rimosso dalla stampante';
+      case 'es':
+        return 'Desasignado de la impresora';
+      default:
+        return 'Unassigned from Printer';
+    }
+  }
+
+  String get locationChanged {
+    switch (locale.languageCode) {
+      case 'tr':
+        return 'Lokasyon Değiştirildi';
+      case 'de':
+        return 'Standort geändert';
+      case 'fr':
+        return 'Emplacement modifié';
+      case 'it':
+        return 'Posizione modificata';
+      case 'es':
+        return 'Ubicación cambiada';
+      default:
+        return 'Location Changed';
+    }
+  }
+
+  String get slotChanged {
+    switch (locale.languageCode) {
+      case 'tr':
+        return 'Slot Değiştirildi';
+      case 'de':
+        return 'Slot geändert';
+      case 'fr':
+        return 'Slot modifié';
+      case 'it':
+        return 'Slot modificato';
+      case 'es':
+        return 'Ranura cambiada';
+      default:
+        return 'Slot Changed';
+    }
+  }
+
+  String get from {
+    switch (locale.languageCode) {
+      case 'tr':
+        return 'Nereden';
+      case 'de':
+        return 'Von';
+      case 'fr':
+        return 'De';
+      case 'it':
+        return 'Da';
+      case 'es':
+        return 'Desde';
+      default:
+        return 'From';
+    }
+  }
+
+  String get to {
+    switch (locale.languageCode) {
+      case 'tr':
+        return 'Nereye';
+      case 'de':
+        return 'Nach';
+      case 'fr':
+        return 'À';
+      case 'it':
+        return 'A';
+      case 'es':
+        return 'A';
+      default:
+        return 'To';
+    }
+  }
 }

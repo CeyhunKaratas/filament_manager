@@ -76,10 +76,13 @@ class _PrinterDetailPageState extends State<PrinterDetailPage> {
         final initialHistory = await historyRepo.getInitialHistory(filament.id);
         final latestHistory = await historyRepo.getLatestHistory(filament.id);
 
-        if (initialHistory != null && latestHistory != null) {
+        if (initialHistory != null &&
+            latestHistory != null &&
+            latestHistory.gram != null &&
+            initialHistory.gram != null) {
           final calculatedStatus = StatusCalculator.calculateStatus(
-            currentGram: latestHistory.gram,
-            initialGram: initialHistory.gram,
+            currentGram: latestHistory.gram!,
+            initialGram: initialHistory.gram!,
           );
           filamentsWithStatus.add(filament.copyWith(status: calculatedStatus));
         } else {

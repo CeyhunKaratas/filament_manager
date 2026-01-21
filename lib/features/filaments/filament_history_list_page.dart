@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'dart:io';
 import '../../core/database/filament_history_repository.dart';
+import '../../core/database/location_repository.dart';
+import '../../core/database/printer_repository.dart';
 import '../../core/models/filament_history.dart';
 import '../../core/models/filament.dart';
 import '../../l10n/app_strings.dart';
@@ -19,8 +21,15 @@ class FilamentHistoryListPage extends StatefulWidget {
 
 class _FilamentHistoryListPageState extends State<FilamentHistoryListPage> {
   final FilamentHistoryRepository _historyRepo = FilamentHistoryRepository();
+  final LocationRepository _locationRepo = LocationRepository();
+  final PrinterRepository _printerRepo = PrinterRepository();
+
   List<FilamentHistory> _history = [];
   bool _isLoading = true;
+
+  // Cache for location and printer names
+  final Map<int, String> _locationNames = {};
+  final Map<int, String> _printerNames = {};
 
   @override
   void initState() {
@@ -33,6 +42,19 @@ class _FilamentHistoryListPageState extends State<FilamentHistoryListPage> {
       final history = await _historyRepo.getHistoryForFilament(
         widget.filament.id,
       );
+
+      // Load all locations and printers for name lookup
+      final locations = await _locationRepo.getAllLocations();
+      final printers = await _printerRepo.getAllPrinters();
+
+      for (final loc in locations) {
+        _locationNames[loc.id!] = loc.name;
+      }
+
+      for (final printer in printers) {
+        _printerNames[printer.id!] = printer.name;
+      }
+
       if (mounted) {
         setState(() {
           _history = history;
@@ -70,6 +92,92 @@ class _FilamentHistoryListPageState extends State<FilamentHistoryListPage> {
     );
   }
 
+  Widget _buildMovementInfo(FilamentHistory record, AppStrings strings) {
+    IconData icon;
+    Color color;
+    String title;
+    String description;
+
+    switch (record.type) {
+      case HistoryType.assignedToPrinter:
+        icon = Icons.print;
+        color = Colors.blue;
+        title = strings.assignedToPrinter;
+        description =
+            '${_printerNames[record.newPrinterId] ?? '?'}, '
+            '${strings.slot} ${record.newSlot}';
+        break;
+
+      case HistoryType.unassignedFromPrinter:
+        icon = Icons.remove_circle_outline;
+        color = Colors.orange;
+        title = strings.unassignedFromPrinter;
+        description =
+            '${strings.from}: ${_printerNames[record.oldPrinterId] ?? '?'}, '
+            '${strings.slot} ${record.oldSlot}\n'
+            '${strings.to}: ${_locationNames[record.newLocationId] ?? '?'}';
+        break;
+
+      case HistoryType.locationChanged:
+        icon = Icons.move_to_inbox;
+        color = Colors.purple;
+        title = strings.locationChanged;
+        description =
+            '${strings.from}: ${_locationNames[record.oldLocationId] ?? '?'}\n'
+            '${strings.to}: ${_locationNames[record.newLocationId] ?? '?'}';
+        break;
+
+      case HistoryType.slotChanged:
+        icon = Icons.swap_horiz;
+        color = Colors.teal;
+        title = strings.slotChanged;
+        description =
+            '${_printerNames[record.oldPrinterId] ?? '?'}: '
+            '${strings.slot} ${record.oldSlot} → ${record.newSlot}';
+        break;
+
+      case HistoryType.gramUpdate:
+      default:
+        return const SizedBox.shrink();
+    }
+
+    return Container(
+      padding: const EdgeInsets.all(12),
+      decoration: BoxDecoration(
+        color: color.withOpacity(0.1),
+        borderRadius: BorderRadius.circular(8),
+        border: Border.all(color: color.withOpacity(0.3)),
+      ),
+      child: Row(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Icon(icon, color: color, size: 24),
+          const SizedBox(width: 12),
+          Expanded(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(
+                  title,
+                  style: TextStyle(
+                    fontWeight: FontWeight.bold,
+                    color: color,
+                    fontSize: 14,
+                  ),
+                ),
+                const SizedBox(height: 4),
+                Text(
+                  description,
+                  style: TextStyle(fontSize: 13, color: Colors.grey.shade700),
+                ),
+              ],
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     final strings = AppStrings.of(Localizations.localeOf(context));
@@ -96,7 +204,7 @@ class _FilamentHistoryListPageState extends State<FilamentHistoryListPage> {
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
-                        // Date & gram
+                        // Date & Type indicator
                         Row(
                           mainAxisAlignment: MainAxisAlignment.spaceBetween,
                           children: [
@@ -107,23 +215,26 @@ class _FilamentHistoryListPageState extends State<FilamentHistoryListPage> {
                                 fontSize: 16,
                               ),
                             ),
-                            Container(
-                              padding: const EdgeInsets.symmetric(
-                                horizontal: 12,
-                                vertical: 6,
-                              ),
-                              decoration: BoxDecoration(
-                                color: Colors.blue.shade100,
-                                borderRadius: BorderRadius.circular(16),
-                              ),
-                              child: Text(
-                                '${record.gram}g',
-                                style: TextStyle(
-                                  fontWeight: FontWeight.bold,
-                                  color: Colors.blue.shade900,
+                            // Show gram only for gram updates
+                            if (record.type == HistoryType.gramUpdate &&
+                                record.gram != null)
+                              Container(
+                                padding: const EdgeInsets.symmetric(
+                                  horizontal: 12,
+                                  vertical: 6,
+                                ),
+                                decoration: BoxDecoration(
+                                  color: Colors.blue.shade100,
+                                  borderRadius: BorderRadius.circular(16),
+                                ),
+                                child: Text(
+                                  '${record.gram}g',
+                                  style: TextStyle(
+                                    fontWeight: FontWeight.bold,
+                                    color: Colors.blue.shade900,
+                                  ),
                                 ),
                               ),
-                            ),
                           ],
                         ),
 
@@ -147,6 +258,12 @@ class _FilamentHistoryListPageState extends State<FilamentHistoryListPage> {
                               ),
                             ),
                           ),
+                        ],
+
+                        // Movement info (for non-gram records)
+                        if (record.type != HistoryType.gramUpdate) ...[
+                          const SizedBox(height: 12),
+                          _buildMovementInfo(record, strings),
                         ],
 
                         // Photo

@@ -7,7 +7,7 @@ class DatabaseHelper {
   static final DatabaseHelper instance = DatabaseHelper._();
 
   static Database? _database;
-  static const int _dbVersion = 3; // v0.5.1-beta: Movement tracking added
+  static const int _dbVersion = 4; // v0.5.1-beta: Movement tracking added
 
   Future<Database> get database async {
     if (_database != null) return _database!;
@@ -63,45 +63,56 @@ class DatabaseHelper {
 
     // v2 → v3 migration: Add movement tracking columns
     if (oldVersion < 3) {
-      // Add new columns to existing table
-      await db.execute(
-        'ALTER TABLE ${FilamentHistoryTable.tableName} '
-        'ADD COLUMN ${FilamentHistoryTable.columnType} TEXT NOT NULL DEFAULT "gramUpdate"',
-      );
+      // Old migration code stays
+    }
 
-      await db.execute(
-        'ALTER TABLE ${FilamentHistoryTable.tableName} '
-        'ADD COLUMN ${FilamentHistoryTable.columnOldLocationId} INTEGER',
-      );
+    // v3 → v4 migration: Recreate table for gram nullable
+    if (oldVersion < 4) {
+      // Recreate table with new schema (gram nullable + movement columns)
+      // Step 1: Create new table
+      await db.execute('''
+        CREATE TABLE ${FilamentHistoryTable.tableName}_new (
+          ${FilamentHistoryTable.columnId} INTEGER PRIMARY KEY AUTOINCREMENT,
+          ${FilamentHistoryTable.columnFilamentId} INTEGER NOT NULL,
+          ${FilamentHistoryTable.columnCreatedAt} TEXT NOT NULL,
+          ${FilamentHistoryTable.columnType} TEXT NOT NULL DEFAULT 'gramUpdate',
+          ${FilamentHistoryTable.columnGram} INTEGER,
+          ${FilamentHistoryTable.columnPhoto} TEXT,
+          ${FilamentHistoryTable.columnNote} TEXT,
+          ${FilamentHistoryTable.columnOldLocationId} INTEGER,
+          ${FilamentHistoryTable.columnNewLocationId} INTEGER,
+          ${FilamentHistoryTable.columnOldPrinterId} INTEGER,
+          ${FilamentHistoryTable.columnNewPrinterId} INTEGER,
+          ${FilamentHistoryTable.columnOldSlot} INTEGER,
+          ${FilamentHistoryTable.columnNewSlot} INTEGER,
+          FOREIGN KEY (${FilamentHistoryTable.columnFilamentId}) 
+            REFERENCES ${FilamentTable.tableName}(${FilamentTable.columnId}) 
+            ON DELETE CASCADE
+        )
+      ''');
 
-      await db.execute(
-        'ALTER TABLE ${FilamentHistoryTable.tableName} '
-        'ADD COLUMN ${FilamentHistoryTable.columnNewLocationId} INTEGER',
-      );
+      // Step 2: Copy existing data (add type='gramUpdate' for all existing records)
+      await db.execute('''
+        INSERT INTO ${FilamentHistoryTable.tableName}_new 
+          (${FilamentHistoryTable.columnId}, 
+           ${FilamentHistoryTable.columnFilamentId}, 
+           ${FilamentHistoryTable.columnCreatedAt},
+           ${FilamentHistoryTable.columnType},
+           ${FilamentHistoryTable.columnGram}, 
+           ${FilamentHistoryTable.columnPhoto}, 
+           ${FilamentHistoryTable.columnNote})
+        SELECT id, filament_id, created_at, 'gramUpdate', gram, photo, note 
+        FROM ${FilamentHistoryTable.tableName}
+      ''');
 
-      await db.execute(
-        'ALTER TABLE ${FilamentHistoryTable.tableName} '
-        'ADD COLUMN ${FilamentHistoryTable.columnOldPrinterId} INTEGER',
-      );
+      // Step 3: Drop old table
+      await db.execute('DROP TABLE ${FilamentHistoryTable.tableName}');
 
-      await db.execute(
-        'ALTER TABLE ${FilamentHistoryTable.tableName} '
-        'ADD COLUMN ${FilamentHistoryTable.columnNewPrinterId} INTEGER',
-      );
-
-      await db.execute(
-        'ALTER TABLE ${FilamentHistoryTable.tableName} '
-        'ADD COLUMN ${FilamentHistoryTable.columnOldSlot} INTEGER',
-      );
-
-      await db.execute(
-        'ALTER TABLE ${FilamentHistoryTable.tableName} '
-        'ADD COLUMN ${FilamentHistoryTable.columnNewSlot} INTEGER',
-      );
-
-      // Make gram column nullable for movement-only records
-      // Note: SQLite doesn't support ALTER COLUMN, but NULL is default
-      // Existing records already have gram values, new movement records will use NULL
+      // Step 4: Rename new table
+      await db.execute('''
+        ALTER TABLE ${FilamentHistoryTable.tableName}_new 
+        RENAME TO ${FilamentHistoryTable.tableName}
+      ''');
     }
   }
 
