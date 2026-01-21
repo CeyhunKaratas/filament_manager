@@ -8,7 +8,7 @@ The app focuses on **clarity, speed and daily usability**, not cloud features or
 
 ## 🚧 Project Status
 
-- **Current version:** `0.5.0-beta`
+- **Current version:** `0.5.1-beta`
 - **Stage:** Beta (limited public testing)
 - **Database:** Local SQLite (persistent)
 - **Platform:** Android (iOS not tested yet)
@@ -38,6 +38,12 @@ Anyone who installs this beta version will receive permanent free access to all 
 ### Filament Management
 - Add filaments by **brand, material and color**
 - **Gram-based history tracking** with photos and notes
+- **Movement tracking** - Full audit trail of all filament movements
+  - Assignment to printers
+  - Location changes
+  - Slot changes
+  - Unassignments
+- Full-screen photo viewer for history images
 - Store filaments by **location** or assign them to **printers and slots**
 - Automatic status calculation based on remaining grams
 - Track filament status:

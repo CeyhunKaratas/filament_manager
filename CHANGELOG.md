@@ -7,6 +7,53 @@ and this project follows [Semantic Versioning](https://semver.org/).
 
 ---
 
+## [0.5.1-beta] — 2026-01-21
+
+### Added
+- **Issue #25**: Movement tracking in history
+  - History now records all filament movements (assign, unassign, location changes, slot changes)
+  - New HistoryType enum: gramUpdate, assignedToPrinter, unassignedFromPrinter, locationChanged, slotChanged
+  - Movement records display with color-coded cards and icons
+  - Location and printer names shown in movement history
+  - Complete audit trail for all filament movements
+- **Issue #22**: Change location from Inventory Report
+  - "Move to Location" option added to filament popup menu in inventory report
+  - Quick location changes without navigating to detail page
+- **Issue #24**: Full-screen photo viewer in history
+  - Added PhotoView package for proper image viewing
+  - Vertical photos now display without cropping
+  - Pinch to zoom and swipe to dismiss functionality
+- **Issue #23**: Location picker when replacing filament in slot
+  - When assigning to occupied slot, user selects where to move old filament
+  - Prevents automatic movement to default location
+  - Better inventory organization
+
+### Changed
+- Database v2 → v4 (movement tracking schema migration)
+- History page now displays both gram updates and movement records
+- Gram field is now nullable for movement-only history records
+- Inventory report uses `getLatestGramUpdate()` instead of `getLatestHistory()`
+- FilamentActions automatically records history for all movements
+
+### Fixed
+- Photo viewer cropping vertical images
+- Dashboard handling nullable gram values
+- Printer detail page handling nullable gram values
+- Filament repository handling nullable gram values
+
+### Technical
+- Database migration recreates history table with proper schema
+- FilamentHistoryRepository: Added movement tracking methods
+  - `recordAssignedToPrinter()`
+  - `recordUnassignedFromPrinter()`
+  - `recordLocationChanged()`
+  - `recordSlotChanged()`
+  - `getGramHistory()`, `getMovementHistory()`, `getLatestGramUpdate()`
+- FilamentActions: Automatic history recording on assign/unassign/move operations
+- Added photo_view package for image viewing
+
+---
+
 ## [0.5.0-beta] — 2026-01-17
 
 ### Added
