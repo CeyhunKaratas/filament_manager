@@ -228,9 +228,13 @@ class ExportImportService {
         final filename = file.name;
         if (file.isFile) {
           final data = file.content as List<int>;
-          final outFile = File('${tempDir.path}/$filename');
-          await outFile.create(recursive: true);
-          await outFile.writeAsBytes(data);
+          // Remove any directory prefix from filename
+          final cleanFilename = filename.split('/').last;
+          if (cleanFilename.isNotEmpty) {
+            final outFile = File('${tempDir.path}/$cleanFilename');
+            await outFile.create(recursive: true);
+            await outFile.writeAsBytes(data);
+          }
         }
       }
 
@@ -238,7 +242,10 @@ class ExportImportService {
       final jsonFile = File('${tempDir.path}/backup.json');
       if (!await jsonFile.exists()) {
         await tempDir.delete(recursive: true);
-        return ImportResult(success: false, error: 'Invalid backup file');
+        return ImportResult(
+          success: false,
+          error: 'Invalid backup file: backup.json not found',
+        );
       }
 
       final jsonString = await jsonFile.readAsString();
