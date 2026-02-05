@@ -11,11 +11,15 @@ and this project follows [Semantic Versioning](https://semver.org/).
 
 ### Added
 - Quick actions menu for filaments in printer slot screen (#27)
-- Assign to slot, move to location, unassign options directly from printer view
+- Direct access to assign, unassign, move location from printer view
+
+### Fixed
+- Photos now saved to permanent storage instead of cache (#26)
+- Photos preserved correctly in export/import process
 
 ### Improved
 - Better workflow for printer management
-- Reduced navigation required for common operations
+- Reduced navigation for common operations
 
 ---
 
