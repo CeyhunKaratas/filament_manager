@@ -7,6 +7,18 @@ and this project follows [Semantic Versioning](https://semver.org/).
 
 ---
 
+## [0.5.3-beta+11] - 2026-02-05
+
+### Added
+- Quick actions menu for filaments in printer slot screen (#27)
+- Assign to slot, move to location, unassign options directly from printer view
+
+### Improved
+- Better workflow for printer management
+- Reduced navigation required for common operations
+
+---
+
 ## [0.5.2-beta+10] - 2025-01-22
 
 ### Added

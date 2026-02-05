@@ -2,6 +2,9 @@ import 'package:camera/camera.dart';
 import 'package:flutter/material.dart';
 import '../../l10n/app_strings.dart';
 
+import 'dart:io';
+import 'package:path_provider/path_provider.dart';
+
 class SinglePhotoCaptureRage extends StatefulWidget {
   const SinglePhotoCaptureRage({super.key});
 
@@ -65,8 +68,18 @@ class _SinglePhotoCaptureRageState extends State<SinglePhotoCaptureRage> {
 
     try {
       final XFile file = await _controller!.takePicture();
+
+      // Copy to permanent storage
+      final directory = await getApplicationDocumentsDirectory();
+      final photosDir = Directory('${directory.path}/photos');
+      await photosDir.create(recursive: true);
+
+      final timestamp = DateTime.now().millisecondsSinceEpoch;
+      final permanentPath = '${photosDir.path}/photo_$timestamp.jpg';
+      await File(file.path).copy(permanentPath);
+
       if (mounted) {
-        Navigator.of(context).pop<String>(file.path);
+        Navigator.of(context).pop<String>(permanentPath);
       }
     } catch (e) {
       debugPrint('Error taking photo: $e');

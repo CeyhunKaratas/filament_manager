@@ -8,7 +8,7 @@ The app focuses on **clarity, speed and daily usability**, not cloud features or
 
 ## 🚧 Project Status
 
-- **Current version:** `0.5.1-beta`
+- **Current version:** `0.5.3-beta`
 - **Stage:** Beta (limited public testing)
 - **Database:** Local SQLite (persistent)
 - **Platform:** Android (iOS not tested yet)

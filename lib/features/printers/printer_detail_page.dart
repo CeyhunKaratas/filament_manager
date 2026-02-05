@@ -12,6 +12,10 @@ import 'package:filament_manager/features/definitions/materials/material_model.d
 import 'package:filament_manager/features/definitions/colors/color_model.dart';
 import '../../core/database/filament_history_repository.dart';
 import '../../core/utils/status_calculator.dart';
+import '../../core/widgets/filament_popup_menu.dart';
+import '../../core/services/filament_actions.dart';
+import '../../core/database/location_repository.dart';
+import '../../core/database/printer_repository.dart';
 
 class PrinterDetailPage extends StatefulWidget {
   final Printer printer;
@@ -33,6 +37,8 @@ class _PrinterDetailPageState extends State<PrinterDetailPage> {
   final Map<int, BrandModel> _brands = {};
   final Map<int, MaterialModel> _materials = {};
   final Map<int, ColorModel> _colors = {};
+  List<dynamic> _locations = [];
+  List<Printer> _printers = [];
 
   bool _isLoading = true;
 
@@ -55,6 +61,10 @@ class _PrinterDetailPageState extends State<PrinterDetailPage> {
       final allBrands = await _brandRepository.getAll();
       final allMaterials = await _materialRepository.getAll();
       final allColors = await _colorRepository.getAll();
+      final allLocations = await LocationRepository().getAllLocations();
+      final allPrinters = await PrinterRepository().getAllPrinters();
+
+      _printers = allPrinters;
 
       for (final b in allBrands) {
         _brands[b.id] = b;
@@ -67,6 +77,8 @@ class _PrinterDetailPageState extends State<PrinterDetailPage> {
       for (final c in allColors) {
         _colors[c.id] = c;
       }
+
+      _locations = allLocations;
 
       // Calculate status for each filament
       final historyRepo = FilamentHistoryRepository();
@@ -109,6 +121,70 @@ class _PrinterDetailPageState extends State<PrinterDetailPage> {
           ),
         );
       }
+    }
+  }
+
+  Future<void> _handleFilamentAction(String action, Filament filament) async {
+    final strings = AppStrings.of(Localizations.localeOf(context));
+
+    switch (action) {
+      case 'save_status':
+        final result = await FilamentActions.saveStatus(context, filament);
+        if (result && mounted) {
+          _loadFilaments(); // Refresh
+        }
+        break;
+
+      case 'view_history':
+        if (mounted) {
+          await FilamentActions.viewHistory(context, filament);
+          _loadFilaments(); // Refresh after returning
+        }
+        break;
+
+      case 'edit':
+        final result = await FilamentActions.edit(context, filament);
+        if (result && mounted) {
+          _loadFilaments(); // Refresh
+        }
+        break;
+
+      case 'delete':
+        final result = await FilamentActions.delete(context, filament);
+        if (result && mounted) {
+          _loadFilaments(); // Refresh
+        }
+        break;
+
+      case 'assign':
+        final result = await FilamentActions.assignToPrinter(
+          context,
+          filament,
+          _printers,
+        );
+        break;
+
+      case 'move_location':
+        final result = await FilamentActions.moveToLocation(
+          context,
+          filament,
+          _locations,
+        );
+        if (result && mounted) {
+          _loadFilaments(); // Refresh
+        }
+        break;
+
+      case 'unassign':
+        final result = await FilamentActions.unassignWithLocation(
+          context,
+          filament,
+          _locations,
+        );
+        if (result && mounted) {
+          _loadFilaments(); // Refresh
+        }
+        break;
     }
   }
 
@@ -200,9 +276,11 @@ class _PrinterDetailPageState extends State<PrinterDetailPage> {
                               ? Text(strings.empty)
                               : Row(
                                   children: [
-                                    Text(
-                                      '${_brands[filamentForSlot.brandId]?.name ?? ''} '
-                                      '${_materials[filamentForSlot.materialId]?.name ?? ''}',
+                                    Expanded(
+                                      child: Text(
+                                        '${_brands[filamentForSlot.brandId]?.name ?? ''} '
+                                        '${_materials[filamentForSlot.materialId]?.name ?? ''}',
+                                      ),
                                     ),
                                     const SizedBox(width: 8),
                                     Container(
@@ -246,6 +324,14 @@ class _PrinterDetailPageState extends State<PrinterDetailPage> {
                                       '${strings.statusLabel(filamentForSlot.status)}',
                                     ),
                                   ],
+                                ),
+                          // Add popup menu for filaments
+                          trailing: filamentForSlot == null
+                              ? null
+                              : FilamentPopupMenu(
+                                  filament: filamentForSlot,
+                                  onAction: _handleFilamentAction,
+                                  showLocationOptions: true,
                                 ),
                         );
                       },
